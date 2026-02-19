@@ -1,0 +1,515 @@
+{
+  "$schema": "../dataset/v1/schema.json",
+  "datasetVersion": "1.0.0",
+  "generatedAt": "2026-02-19T12:00:00Z",
+  "groups": [
+    {
+      "id": "b1a3c6d2-8f4e-4b2a-9f1e-0a1b2c3d4e5f",
+      "name": "BTS",
+      "agency": "HYBE",
+      "debutYear": 2013,
+      "isActive": true
+    },
+    {
+      "id": "c2b4d6e8-9a0b-4c3d-8a2b-1c2d3e4f5a6b",
+      "name": "BLACKPINK",
+      "agency": "YG Entertainment",
+      "debutYear": 2016,
+      "isActive": true
+    },
+    {
+      "id": "d3c5e7f9-0a1b-4d3c-8b3c-2d3e4f5a6b7c",
+      "name": "TWICE",
+      "agency": "JYP Entertainment",
+      "debutYear": 2015,
+      "isActive": true
+    },
+    {
+      "id": "e4d6f8a0-1b2c-4e4d-8c4d-3e4f5a6b7c8d",
+      "name": "Red Velvet",
+      "agency": "SM Entertainment",
+      "debutYear": 2014,
+      "isActive": true
+    },
+    {
+      "id": "f5e7a9b1-2c3d-4f5e-8d5e-4f5a6b7c8d9e",
+      "name": "EXO",
+      "agency": "SM Entertainment",
+      "debutYear": 2012,
+      "isActive": true
+    },
+    {
+      "id": "a6f8b0c2-3d4e-4a6f-8e6f-5a6b7c8d9e0f",
+      "name": "SEVENTEEN",
+      "agency": "Pledis Entertainment",
+      "debutYear": 2015,
+      "isActive": true
+    },
+    {
+      "id": "b7a9c1d3-4e5f-4b7a-8f7a-6b7c8d9e0f1a",
+      "name": "NCT 127",
+      "agency": "SM Entertainment",
+      "debutYear": 2016,
+      "isActive": true
+    },
+    {
+      "id": "c8b0d2e4-5f6a-4c8b-8a8b-7c8d9e0f1a2b",
+      "name": "Stray Kids",
+      "agency": "JYP Entertainment",
+      "debutYear": 2017,
+      "isActive": true
+    },
+    {
+      "id": "d9c1e3f5-6a7b-4d9c-8b9c-8d9e0f1a2b3c",
+      "name": "ITZY",
+      "agency": "JYP Entertainment",
+      "debutYear": 2019,
+      "isActive": true
+    },
+    {
+      "id": "e0d2f4a6-7b8c-4e0d-8cad-9e0f1a2b3c4d",
+      "name": "(G)I-DLE",
+      "agency": "CUBE Entertainment",
+      "debutYear": 2018,
+      "isActive": true
+    },
+    {
+      "id": "f1e3a5c7-8d9e-4f1e-8dbe-0f1a2b3c4d5e",
+      "name": "aespa",
+      "agency": "SM Entertainment",
+      "debutYear": 2020,
+      "isActive": true
+    },
+    {
+      "id": "a2f4b6d8-9e0f-4a2f-8ecf-1a2b3c4d5e6f",
+      "name": "SHINee",
+      "agency": "SM Entertainment",
+      "debutYear": 2008,
+      "isActive": true
+    },
+    {
+      "id": "b3a5c7e9-0f1a-4b3a-8fdf-2b3c4d5e6f7a",
+      "name": "MAMAMOO",
+      "agency": "RBW",
+      "debutYear": 2014,
+      "isActive": true
+    },
+    {
+      "id": "c4b6d8f0-1a2b-4c4b-8afe-3c4d5e6f7a8b",
+      "name": "BIGBANG",
+      "agency": "YG Entertainment",
+      "debutYear": 2006,
+      "isActive": true
+    }
+  ],
+  "albums": [
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000001",
+      "groupId": "b1a3c6d2-8f4e-4b2a-9f1e-0a1b2c3d4e5f",
+      "title": "Wings",
+      "type": "Album",
+      "releaseDate": "2016-10-10",
+      "coverImage": "bts_wings.jpg",
+      "barcode": "8800000000001",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000002",
+      "groupId": "b1a3c6d2-8f4e-4b2a-9f1e-0a1b2c3d4e5f",
+      "title": "Map of the Soul: 7",
+      "type": "Album",
+      "releaseDate": "2020-02-21",
+      "coverImage": "bts_map_of_the_soul_7.jpg",
+      "barcode": "8800000000002",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000003",
+      "groupId": "c2b4d6e8-9a0b-4c3d-8a2b-1c2d3e4f5a6b",
+      "title": "Square Up",
+      "type": "EP",
+      "releaseDate": "2018-06-15",
+      "coverImage": "blackpink_square_up.jpg",
+      "barcode": "8800000000003",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000004",
+      "groupId": "c2b4d6e8-9a0b-4c3d-8a2b-1c2d3e4f5a6b",
+      "title": "The Album",
+      "type": "Album",
+      "releaseDate": "2020-10-02",
+      "coverImage": "blackpink_the_album.jpg",
+      "barcode": "8800000000004",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000005",
+      "groupId": "d3c5e7f9-0a1b-4d3c-8b3c-2d3e4f5a6b7c",
+      "title": "Twicetagram",
+      "type": "Album",
+      "releaseDate": "2017-10-30",
+      "coverImage": "twice_twicetagram.jpg",
+      "barcode": "8800000000005",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000006",
+      "groupId": "d3c5e7f9-0a1b-4d3c-8b3c-2d3e4f5a6b7c",
+      "title": "Formula of Love: O+T=<3",
+      "type": "Album",
+      "releaseDate": "2021-11-12",
+      "coverImage": "twice_formula_of_love.jpg",
+      "barcode": "8800000000006",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000007",
+      "groupId": "e4d6f8a0-1b2c-4e4d-8c4d-3e4f5a6b7c8d",
+      "title": "The Red",
+      "type": "Album",
+      "releaseDate": "2015-09-09",
+      "coverImage": "red_velvet_the_red.jpg",
+      "barcode": "8800000000007",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000008",
+      "groupId": "e4d6f8a0-1b2c-4e4d-8c4d-3e4f5a6b7c8d",
+      "title": "Perfect Velvet",
+      "type": "Album",
+      "releaseDate": "2017-11-17",
+      "coverImage": "red_velvet_perfect_velvet.jpg",
+      "barcode": "8800000000008",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000009",
+      "groupId": "f5e7a9b1-2c3d-4f5e-8d5e-4f5a6b7c8d9e",
+      "title": "XOXO",
+      "type": "Album",
+      "releaseDate": "2013-06-03",
+      "coverImage": "exo_xoxo.jpg",
+      "barcode": "8800000000009",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000a",
+      "groupId": "f5e7a9b1-2c3d-4f5e-8d5e-4f5a6b7c8d9e",
+      "title": "The War",
+      "type": "Album",
+      "releaseDate": "2017-07-18",
+      "coverImage": "exo_the_war.jpg",
+      "barcode": "8800000000010",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000b",
+      "groupId": "a6f8b0c2-3d4e-4a6f-8e6f-5a6b7c8d9e0f",
+      "title": "17 Carat",
+      "type": "EP",
+      "releaseDate": "2015-05-29",
+      "coverImage": "seventeen_17_carat.jpg",
+      "barcode": "8800000000011",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000c",
+      "groupId": "a6f8b0c2-3d4e-4a6f-8e6f-5a6b7c8d9e0f",
+      "title": "An Ode",
+      "type": "Album",
+      "releaseDate": "2019-09-16",
+      "coverImage": "seventeen_an_ode.jpg",
+      "barcode": "8800000000012",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000d",
+      "groupId": "b7a9c1d3-4e5f-4b7a-8f7a-6b7c8d9e0f1a",
+      "title": "Limitless",
+      "type": "EP",
+      "releaseDate": "2017-01-17",
+      "coverImage": "nct127_limitless.jpg",
+      "barcode": "8800000000013",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000e",
+      "groupId": "b7a9c1d3-4e5f-4b7a-8f7a-6b7c8d9e0f1a",
+      "title": "Regular-Irregular",
+      "type": "Album",
+      "releaseDate": "2018-10-12",
+      "coverImage": "nct127_regular_irregular.jpg",
+      "barcode": "8800000000014",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000000f",
+      "groupId": "c8b0d2e4-5f6a-4c8b-8a8b-7c8d9e0f1a2b",
+      "title": "I Am NOT",
+      "type": "EP",
+      "releaseDate": "2018-03-26",
+      "coverImage": "stray_kids_i_am_not.jpg",
+      "barcode": "8800000000015",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000010",
+      "groupId": "c8b0d2e4-5f6a-4c8b-8a8b-7c8d9e0f1a2b",
+      "title": "Noeasy",
+      "type": "Album",
+      "releaseDate": "2021-08-23",
+      "coverImage": "stray_kids_noeasy.jpg",
+      "barcode": "8800000000016",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000011",
+      "groupId": "d9c1e3f5-6a7b-4d9c-8b9c-8d9e0f1a2b3c",
+      "title": "It'z Different",
+      "type": "Single",
+      "releaseDate": "2019-02-12",
+      "coverImage": "itzy_its_different.jpg",
+      "barcode": "8800000000017",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000012",
+      "groupId": "d9c1e3f5-6a7b-4d9c-8b9c-8d9e0f1a2b3c",
+      "title": "Not Shy",
+      "type": "EP",
+      "releaseDate": "2020-08-17",
+      "coverImage": "itzy_not_shy.jpg",
+      "barcode": "8800000000018",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000013",
+      "groupId": "e0d2f4a6-7b8c-4e0d-8cad-9e0f1a2b3c4d",
+      "title": "I Am",
+      "type": "EP",
+      "releaseDate": "2018-05-02",
+      "coverImage": "gi_dle_i_am.jpg",
+      "barcode": "8800000000019",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000014",
+      "groupId": "e0d2f4a6-7b8c-4e0d-8cad-9e0f1a2b3c4d",
+      "title": "I Trust",
+      "type": "Album",
+      "releaseDate": "2020-04-06",
+      "coverImage": "gi_dle_i_trust.jpg",
+      "barcode": "8800000000020",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000015",
+      "groupId": "f1e3a5c7-8d9e-4f1e-8dbe-0f1a2b3c4d5e",
+      "title": "Black Mamba",
+      "type": "Single",
+      "releaseDate": "2020-11-17",
+      "coverImage": "aespa_black_mamba.jpg",
+      "barcode": "8800000000021",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000016",
+      "groupId": "f1e3a5c7-8d9e-4f1e-8dbe-0f1a2b3c4d5e",
+      "title": "Savage",
+      "type": "EP",
+      "releaseDate": "2021-10-05",
+      "coverImage": "aespa_savage.jpg",
+      "barcode": "8800000000022",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000017",
+      "groupId": "a2f4b6d8-9e0f-4a2f-8ecf-1a2b3c4d5e6f",
+      "title": "Odd",
+      "type": "EP",
+      "releaseDate": "2015-05-18",
+      "coverImage": "shinee_odd.jpg",
+      "barcode": "8800000000023",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000018",
+      "groupId": "a2f4b6d8-9e0f-4a2f-8ecf-1a2b3c4d5e6f",
+      "title": "Don't Call Me",
+      "type": "Album",
+      "releaseDate": "2021-02-22",
+      "coverImage": "shinee_dont_call_me.jpg",
+      "barcode": "8800000000024",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-000000000019",
+      "groupId": "b3a5c7e9-0f1a-4b3a-8fdf-2b3c4d5e6f7a",
+      "title": "Pink Funky",
+      "type": "Album",
+      "releaseDate": "2015-06-19",
+      "coverImage": "mamamoo_pink_funky.jpg",
+      "barcode": "8800000000025",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000001a",
+      "groupId": "b3a5c7e9-0f1a-4b3a-8fdf-2b3c4d5e6f7a",
+      "title": "Reality in Black",
+      "type": "Album",
+      "releaseDate": "2019-11-14",
+      "coverImage": "mamamoo_reality_in_black.jpg",
+      "barcode": "8800000000026",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000001b",
+      "groupId": "c4b6d8f0-1a2b-4c4b-8afe-3c4d5e6f7a8b",
+      "title": "Remember",
+      "type": "Album",
+      "releaseDate": "2008-11-05",
+      "coverImage": "bigbang_remember.jpg",
+      "barcode": "8800000000027",
+      "verified": true
+    },
+    {
+      "id": "10000000-0000-4aaa-8bbb-00000000001c",
+      "groupId": "c4b6d8f0-1a2b-4c4b-8afe-3c4d5e6f7a8b",
+      "title": "Alive",
+      "type": "Album",
+      "releaseDate": "2012-02-29",
+      "coverImage": "bigbang_alive.jpg",
+      "barcode": "8800000000028",
+      "verified": true
+    }
+  ],
+  "lightsticks": [
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000001",
+      "groupId": "b1a3c6d2-8f4e-4b2a-9f1e-0a1b2c3d4e5f",
+      "name": "ARMY Bomb",
+      "version": "Ver.3",
+      "releaseYear": 2018,
+      "image": "bts_army_bomb_ver3.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000002",
+      "groupId": "c2b4d6e8-9a0b-4c3d-8a2b-1c2d3e4f5a6b",
+      "name": "BLACKPINK Lightstick",
+      "version": "Ver.2",
+      "releaseYear": 2021,
+      "image": "blackpink_lightstick_v2.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000003",
+      "groupId": "d3c5e7f9-0a1b-4d3c-8b3c-2d3e4f5a6b7c",
+      "name": "Candy Bong",
+      "version": "Official",
+      "releaseYear": 2017,
+      "image": "twice_candy_bong.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000004",
+      "groupId": "e4d6f8a0-1b2c-4e4d-8c4d-3e4f5a6b7c8d",
+      "name": "Red Velvet Lightstick",
+      "version": "Official",
+      "releaseYear": 2017,
+      "image": "red_velvet_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000005",
+      "groupId": "f5e7a9b1-2c3d-4f5e-8d5e-4f5a6b7c8d9e",
+      "name": "EXO-L Lightstick",
+      "version": "Ver.2",
+      "releaseYear": 2019,
+      "image": "exo_exol_lightstick_v2.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000006",
+      "groupId": "a6f8b0c2-3d4e-4a6f-8e6f-5a6b7c8d9e0f",
+      "name": "Carat Bong",
+      "version": "Ver.3",
+      "releaseYear": 2019,
+      "image": "seventeen_carat_bong_v3.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000007",
+      "groupId": "b7a9c1d3-4e5f-4b7a-8f7a-6b7c8d9e0f1a",
+      "name": "NCT Lightstick",
+      "version": "Official",
+      "releaseYear": 2019,
+      "image": "nct_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000008",
+      "groupId": "c8b0d2e4-5f6a-4c8b-8a8b-7c8d9e0f1a2b",
+      "name": "Stray Kids Lightstick",
+      "version": "Ver.2",
+      "releaseYear": 2021,
+      "image": "stray_kids_lightstick_v2.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-000000000009",
+      "groupId": "d9c1e3f5-6a7b-4d9c-8b9c-8d9e0f1a2b3c",
+      "name": "ITZY Lightstick",
+      "version": "Official",
+      "releaseYear": 2022,
+      "image": "itzy_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-00000000000a",
+      "groupId": "e0d2f4a6-7b8c-4e0d-8cad-9e0f1a2b3c4d",
+      "name": "(G)I-DLE Lightstick",
+      "version": "Official",
+      "releaseYear": 2020,
+      "image": "gi_dle_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-00000000000b",
+      "groupId": "f1e3a5c7-8d9e-4f1e-8dbe-0f1a2b3c4d5e",
+      "name": "aespa Lightstick",
+      "version": "Official",
+      "releaseYear": 2022,
+      "image": "aespa_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-00000000000c",
+      "groupId": "a2f4b6d8-9e0f-4a2f-8ecf-1a2b3c4d5e6f",
+      "name": "SHINee Lightstick (Keyring)",
+      "version": "Official",
+      "releaseYear": 2018,
+      "image": "shinee_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-00000000000d",
+      "groupId": "b3a5c7e9-0f1a-4b3a-8fdf-2b3c4d5e6f7a",
+      "name": "MAMAMOO Lightstick",
+      "version": "Official",
+      "releaseYear": 2018,
+      "image": "mamamoo_lightstick.jpg",
+      "verified": true
+    },
+    {
+      "id": "20000000-0000-4bbb-8ccc-00000000000e",
+      "groupId": "c4b6d8f0-1a2b-4c4b-8afe-3c4d5e6f7a8b",
+      "name": "BIGBANG Lightstick",
+      "version": "Ver.2",
+      "releaseYear": 2016,
+      "image": "bigbang_lightstick_v2.jpg",
+      "verified": true
+    }
+  ]
+}

@@ -9,6 +9,8 @@
     "build": "tauri build",
     "build:front": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "tauri": "tauri"
   },
   "dependencies": {
@@ -24,11 +26,13 @@
     "@tauri-apps/cli": "^2.10.0",
     "@types/node": "^25.3.0",
     "@vitejs/plugin-vue": "^6.0.4",
+    "@vitest/coverage-v8": "4.0.18",
     "daisyui": "^5.5.18",
     "sass": "^1.97.3",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
+    "vitest": "^4.0.18",
     "vue-tsc": "^3.2.4"
   }
 }

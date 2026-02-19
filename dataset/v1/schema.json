@@ -1,0 +1,163 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example.com/kolect/dataset.schema.json",
+    "title": "Kolect Dataset Schema v1",
+    "type": "object",
+    "required": [
+        "datasetVersion",
+        "generatedAt",
+        "groups",
+        "albums",
+        "lightsticks"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "datasetVersion": {
+            "type": "string"
+        },
+        "generatedAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$",
+            "description": "ISO 8601 UTC timestamp"
+        },
+        "groups": {
+            "type": "array",
+            "minItems": 12,
+            "maxItems": 15,
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "agency",
+                    "debutYear",
+                    "isActive"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "agency": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "debutYear": {
+                        "type": "integer",
+                        "minimum": 1900,
+                        "maximum": 2100
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "albums": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "groupId",
+                    "title",
+                    "type",
+                    "releaseDate",
+                    "coverImage",
+                    "barcode",
+                    "verified"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                    },
+                    "groupId": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                    },
+                    "title": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "EP",
+                            "Album",
+                            "Single"
+                        ]
+                    },
+                    "releaseDate": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "coverImage": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "barcode": {
+                        "type": "string",
+                        "pattern": "^[0-9]{13}$",
+                        "description": "EAN-13 / 13-digit barcode recommended"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "lightsticks": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "groupId",
+                    "name",
+                    "version",
+                    "releaseYear",
+                    "image",
+                    "verified"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                    },
+                    "groupId": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "version": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "releaseYear": {
+                        "type": "integer",
+                        "minimum": 1900,
+                        "maximum": 2100
+                    },
+                    "image": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}
