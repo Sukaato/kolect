@@ -1,0 +1,10 @@
+/* Project-level SCSS: add globals or overrides here */
+html,
+body {
+    height: 100%;
+}
+
+/* Example: ensure app fills viewport */
+#app {
+    min-height: 100dvh;
+}
