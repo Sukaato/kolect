@@ -1,7 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 import { shallowRef } from 'vue'
-import type { CollectionItem } from '@/types/collection'
-import { ProductType } from '@/types/collection'
+import type { CollectionItem, ProductType } from '@/types/collection'
 
 export function useCollection() {
   const items = shallowRef<CollectionItem[]>([])
