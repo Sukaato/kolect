@@ -3,7 +3,7 @@ import Dock from './components/global/dock.vue'
 </script>
 
 <template>
-  <main class="app-root container bg-base-300 h-dvh" data-theme="dark">
+  <main class="app-root bg-base-300 h-dvh" data-theme="dark">
     <router-view />
   </main>
   <Dock />

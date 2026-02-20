@@ -1,20 +1,19 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router';
 import { LucideHome, LucideLibrary, LucideUser } from 'lucide-vue-next';
-
-
 </script>
 
 <template>
   <div class="dock dock-sm">
-    <RouterLink to="/" active-class="dock-active">
+    <RouterLink to="/">
       <LucideHome />
     </RouterLink>
 
-    <RouterLink to="/collection" active-class="dock-active">
+    <RouterLink to="/collection">
       <LucideLibrary />
     </RouterLink>
 
-    <RouterLink to="/setting" active-class="dock-active">
+    <RouterLink to="/setting">
       <LucideUser />
     </RouterLink>
   </div>
