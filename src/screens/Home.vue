@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useGreet } from '../composables/shared/use-greet'
-import { useI18n } from '../composables/shared/use-i18n'
+import { useGreet } from '@/composables/shared/use-greet'
+import { useI18n } from '@/composables/shared/use-i18n'
 
 const name = ref('')
 const { message, greet } = useGreet()

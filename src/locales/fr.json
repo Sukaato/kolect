@@ -20,5 +20,10 @@
   },
   "messages": {
     "syncing": "Synchronisation des données..."
+  },
+  "startup": {
+    "title": "Kolect",
+    "initializing": "Initialisation...",
+    "retry": "Réessayer"
   }
 }

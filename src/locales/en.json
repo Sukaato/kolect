@@ -20,5 +20,10 @@
     },
     "messages": {
         "syncing": "Syncing data..."
+    },
+    "startup": {
+        "title": "Kolect",
+        "initializing": "Initializing...",
+        "retry": "Retry"
     }
 }
