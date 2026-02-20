@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "Kolect",
+    "description": "Votre gestionnaire de collection K-pop"
+  },
+  "nav": {
+    "home": "Accueil",
+    "collection": "Collection",
+    "settings": "Paramètres"
+  },
+  "home": {
+    "title": "Bienvenue sur Tauri + Vue 3",
+    "subtitle": "Cliquez sur les logos Tauri, Vite et Vue pour en savoir plus.",
+    "greetButton": "Saluer",
+    "greetInputPlaceholder": "Entrez un nom..."
+  },
+  "errors": {
+    "datasetSync": "Échec de la synchronisation du dataset",
+    "networkError": "Erreur réseau"
+  },
+  "messages": {
+    "syncing": "Synchronisation des données..."
+  }
+}

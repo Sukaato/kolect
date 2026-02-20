@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useGreet } from '../composables/shared/use-greet';
+import { useGreet } from '../composables/shared/use-greet'
+import { useI18n } from '../composables/shared/use-i18n'
 
 const name = ref('')
 const { message, greet } = useGreet()
+const { t } = useI18n()
 </script>
 
 <template>
   <div>
-    <h1>Welcome to Tauri + Vue 3</h1>
+    <h1>{{ t('home.title') }}</h1>
 
     <div class="row">
       <a href="https://vite.dev" target="_blank">
@@ -21,11 +23,11 @@ const { message, greet } = useGreet()
         <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
       </a>
     </div>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
+    <p>{{ t('home.subtitle') }}</p>
 
     <form class="row" @submit.prevent="() => greet(name)">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
+      <input id="greet-input" v-model="name" :placeholder="t('home.greetInputPlaceholder')" />
+      <button type="submit">{{ t('home.greetButton') }}</button>
     </form>
     <p>{{ message }}</p>
   </div>

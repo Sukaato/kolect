@@ -1,0 +1,24 @@
+{
+    "app": {
+        "title": "Kolect",
+        "description": "Your K-pop collection tracker"
+    },
+    "nav": {
+        "home": "Home",
+        "collection": "Collection",
+        "settings": "Settings"
+    },
+    "home": {
+        "title": "Welcome to Tauri + Vue 3",
+        "subtitle": "Click on the Tauri, Vite, and Vue logos to learn more.",
+        "greetButton": "Greet",
+        "greetInputPlaceholder": "Enter a name..."
+    },
+    "errors": {
+        "datasetSync": "Failed to sync dataset",
+        "networkError": "Network error"
+    },
+    "messages": {
+        "syncing": "Syncing data..."
+    }
+}
