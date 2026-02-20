@@ -10,6 +10,6 @@ export function useGreet() {
 
   return {
     message,
-    greet
+    greet,
   }
 }
