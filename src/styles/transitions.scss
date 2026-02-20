@@ -1,0 +1,37 @@
+/* Page transitions */
+
+/* Transition depuis la page Startup vers Home - Fade et slide up fluide */
+.transition-startup-enter-active {
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.transition-startup-leave-active {
+  transition: opacity 0.4s ease-in, transform 0.4s ease-in;
+}
+
+.transition-startup-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.transition-startup-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Transition entre les autres pages - Glissement fluide */
+.transition-page-enter-active {
+  transition: opacity 0.4s ease-out;
+}
+
+.transition-page-leave-active {
+  transition: opacity 0.3s ease-in;
+}
+
+.transition-page-enter-from {
+  opacity: 0;
+}
+
+.transition-page-leave-to {
+  opacity: 0;
+}

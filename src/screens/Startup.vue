@@ -19,20 +19,29 @@ const handleRetry = () => {
 }
 
 onMounted(async () => {
+  console.log('[Startup] Initializing app...')
   try {
+    console.log('[Startup] Initializing database...')
     // Initialize database
     await initDb()
+    console.log('[Startup] Database initialized successfully')
 
+    console.log('[Startup] Syncing dataset from GitHub...')
     // Sync dataset from GitHub
     await syncDataset()
+    console.log('[Startup] Dataset synced successfully')
 
+    console.log('[Startup] Waiting 1 second before redirect...')
     // Redirect to home after initialization
     await wait(1000)
-    router.push('/home')
   } catch (err) {
-    error.value = err instanceof Error ? err.message : String(err)
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('[Startup] Initialization failed:', errorMsg)
+    error.value = errorMsg
     loading.value = false
   }
+  console.log('[Startup] Redirecting to /home')
+  router.push('/home')
 })
 </script>
 

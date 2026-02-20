@@ -5,5 +5,17 @@ import i18n from './i18n'
 
 import './styles/tailwind.css'
 import './styles/index.scss'
+import './styles/transitions.scss'
 
-createApp(App).use(router).use(i18n).mount('#app')
+console.log('[Main] Starting Kolect app...')
+
+const app = createApp(App)
+
+app.use(router)
+app.use(i18n)
+
+console.log('[Main] Plugins loaded')
+
+app.mount('#app')
+
+console.log('[Main] App mounted successfully')

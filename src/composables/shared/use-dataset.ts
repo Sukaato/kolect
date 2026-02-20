@@ -9,14 +9,16 @@ export function useDataset() {
   async function sync() {
     syncing.value = true
     error.value = null
+    console.log('[useDataset] Starting sync...')
     try {
       const wasUpdated = await invoke<boolean>('sync_dataset')
+      console.log('[useDataset] Sync completed, updated:', wasUpdated)
       updated.value = wasUpdated
       return wasUpdated
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : String(e)
+      console.error('[useDataset] Sync failed:', errorMsg)
       error.value = errorMsg
-      console.error('Failed to sync dataset:', errorMsg)
       return false
     } finally {
       syncing.value = false

@@ -9,7 +9,17 @@ const route = useRoute()
 const { error } = useDataset()
 const displayError = shallowRef<string | null>(null)
 
+console.log('[App] Component mounted')
+
+watch(() => route.path, (newPath) => {
+  console.log('[App] Route changed to:', newPath)
+})
+
 const showDock = computed(() => route.path !== '/')
+
+const transitionName = computed(() => {
+  return route.path === '/' ? 'transition-startup' : 'transition-page'
+})
 
 watch(error, (newError) => {
   if (newError) {
@@ -24,7 +34,11 @@ watch(error, (newError) => {
 
 <template>
   <main class="app-root bg-base-300 h-dvh" data-theme="dark">
-    <router-view />
+    <RouterView v-slot="{ Component }">
+      <Transition :name="transitionName" mode="out-in">
+        <component :is="Component" />
+      </Transition>
+    </RouterView>
   </main>
   <Dock v-if="showDock" />
   <Toast :message="displayError" type="error" />
