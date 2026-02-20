@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
 import Toast from './components/global/toast.vue'
 import { useDataset } from './composables/shared/use-dataset'
+import { TransitionName } from '@/types/transitions'
 
 const route = useRoute()
 const { error } = useDataset()
@@ -18,7 +19,7 @@ watch(() => route.path, (newPath) => {
 const showDock = computed(() => route.path !== '/')
 
 const transitionName = computed(() => {
-  return route.path === '/' ? 'transition-startup' : 'transition-page'
+  return route.path === '/' ? TransitionName.Startup : TransitionName.Page
 })
 
 watch(error, (newError) => {
@@ -40,7 +41,7 @@ watch(error, (newError) => {
       </Transition>
     </RouterView>
   </main>
-  <Transition name="transition-dock">
+  <Transition :name="TransitionName.Dock">
     <Dock v-if="showDock" />
   </Transition>
   <Toast :message="displayError" type="error" />

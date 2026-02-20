@@ -1,5 +1,5 @@
-import { useI18n as useVueI18n } from 'vue-i18n'
 import { shallowRef } from 'vue'
+import { useI18n as useVueI18n } from 'vue-i18n'
 
 export function useI18n() {
   const i18n = useVueI18n()

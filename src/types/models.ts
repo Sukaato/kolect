@@ -1,3 +1,9 @@
+export enum AlbumType {
+  EP = 'EP',
+  Album = 'Album',
+  Single = 'Single',
+}
+
 export type Group = {
   id: string
   name: string
@@ -10,7 +16,7 @@ export type Album = {
   id: string
   groupId: string
   title: string
-  type: 'EP' | 'Album' | 'Single'
+  type: AlbumType
   releaseDate: string
   coverImage: string
   barcode: string
@@ -25,11 +31,4 @@ export type Lightstick = {
   releaseYear: number
   image: string
   verified: boolean
-}
-
-export type CollectionItem = {
-  id: string
-  productId: string
-  productType: 'ALBUM' | 'LIGHTSTICK'
-  addedAt: number
 }

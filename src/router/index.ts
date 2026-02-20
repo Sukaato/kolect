@@ -1,12 +1,17 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
+import { RouteName } from '@/types/routes'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', name: 'Startup', component: Startup },
-  { path: '/home', name: 'Home', component: Home },
-  { path: '/collection', name: 'Collection', component: () => import('@/screens/Collection.vue') },
-  { path: '/setting', name: 'Setting', component: () => import('@/screens/Setting.vue') },
+  { path: '/', name: RouteName.Startup, component: Startup },
+  { path: '/home', name: RouteName.Home, component: Home },
+  {
+    path: '/collection',
+    name: RouteName.Collection,
+    component: () => import('@/screens/Collection.vue'),
+  },
+  { path: '/setting', name: RouteName.Setting, component: () => import('@/screens/Setting.vue') },
 ]
 
 const router = createRouter({
@@ -21,7 +26,7 @@ router.beforeEach((to, from) => {
   console.log(`[Router] Navigating from ${from.path} to ${to.path}`)
 })
 
-router.afterEach((to) => {
+router.afterEach(to => {
   console.log(`[Router] Navigation complete, now at ${to.path}`)
 })
 
