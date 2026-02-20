@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useDataset } from '@/composables/shared/use-dataset'
 import { useDb } from '@/composables/shared/use-db'
 import { useI18n } from '@/composables/shared/use-i18n'
+import { wait } from '@/utils/wait'
 
 const router = useRouter()
 const { sync: syncDataset } = useDataset()
@@ -26,9 +27,8 @@ onMounted(async () => {
     await syncDataset()
 
     // Redirect to home after initialization
-    setTimeout(() => {
-      router.push('/home')
-    }, 1000)
+    await wait(1000)
+    router.push('/home')
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err)
     loading.value = false
