@@ -35,3 +35,22 @@
 .transition-page-leave-to {
   opacity: 0;
 }
+
+/* Dock transition - Fade and slide up */
+.transition-dock-enter-active {
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.transition-dock-leave-active {
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+.transition-dock-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.transition-dock-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}

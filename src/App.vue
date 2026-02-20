@@ -40,6 +40,8 @@ watch(error, (newError) => {
       </Transition>
     </RouterView>
   </main>
-  <Dock v-if="showDock" />
+  <Transition name="transition-dock">
+    <Dock v-if="showDock" />
+  </Transition>
   <Toast :message="displayError" type="error" />
 </template>
