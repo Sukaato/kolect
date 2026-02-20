@@ -1,5 +1,17 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import Dock from './components/global/dock.vue'
+import { useDataset } from './composables/shared/use-dataset'
+
+const { sync } = useDataset()
+
+onMounted(async () => {
+  try {
+    await sync()
+  } catch (error) {
+    console.error('Failed to sync dataset:', error)
+  }
+})
 </script>
 
 <template>
