@@ -1,34 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import dataset from './public/dataset.json' assert { type: 'json' }
 
-type Group = {
-  id: string
-  name: string
-  agency: string
-  debutYear: number
-  isActive: boolean
-}
-
-type Album = {
-  id: string
-  groupId: string
-  title: string
-  type: 'EP' | 'Album' | 'Single'
-  releaseDate: string
-  coverImage: string
-  barcode: string
-  verified: boolean
-}
-
-type Lightstick = {
-  id: string
-  groupId: string
-  name: string
-  version: string
-  releaseYear: number
-  image: string
-  verified: boolean
-}
+import type { Group, Album, Lightstick } from './src/types'
 
 function isUuidV4(s: unknown): s is string {
   if (typeof s !== 'string') return false
