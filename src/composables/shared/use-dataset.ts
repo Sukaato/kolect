@@ -14,8 +14,10 @@ export function useDataset() {
       updated.value = wasUpdated
       return wasUpdated
     } catch (e) {
-      error.value = e instanceof Error ? e.message : String(e)
-      throw e
+      const errorMsg = e instanceof Error ? e.message : String(e)
+      error.value = errorMsg
+      console.error('Failed to sync dataset:', errorMsg)
+      return false
     } finally {
       syncing.value = false
     }

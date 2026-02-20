@@ -104,14 +104,7 @@ fn save_dataset_cache(dataset: &Dataset) -> Result<(), String> {
 /// Sync dataset from GitHub, comparing versions and saving if different
 pub async fn sync_dataset() -> Result<bool, String> {
     // Fetch from GitHub
-    let remote_dataset = match fetch_from_github().await {
-        Ok(dataset) => dataset,
-        Err(e) => {
-            eprintln!("Failed to fetch from GitHub: {}", e);
-            // Return success but indicate no update
-            return Ok(false);
-        }
-    };
+    let remote_dataset = fetch_from_github().await?;
 
     // Try to load local dataset
     let local_dataset = load_local_dataset();

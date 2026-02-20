@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Dock from './components/global/dock.vue'
+import Toast from './components/global/toast.vue'
 import { useDataset } from './composables/shared/use-dataset'
 
-const { sync } = useDataset()
+const { sync, error } = useDataset()
+const displayError = ref<string | null>(null)
 
 onMounted(async () => {
-  try {
-    await sync()
-  } catch (error) {
-    console.error('Failed to sync dataset:', error)
+  await sync()
+})
+
+watch(error, (newError) => {
+  if (newError) {
+    displayError.value = newError
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      displayError.value = null
+    }, 5000)
   }
 })
 </script>
@@ -19,4 +27,5 @@ onMounted(async () => {
     <router-view />
   </main>
   <Dock />
+  <Toast :message="displayError" type="error" />
 </template>
