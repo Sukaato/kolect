@@ -1,0 +1,7 @@
+# Kolect Application Configuration
+
+[log]
+level = "debug"  # debug, info, warn, error
+
+[dataset]
+url = "https://raw.githubusercontent.com/Sukaato/kolect/refs/heads/main/public/dataset.json"
