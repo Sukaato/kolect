@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { useLogger } from '@/composables/shared/use-logger'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
@@ -20,14 +21,16 @@ const router = createRouter({
   routes,
 })
 
-console.log('[Router] Initializing routes')
+const { debug } = useLogger('Router')
+
+debug('Initializing routes')
 
 router.beforeEach((to, from) => {
-  console.log(`[Router] Navigating from ${from.path} to ${to.path}`)
+  debug(`Navigating from ${from.path} to ${to.path}`)
 })
 
 router.afterEach(to => {
-  console.log(`[Router] Navigation complete, now at ${to.path}`)
+  debug(`Navigation complete, now at ${to.path}`)
 })
 
 export default router

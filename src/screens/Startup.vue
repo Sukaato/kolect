@@ -4,12 +4,14 @@ import { useRouter } from 'vue-router'
 import { useDataset } from '@/composables/shared/use-dataset'
 import { useDb } from '@/composables/shared/use-db'
 import { useI18n } from '@/composables/shared/use-i18n'
+import { useLogger } from '@/composables/shared/use-logger'
 import { wait } from '@/utils/wait'
 
 const router = useRouter()
 const { initDb } = useDb()
 const { sync: syncDataset, error: syncError } = useDataset()
 const { t } = useI18n()
+const { info, error: logError } = useLogger('Startup')
 
 const loading = shallowRef(true)
 const error = shallowRef<string | null>(null)
@@ -19,29 +21,29 @@ function handleRetry(): void {
 }
 
 onMounted(async () => {
-  console.log('[Startup] Initializing app...')
+  info('Initializing app...')
   try {
-    console.log('[Startup] Initializing database...')
+    info('Initializing database...')
     // Initialize database
     await initDb()
-    console.log('[Startup] Database initialized successfully')
+    info('Database initialized successfully')
 
-    console.log('[Startup] Syncing dataset from GitHub...')
+    info('Syncing dataset from GitHub...')
     // Sync dataset from GitHub
     await syncDataset()
     if (syncError.value) {
       throw new Error(syncError.value)
     }
-    console.log('[Startup] Dataset synced successfully')
+    info('Dataset synced successfully')
 
-    console.log('[Startup] Waiting 1 second before redirect...')
+    info('Waiting 1 second before redirect...')
     // Redirect to home after initialization
     await wait(2000)
-    console.log('[Startup] Redirecting to /home')
+    info('Redirecting to /home')
     router.replace('/home') // So user can't go back to Startup screen
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
-    console.error('[Startup] Initialization failed:', errorMsg)
+    logError('Initialization failed:', errorMsg)
     error.value = errorMsg
     loading.value = false
   }

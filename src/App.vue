@@ -4,16 +4,18 @@ import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
 import Toast from './components/global/toast.vue'
 import { useDataset } from './composables/shared/use-dataset'
+import { useLogger } from './composables/shared/use-logger'
 import { TransitionName } from '@/types/transitions'
 
 const route = useRoute()
 const { error } = useDataset()
+const { debug } = useLogger('App')
 const displayError = shallowRef<string | null>(null)
 
-console.log('[App] Component mounted')
+debug('Component mounted')
 
 watch(() => route.path, (newPath) => {
-  console.log('[App] Route changed to:', newPath)
+  debug('Route changed to:', newPath)
 })
 
 const showDock = computed(() => route.path !== '/')
