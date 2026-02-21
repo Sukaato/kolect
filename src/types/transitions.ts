@@ -1,5 +1,5 @@
 export enum TransitionName {
-  Startup = 'transition-startup',
-  Page = 'transition-page',
-  Dock = 'transition-dock',
+  STARTUP = 'transition-startup',
+  PAGE = 'transition-page',
+  DOCK = 'transition-dock',
 }

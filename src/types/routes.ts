@@ -1,6 +1,6 @@
 export enum RouteName {
-  Startup = 'Startup',
-  Home = 'Home',
-  Collection = 'Collection',
-  Setting = 'Setting',
+  STARTUP = 'Startup',
+  HOME = 'Home',
+  COLLECTION = 'Collection',
+  SETTING = 'Setting',
 }

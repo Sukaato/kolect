@@ -1,7 +1,7 @@
 export enum AlbumType {
   EP = 'EP',
-  Album = 'Album',
-  Single = 'Single',
+  ALBUM = 'Album',
+  SINGLE = 'Single',
 }
 
 export type Group = {

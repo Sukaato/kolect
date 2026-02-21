@@ -1,6 +1,1 @@
-export enum DbStatus {
-  Idle = 'idle',
-  Initializing = 'initializing',
-  Ready = 'ready',
-  Error = 'error',
-}
+export type DbStatus = 'idle' | 'initializing' | 'ready' | 'error'

@@ -19,7 +19,7 @@ watch(() => route.path, (newPath) => {
 const showDock = computed(() => route.path !== '/')
 
 const transitionName = computed(() => {
-  return route.path === '/' ? TransitionName.Startup : TransitionName.Page
+  return route.path === '/' ? TransitionName.STARTUP : TransitionName.PAGE
 })
 
 watch(error, (newError) => {
@@ -41,7 +41,7 @@ watch(error, (newError) => {
       </Transition>
     </RouterView>
   </main>
-  <Transition :name="TransitionName.Dock">
+  <Transition :name="TransitionName.DOCK">
     <Dock v-if="showDock" />
   </Transition>
   <Toast :message="displayError" type="error" />

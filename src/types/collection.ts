@@ -1,6 +1,6 @@
 export enum ProductType {
-  Album = 'ALBUM',
-  Lightstick = 'LIGHTSTICK',
+  ALBUM = 'ALBUM',
+  LIGHTSTICK = 'LIGHTSTICK',
 }
 
 export type CollectionItem = {

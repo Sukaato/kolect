@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDataset } from '@/composables/shared/use-dataset'
 import { useDb } from '@/composables/shared/use-db'
@@ -7,14 +7,14 @@ import { useI18n } from '@/composables/shared/use-i18n'
 import { wait } from '@/utils/wait'
 
 const router = useRouter()
-const { sync: syncDataset } = useDataset()
 const { initDb } = useDb()
+const { sync: syncDataset, error: syncError } = useDataset()
 const { t } = useI18n()
 
-const loading = ref(true)
-const error = ref<string | null>(null)
+const loading = shallowRef(true)
+const error = shallowRef<string | null>(null)
 
-const handleRetry = () => {
+function handleRetry(): void {
   window.location.reload()
 }
 
@@ -29,19 +29,23 @@ onMounted(async () => {
     console.log('[Startup] Syncing dataset from GitHub...')
     // Sync dataset from GitHub
     await syncDataset()
+    if (syncError.value) {
+      throw new Error(syncError.value)
+    }
     console.log('[Startup] Dataset synced successfully')
 
     console.log('[Startup] Waiting 1 second before redirect...')
     // Redirect to home after initialization
-    await wait(1000)
+    await wait(2000)
+    console.log('[Startup] Redirecting to /home')
+    router.replace('/home') // So user can't go back to Startup screen
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.error('[Startup] Initialization failed:', errorMsg)
     error.value = errorMsg
     loading.value = false
   }
-  console.log('[Startup] Redirecting to /home')
-  router.push('/home')
+
 })
 </script>
 
@@ -67,6 +71,9 @@ onMounted(async () => {
         <p class="text-error text-sm">{{ error }}</p>
         <button class="btn btn-sm btn-primary" @click="handleRetry">
           {{ t('startup.retry') }}
+        </button>
+        <button class="btn btn-sm btn-primary" @click="router.replace('/home')">
+          {{ 'Home' }}
         </button>
       </div>
     </div>

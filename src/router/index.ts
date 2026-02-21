@@ -4,14 +4,14 @@ import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', name: RouteName.Startup, component: Startup },
-  { path: '/home', name: RouteName.Home, component: Home },
+  { path: '/', name: RouteName.STARTUP, component: Startup },
+  { path: '/home', name: RouteName.HOME, component: Home },
   {
     path: '/collection',
-    name: RouteName.Collection,
+    name: RouteName.COLLECTION,
     component: () => import('@/screens/Collection.vue'),
   },
-  { path: '/setting', name: RouteName.Setting, component: () => import('@/screens/Setting.vue') },
+  { path: '/setting', name: RouteName.SETTING, component: () => import('@/screens/Setting.vue') },
 ]
 
 const router = createRouter({
