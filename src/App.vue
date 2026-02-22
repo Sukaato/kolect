@@ -1,22 +1,16 @@
 <script setup lang="ts">
+import { TransitionName } from '@/types/transitions'
 import { computed, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
 import Toast from './components/global/toast.vue'
-import { useDataset } from './composables/shared/use-dataset'
-import { useLogger } from './composables/shared/use-logger'
-import { TransitionName } from '@/types/transitions'
+import { useDatasetStore } from './stores/dataset.store'
+import { storeToRefs } from 'pinia'
 
 const route = useRoute()
-const { error } = useDataset()
-const { debug } = useLogger('App')
+const datasetStore = useDatasetStore()
+const { error } = storeToRefs(datasetStore)
 const displayError = shallowRef<string | null>(null)
-
-debug('Component mounted')
-
-watch(() => route.path, (newPath) => {
-  debug('Route changed to:', newPath)
-})
 
 const showDock = computed(() => route.path !== '/')
 

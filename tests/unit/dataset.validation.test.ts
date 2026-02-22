@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import dataset from './public/dataset.json' assert { type: 'json' }
-
-import type { Group, Album, Lightstick } from './src/types'
+import dataset from '../../public/dataset.json' assert { type: 'json' }
+import { Album, Group, Lightstick } from '../../src/types/models'
 
 function isUuidV4(s: unknown): s is string {
   if (typeof s !== 'string') return false
@@ -22,7 +21,7 @@ function isYyyyMmDd(s: unknown): s is string {
 }
 
 function hasOwn(obj: Record<string, unknown>, key: string) {
-  return Object.prototype.hasOwnProperty.call(obj, key)
+  return  Object.hasOwn(obj, key)
 }
 
 describe('Dataset structure', () => {

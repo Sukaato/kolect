@@ -1,16 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useGreet } from '@/composables/shared/use-greet'
-import { useI18n } from '@/composables/shared/use-i18n'
+import { useLogger } from '@/composables/use-logger'
+import { useDatasetStore } from '@/stores/dataset.store';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
-const name = ref('')
-const { message, greet } = useGreet()
-const { t } = useI18n()
+const logger = useLogger('Home')
+const datasetStore = useDatasetStore()
+const { dataset } = storeToRefs(datasetStore)
+
+onMounted(async () => {
+  logger.info('Home screen mounted')
+
+  if (!dataset.value) {
+    logger.warn('Dataset is not loaded, fetching dataset...')
+    await datasetStore.fetch()
+  }
+})
 </script>
 
 <template>
   <div>
-    <h1>{{ t('home.title') }}</h1>
+    <h1>{{ $t('home.title') }}</h1>
 
     <div class="row">
       <a href="https://vite.dev" target="_blank">
@@ -23,13 +33,7 @@ const { t } = useI18n()
         <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
       </a>
     </div>
-    <p>{{ t('home.subtitle') }}</p>
-
-    <form class="row" @submit.prevent="() => greet(name)">
-      <input id="greet-input" v-model="name" :placeholder="t('home.greetInputPlaceholder')" />
-      <button type="submit">{{ t('home.greetButton') }}</button>
-    </form>
-    <p>{{ message }}</p>
+    <p>{{ $t('home.subtitle') }}</p>
   </div>
 </template>
 

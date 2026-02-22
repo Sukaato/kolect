@@ -16,7 +16,17 @@ pub fn run() {
             commands::collection::get_collection,
             commands::collection::remove_from_collection,
             commands::dataset::sync_dataset,
+            commands::dataset::get_dataset,
         ])
+        .setup(|_| {
+            // Initialize database on app startup
+            if let Err(e) = db::init(&db::DbLocation::Default) {
+                eprintln!("Failed to initialize database: {}", e);
+            }
+            crate::services::logger::info("[main]", Some("Database initialized successfully"));
+            crate::services::logger::info("[main]", Some("Application started successfully"));
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

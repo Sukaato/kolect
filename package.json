@@ -17,6 +17,7 @@
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-opener": "^2.5.3",
     "lucide-vue-next": "^0.564.0",
+    "pinia": "^3.0.4",
     "vue": "^3.5.28",
     "vue-i18n": "^11.2.8",
     "vue-router": "^5.0.2"
@@ -33,6 +34,7 @@
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
+    "vite-plugin-vue-devtools": "^8.0.6",
     "vitest": "^4.0.18",
     "vue-tsc": "^3.2.4"
   }

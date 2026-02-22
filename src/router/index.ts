@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { useLogger } from '@/composables/shared/use-logger'
+import { useLogger } from '@/composables/use-logger'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
