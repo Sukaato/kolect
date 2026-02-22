@@ -1,0 +1,34 @@
+name: Code Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Bun
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Install front deps
+        run: bun install
+
+      - name: Type check (Vue)
+        run: bun run vue-tsc --noEmit
+
+      - name: Lint (si tu as ESLint)
+        run: bun run lint || true
+
+      # Rust
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust format check
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
