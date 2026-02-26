@@ -8,25 +8,9 @@
     "collection": "Collection",
     "settings": "Paramètres"
   },
-  "home": {
-    "title": "Bienvenue sur Tauri + Vue 3",
-    "subtitle": "Cliquez sur les logos Tauri, Vite et Vue pour en savoir plus.",
-    "greetButton": "Saluer",
-    "greetInputPlaceholder": "Entrez un nom..."
-  },
-  "errors": {
-    "datasetSync": "Échec de la synchronisation du dataset",
-    "networkError": "Erreur réseau"
-  },
-  "messages": {
-    "syncing": "Synchronisation des données..."
-  },
-  "startup": {
-    "title": "Kolect",
-    "initializing": "Initialisation...",
-    "retry": "Réessayer"
-  },
   "screens": {
+    "home": {},
+    "collection": {},
     "setting": {
       "title": "Paramètres",
       "sections": {
@@ -43,7 +27,7 @@
           },
           "language": {
             "title": "Langue",
-            "description": "Sélectionnez la langue utilisée dans l’interface."
+            "description": "Sélectionnez la langue utilisée dans l'interface."
           }
         },
         "data": {
@@ -61,5 +45,23 @@
         }
       }
     }
+  },
+  "home": {
+    "title": "Bienvenue sur Tauri + Vue 3",
+    "subtitle": "Cliquez sur les logos Tauri, Vite et Vue pour en savoir plus.",
+    "greetButton": "Saluer",
+    "greetInputPlaceholder": "Entrez un nom..."
+  },
+  "errors": {
+    "datasetSync": "Échec de la synchronisation du dataset",
+    "networkError": "Erreur réseau"
+  },
+  "messages": {
+    "syncing": "Synchronisation des données..."
+  },
+  "startup": {
+    "title": "Kolect",
+    "initializing": "Initialisation...",
+    "retry": "Réessayer"
   }
 }

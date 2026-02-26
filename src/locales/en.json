@@ -9,12 +9,8 @@
     "settings": "Settings"
   },
   "screens": {
-    "home": {
-
-    },
-    "collection": {
-
-    },
+    "home": {},
+    "collection": {},
     "setting": {
       "title": "Settings",
       "sections": {
@@ -31,12 +27,7 @@
           },
           "language": {
             "title": "Language",
-            "description": "Select the language used in the interface",
-            "values": {
-              "en": "English",
-              "french": "Français",
-              "ko": ""
-            }
+            "description": "Select the language used in the interface"
           }
         },
         "data": {
