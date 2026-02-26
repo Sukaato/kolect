@@ -8,6 +8,53 @@
     "collection": "Collection",
     "settings": "Settings"
   },
+  "screens": {
+    "home": {
+
+    },
+    "collection": {
+
+    },
+    "setting": {
+      "title": "Settings",
+      "sections": {
+        "appearence": {
+          "title": "Appearence",
+          "theme": {
+            "title": "Theme",
+            "description": "Choose how Kolect looks on your device",
+            "values": {
+              "system": "System",
+              "light": "Light",
+              "dark": "Dark"
+            }
+          },
+          "language": {
+            "title": "Language",
+            "description": "Select the language used in the interface",
+            "values": {
+              "en": "English",
+              "french": "Français",
+              "ko": ""
+            }
+          }
+        },
+        "data": {
+          "title": "Data",
+          "dataset": {
+            "title": "Dataset",
+            "description": "Synchronize the local dataset with the remote server to get the latest K-pop groups and lightsticks.",
+            "actions": {
+              "sync": {
+                "text": "Sync Dataset",
+                "syncing": "Syncing..."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "home": {
     "title": "Welcome to Tauri + Vue 3",
     "subtitle": "Click on the Tauri, Vite, and Vue logos to learn more.",

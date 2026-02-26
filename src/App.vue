@@ -5,28 +5,31 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
 import Toast from './components/global/toast.vue'
+import { useThemeStore } from './stores/theme.store'
 import { useToastStore } from './stores/toast.store'
 
 const route = useRoute()
-
-const toastStore = useToastStore()
-const { toasts } = storeToRefs(toastStore)
-
 const showDock = computed(() => route.path !== '/')
-
 const transitionName = computed(() => {
   return route.path === '/' ? TransitionName.STARTUP : TransitionName.PAGE
 })
+
+const themeStore = useThemeStore()
+const { theme } = storeToRefs(themeStore)
+
+const toastStore = useToastStore()
+const { toasts } = storeToRefs(toastStore)
 </script>
 
 <template>
-  <main class="app-root bg-base-300 h-dvh" data-theme="dark">
+  <main class="app-root bg-base-300 h-dvh overflow-y-auto" :data-theme="theme">
     <RouterView v-slot="{ Component }">
       <Transition :name="transitionName" mode="out-in">
         <component :is="Component" />
       </Transition>
     </RouterView>
   </main>
+
   <Transition :name="TransitionName.DOCK">
     <Dock v-if="showDock" />
   </Transition>

@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "format": "biome format --fix",
+    "lint": "biome lint --fix"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.1",

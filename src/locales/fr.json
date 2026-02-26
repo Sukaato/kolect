@@ -25,5 +25,41 @@
     "title": "Kolect",
     "initializing": "Initialisation...",
     "retry": "Réessayer"
+  },
+  "screens": {
+    "setting": {
+      "title": "Paramètres",
+      "sections": {
+        "appearence": {
+          "title": "Apparence",
+          "theme": {
+            "title": "Thème",
+            "description": "Choisissez comment Kolect apparaît sur votre appareil.",
+            "values": {
+              "system": "Système",
+              "light": "Clair",
+              "dark": "Sombre"
+            }
+          },
+          "language": {
+            "title": "Langue",
+            "description": "Sélectionnez la langue utilisée dans l’interface."
+          }
+        },
+        "data": {
+          "title": "Data",
+          "dataset": {
+            "title": "Jeu de données",
+            "description": "Synchronisez le jeu de données local avec le serveur distant afin d’obtenir les derniers groupes de K-pop et lightsticks.",
+            "actions": {
+              "sync": {
+                "text": "Synchroniser",
+                "syncing": "Synchronisation..."
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
