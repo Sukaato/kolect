@@ -15,10 +15,10 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
 
-      - name: Install frontend dependencies
+      - name: Install
         run: bun install
 
-      - name: Lint frontend
+      - name: Quality check
         run: bunx biome check .
 
       - name: Setup Rust

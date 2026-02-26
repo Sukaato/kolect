@@ -6,7 +6,6 @@ use diesel::{query_dsl::methods::SelectDsl, RunQueryDsl, SelectableHelper};
 use std::{
     fs::{self, File},
     io::Write,
-    path::PathBuf,
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::Manager;
@@ -27,7 +26,7 @@ pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
         return Ok(false);
     }
 
-    if current_version != "" {
+    if !current_version.is_empty() {
         // Check with semver if the new version is greater than the current version
         let new_semver = semver::Version::parse(&new_version)
             .map_err(|e| format!("Failed to parse new dataset version: {}", e))?;
@@ -67,7 +66,7 @@ async fn fetch(url: &str) -> Result<DatasetDto, String> {
 
 fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     let metadata_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
-    let metadata_path = PathBuf::from(metadata_dir).join("dataset_metadata.json");
+    let metadata_path = metadata_dir.join("dataset_metadata.json");
 
     if !metadata_path.exists() {
         logger::warn(
@@ -150,7 +149,7 @@ fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
 
 fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(), String> {
     let metadata_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
-    let metadata_path = PathBuf::from(metadata_dir).join("dataset_metadata.json");
+    let metadata_path = metadata_dir.join("dataset_metadata.json");
 
     logger::debug(
         "[dataset::update_dataset_metadata]",

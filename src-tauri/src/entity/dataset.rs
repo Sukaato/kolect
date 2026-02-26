@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::entity::{AlbumDto, GroupDto, LightstickDto};
 
-
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct DatasetDto {
     #[serde(rename = "datasetVersion")]
@@ -16,4 +15,3 @@ pub struct DatasetDto {
     #[serde(default)]
     pub lightsticks: Vec<LightstickDto>,
 }
-

@@ -70,7 +70,7 @@ impl Album {
             release_date: Some(dto.release_date.clone()),
             cover_image: Some(dto.cover_image.clone()),
             barcode: Some(dto.barcode.clone()),
-            verified: dto.verified.clone(),
+            verified: dto.verified,
             group_id: dto.group_id.clone(),
         }
     }
@@ -83,7 +83,7 @@ impl Album {
             release_date: self.release_date.clone().unwrap_or_default(),
             cover_image: self.cover_image.clone().unwrap_or_default(),
             barcode: self.barcode.clone().unwrap_or_default(),
-            verified: self.verified.clone(),
+            verified: self.verified,
             group_id: self.group_id.clone(),
         }
     }

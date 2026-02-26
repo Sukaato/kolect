@@ -53,8 +53,8 @@ impl Group {
             id: self.id.clone().unwrap_or_default(),
             name: self.name.clone(),
             agency: self.agency.clone().unwrap_or_default(),
-            debut_year: self.debut_year.clone().unwrap_or_default(),
-            is_active: self.is_active.clone(),
+            debut_year: self.debut_year.unwrap_or_default(),
+            is_active: self.is_active,
         }
     }
 }

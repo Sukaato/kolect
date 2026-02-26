@@ -13,7 +13,9 @@
     "coverage": "vitest run --coverage",
     "tauri": "tauri",
     "format": "biome format --fix",
-    "lint": "biome lint --fix"
+    "format:check": "biome format",
+    "lint": "biome lint --fix",
+    "lint:check": "biome lint"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.1",

@@ -61,9 +61,9 @@ impl Lightstick {
             id: self.id.clone().unwrap_or_default(),
             name: self.name.clone().unwrap_or_default(),
             version: self.version.clone().unwrap_or_default(),
-            release_year: self.release_year.clone().unwrap_or_default(),
+            release_year: self.release_year.unwrap_or_default(),
             image: self.image.clone().unwrap_or_default(),
-            verified: self.verified.clone(),
+            verified: self.verified,
             group_id: self.group_id.clone(),
         }
     }
