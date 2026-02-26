@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { useInvoke } from '@/composables/use-invoke'
 
 export const useDatasetStore = defineStore('dataset', () => {
-  const { result, error, loading, invoke: fetch } = useInvoke('get_dataset')
-  const { error: syncError, loading: syncing, invoke: sync } = useInvoke<boolean>('sync_dataset')
+  const { result, error, loading, invoke: fetch } = useInvoke('dataset_get')
+  const { error: syncError, loading: syncing, invoke: sync } = useInvoke<boolean>('dataset_sync')
 
   return {
     dataset: result,

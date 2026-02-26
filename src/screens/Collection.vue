@@ -24,17 +24,20 @@ onMounted(async () => {
         </button>
       </div>
     </header>
-    <Transition>
-      <p v-if="loading">Loading...</p>
-    </Transition>
-    <Transition>
-      <p v-if="error" class="text-error">Error: {{ error }}</p>
-    </Transition>
-    <TransitionGroup tag="ul">
-      Collection
-      <li v-for="value in collection" :key="value.id">
-        {{ value.productId }} ({{ value.productType }})
-      </li>
-    </TransitionGroup>
+    <div>
+      <button @click="collectionStore.load()">Refresh</button>
+      <Transition>
+        <p v-if="loading">Loading...</p>
+      </Transition>
+      <Transition>
+        <p v-if="error" class="text-error">Error: {{ error }}</p>
+      </Transition>
+      <TransitionGroup tag="ul">
+        Collection
+        <li v-for="value in collection" :key="value.id">
+          {{ value.productId }} ({{ value.productType }})
+        </li>
+      </TransitionGroup>
+    </div>
   </div>
 </template>

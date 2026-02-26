@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/plugin-fs": "~2",
     "@tauri-apps/plugin-opener": "^2.5.3",
     "lucide-vue-next": "^0.564.0",
     "pinia": "^3.0.4",
