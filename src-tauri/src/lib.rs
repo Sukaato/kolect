@@ -1,32 +1,28 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod commands;
 mod config;
-mod db;
+mod entity;
+mod schema;
 mod services;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
+        .setup(|_app| {
+            // Initialize database on app startup
+            services::database::init();
+            services::logger::info("[setup]", Some("Application started successfully"));
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             commands::logger::log,
             commands::config::get_config,
-            commands::database::init_db,
-            commands::collection::add_to_collection,
-            commands::collection::get_collection,
-            commands::collection::remove_from_collection,
-            commands::dataset::sync_dataset,
-            commands::dataset::get_dataset,
+            commands::dataset::dataset_sync,
+            commands::dataset::dataset_get,
         ])
-        .setup(|_| {
-            // Initialize database on app startup
-            if let Err(e) = db::init(&db::DbLocation::Default) {
-                eprintln!("Failed to initialize database: {}", e);
-            }
-            crate::services::logger::info("[main]", Some("Database initialized successfully"));
-            crate::services::logger::info("[main]", Some("Application started successfully"));
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

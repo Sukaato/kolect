@@ -1,46 +1,14 @@
-use crate::services::dataset::{ Dataset, sync, get };
-use crate::services::logger;
+use crate::{entity::DatasetDto, services};
 
-/// Sync dataset from remote source
+/// Syncs the dataset by fetching the latest data from the source and updating the local database accordingly.
 #[tauri::command]
-pub async fn sync_dataset() -> Result<bool, String> {
-    logger::info("[sync_dataset] Starting dataset sync", None);
-
-    let url = crate::config::get_dataset_url();
-    let result = sync(&url).await;
-
-    match &result {
-        Ok(updated) => {
-            logger::info(
-                "[sync_dataset] Dataset sync completed",
-                Some(&format!("updated={}", updated)),
-            );
-        }
-        Err(e) => logger::error("[sync_dataset] Dataset sync failed", Some(e)),
-    }
-
-    result
+pub async fn dataset_sync() -> Result<(), String> {
+    services::dataset::sync().await?;
+    Ok(())
 }
 
-/// get dataset
+/// Retrieves the current dataset from the local database and returns it as a DTO.
 #[tauri::command]
-pub fn get_dataset() -> Result<Dataset, String> {
-    logger::info("[get_dataset]", Some("Fetching dataset..."));
-
-    let result = get();
-
-    match &result {
-        Ok(dataset) => logger::info(
-            "[get_dataset] Dataset fetched successfully",
-            Some(&format!(
-                "groups={}, albums={}, lightsticks={}",
-                dataset.groups.len(),
-                dataset.albums.len(),
-                dataset.lightsticks.len()
-            )),
-        ),
-        Err(e) => logger::error("[get_dataset] Failed to fetch dataset", Some(e)),
-    }
-
-    result
+pub fn dataset_get() -> Result<DatasetDto, String> {
+    services::dataset::get_dataset()
 }

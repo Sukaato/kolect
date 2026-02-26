@@ -1,97 +1,78 @@
-use crate::db::DbLocation;
-use rusqlite::params;
-use serde::{Deserialize, Serialize};
-use std::str::FromStr;
-use uuid::Uuid;
+use std::fs;
+use std::path::Path;
+use std::sync::{Mutex, OnceLock};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum ProductType {
-    Album,
-    Lightstick,
+use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
+
+static DB_CONNECTION: OnceLock<Mutex<SqliteConnection>> = OnceLock::new();
+
+pub fn get_db_connection() -> std::sync::MutexGuard<'static, SqliteConnection> {
+    DB_CONNECTION
+        .get()
+        .expect("Database connection not initialized")
+        .lock()
+        .unwrap()
 }
 
-impl ProductType {
-    pub fn as_str(&self) -> &str {
-        match self {
-            ProductType::Album => "ALBUM",
-            ProductType::Lightstick => "LIGHTSTICK",
-        }
+// Check if a database file exists, and create one if it does not.
+pub fn init() {
+    if !db_file_exists() {
+        create_db_file();
     }
-}
 
-impl FromStr for ProductType {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_uppercase().as_str() {
-            "ALBUM" => Ok(ProductType::Album),
-            "LIGHTSTICK" => Ok(ProductType::Lightstick),
-            _ => Err(format!("Invalid product type: {}", s)),
-        }
+    let conn = establish_db_connection();
+    if DB_CONNECTION.set(Mutex::new(conn)).is_err() {
+        panic!("Database connection already initialized");
     }
+
+    run_migrations();
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CollectionItem {
-    pub id: String,
-    pub product_id: String,
-    pub product_type: String,
-    pub added_at: i64,
+pub fn establish_db_connection() -> SqliteConnection {
+    let db_path = get_db_path().clone();
+
+    SqliteConnection::establish(db_path.as_str())
+        .unwrap_or_else(|_| panic!("Error connecting to {}", db_path))
 }
 
-/// Add item to collection
-pub fn add_to_collection(
-    location: &DbLocation,
-    product_id: &str,
-    product_type: ProductType,
-) -> Result<String, String> {
-    let conn = location.connect()?;
-    let id = Uuid::new_v4().to_string();
-    let added_at = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map_err(|e| e.to_string())?
-        .as_secs() as i64;
-
-    conn.execute(
-        "INSERT INTO user_collection (id, product_id, product_type, added_at) VALUES (?1, ?2, ?3, ?4)",
-        params![&id, product_id, product_type.as_str(), added_at],
-    )
-    .map_err(|e| e.to_string())?;
-
-    Ok(id)
+fn run_migrations() {
+    let mut connection = establish_connection();
+    connection.run_pending_migrations(MIGRATIONS).unwrap();
 }
 
-/// Get collection items
-pub fn get_collection(location: &DbLocation) -> Result<Vec<CollectionItem>, String> {
-    let conn = location.connect()?;
+fn establish_connection() -> SqliteConnection {
+    let db_path = "sqlite://".to_string() + get_db_path().as_str();
 
-    let mut stmt = conn
-        .prepare("SELECT id, product_id, product_type, added_at FROM user_collection ORDER BY added_at DESC")
-        .map_err(|e| e.to_string())?;
-
-    let items = stmt
-        .query_map([], |row| {
-            Ok(CollectionItem {
-                id: row.get(0)?,
-                product_id: row.get(1)?,
-                product_type: row.get(2)?,
-                added_at: row.get(3)?,
-            })
-        })
-        .map_err(|e| e.to_string())?
-        .collect::<rusqlite::Result<Vec<_>>>()
-        .map_err(|e| e.to_string())?;
-
-    Ok(items)
+    SqliteConnection::establish(&db_path)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", db_path))
 }
 
-/// Remove item from collection
-pub fn remove_from_collection(location: &DbLocation, id: &str) -> Result<bool, String> {
-    let conn = location.connect()?;
+// Create the database file.
+fn create_db_file() {
+    let db_path = get_db_path();
+    let db_dir = Path::new(&db_path).parent().unwrap();
 
-    let affected = conn
-        .execute("DELETE FROM user_collection WHERE id = ?1", params![id])
-        .map_err(|e| e.to_string())?;
+    // If the parent directory does not exist, create it.
+    if !db_dir.exists() {
+        fs::create_dir_all(db_dir).unwrap();
+    }
 
-    Ok(affected > 0)
+    // Create the database file.
+    fs::File::create(db_path).unwrap();
+}
+
+// Check whether the database file exists.
+fn db_file_exists() -> bool {
+    let db_path = get_db_path();
+    Path::new(&db_path).exists()
+}
+
+// Get the path where the database file should be located.
+fn get_db_path() -> String {
+    let home_dir = dirs::config_dir().unwrap();
+    home_dir.to_str().unwrap().to_string() + "/kolect/database.sqlite"
 }
