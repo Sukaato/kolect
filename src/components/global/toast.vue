@@ -1,35 +1,69 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { useToastStore, type Toast } from '@/stores/toast.store';
+import { computed, shallowRef } from 'vue'
 
-interface Props {
-  message: string | null
-  type?: 'error' | 'success' | 'info' | 'warning'
-}
+const { id, type = 'error' } = defineProps<Toast>()
 
-const props = withDefaults(defineProps<Props>(), {
-  type: 'error',
-})
+const toastStore = useToastStore()
 
-const isVisible = computed(() => props.message !== null && props.message !== '')
+const startX = shallowRef(0)
+const currentX = shallowRef(0)
+const dragging = shallowRef(false)
+
+const threshold = 100 // px avant dismiss
 
 const alertClass = computed(() => {
-  const base = 'alert'
+  const base = 'alert alert-soft'
   const typeClasses = {
     error: 'alert-error',
     success: 'alert-success',
     info: 'alert-info',
     warning: 'alert-warning',
   }
-  return `${base} ${typeClasses[props.type] || 'alert-error'}`
+  return `${base} ${typeClasses[type] || 'alert-error'}`
 })
+
+const style = computed(() => {
+  if (!dragging.value) return {}
+  return {
+    transform: `translateX(${currentX.value}px)`,
+    opacity: 1 - Math.abs(currentX.value) / 300,
+  }
+})
+
+function onPointerDown(e: PointerEvent) {
+  // toastStore.pauseTimer()
+  dragging.value = true
+  startX.value = e.clientX
+}
+
+function onPointerMove(e: PointerEvent) {
+  if (!dragging.value) return
+  currentX.value = e.clientX - startX.value
+}
+
+function onPointerUp() {
+  if (!dragging.value) return
+
+  if (Math.abs(currentX.value) > threshold) {
+    toastStore.remove(id)
+  }
+
+  dragging.value = false
+  currentX.value = 0
+}
 </script>
 
 <template>
-  <Transition name="toast">
-    <div v-if="isVisible" :class="alertClass" class="fixed bottom-24 left-4 right-4 max-w-md shadow-lg">
-      <span>{{ message }}</span>
-    </div>
-  </Transition>
+  <div :class="alertClass" class="shadow-lg flex flex-col select-none" :style="style" @pointerdown="onPointerDown"
+    @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp">
+    <span v-if="options?.title" class="font-semibold">
+      {{ options.title }}
+    </span>
+    <span class="text-sm">
+      {{ message }}
+    </span>
+  </div>
 </template>
 
 <style scoped>

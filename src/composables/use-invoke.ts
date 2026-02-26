@@ -1,7 +1,14 @@
 import { invoke as tauriInvoke } from '@tauri-apps/api/core'
 import { shallowRef } from 'vue'
+import { useToast } from './use-toast'
 
-export function useInvoke<T = unknown, E = string>(command: string) {
+interface UseInvokeOptions {
+  showErrorToast?: boolean
+}
+
+export function useInvoke<T = unknown, E = string>(command: string, options?: UseInvokeOptions) {
+  const toast = useToast()
+
   const result = shallowRef<T | null>(null)
   const error = shallowRef<E | null>(null)
   const loading = shallowRef(false)
@@ -19,6 +26,10 @@ export function useInvoke<T = unknown, E = string>(command: string) {
       .catch(err => {
         const errorMsg = err instanceof Error ? err.message : String(err)
         error.value = errorMsg as E
+
+        if (options?.showErrorToast !== false) {
+          toast.error(errorMsg)
+        }
         return [errorMsg, null] as [E, null]
       })
       .finally(() => {

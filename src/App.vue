@@ -1,31 +1,21 @@
 <script setup lang="ts">
 import { TransitionName } from '@/types/transitions'
-import { computed, shallowRef, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
 import Toast from './components/global/toast.vue'
-import { useDatasetStore } from './stores/dataset.store'
-import { storeToRefs } from 'pinia'
+import { useToastStore } from './stores/toast.store'
 
 const route = useRoute()
-const datasetStore = useDatasetStore()
-const { error } = storeToRefs(datasetStore)
-const displayError = shallowRef<string | null>(null)
+
+const toastStore = useToastStore()
+const { toasts } = storeToRefs(toastStore)
 
 const showDock = computed(() => route.path !== '/')
 
 const transitionName = computed(() => {
   return route.path === '/' ? TransitionName.STARTUP : TransitionName.PAGE
-})
-
-watch(error, (newError) => {
-  if (newError) {
-    displayError.value = newError
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-      displayError.value = null
-    }, 5000)
-  }
 })
 </script>
 
@@ -40,5 +30,10 @@ watch(error, (newError) => {
   <Transition :name="TransitionName.DOCK">
     <Dock v-if="showDock" />
   </Transition>
-  <Toast :message="displayError" type="error" />
+
+  <div class="fixed bottom-24 left-4 right-4 flex justify-center pointer-events-none">
+    <TransitionGroup name="toast" tag="div" class="stack w-full max-w-md pointer-events-auto">
+      <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast" />
+    </TransitionGroup>
+  </div>
 </template>
