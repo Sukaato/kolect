@@ -8,7 +8,7 @@ pub struct LightstickDto {
     pub name: String,
     pub version: String,
     #[serde(rename = "releaseYear")]
-    pub release_year: String,
+    pub release_year: i32,
     pub image: String,
     pub verified: bool,
     #[serde(rename = "groupId")]
@@ -21,7 +21,7 @@ impl LightstickDto {
             id: &self.id,
             name: &self.name,
             version: &self.version,
-            release_year: self.release_year.parse::<i32>().unwrap_or_default(),
+            release_year: self.release_year,
             image: &self.image,
             verified: self.verified,
             group_id: &self.group_id,
@@ -61,7 +61,7 @@ impl Lightstick {
             id: self.id.clone().unwrap_or_default(),
             name: self.name.clone().unwrap_or_default(),
             version: self.version.clone().unwrap_or_default(),
-            release_year: self.release_year.clone().unwrap_or_default().to_string(),
+            release_year: self.release_year.clone().unwrap_or_default(),
             image: self.image.clone().unwrap_or_default(),
             verified: self.verified.clone(),
             group_id: self.group_id.clone(),

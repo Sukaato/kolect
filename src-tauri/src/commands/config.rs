@@ -18,8 +18,8 @@ pub struct DatasetConfigResponse {
 
 /// Get full app configuration (read-only)
 #[tauri::command]
-pub fn get_config() -> ConfigResponse {
-    println!("[get_config] Retrieving app configuration");
+pub fn config_get() -> ConfigResponse {
+    println!("[config_get] Retrieving app configuration");
 
     let config = crate::config::get_config();
     ConfigResponse {

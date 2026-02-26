@@ -8,7 +8,7 @@ pub struct GroupDto {
     pub name: String,
     pub agency: String,
     #[serde(rename = "debutYear")]
-    pub debut_year: String,
+    pub debut_year: i32,
     #[serde(rename = "isActive")]
     pub is_active: bool,
 }
@@ -19,7 +19,7 @@ impl GroupDto {
             id: &self.id,
             name: &self.name,
             agency: &self.agency,
-            debut_year: self.debut_year.parse::<i32>().unwrap_or_default(),
+            debut_year: self.debut_year,
             is_active: self.is_active,
         }
     }
@@ -53,7 +53,7 @@ impl Group {
             id: self.id.clone().unwrap_or_default(),
             name: self.name.clone(),
             agency: self.agency.clone().unwrap_or_default(),
-            debut_year: self.debut_year.unwrap_or_default().to_string(),
+            debut_year: self.debut_year.clone().unwrap_or_default(),
             is_active: self.is_active.clone(),
         }
     }
