@@ -1,4 +1,5 @@
 import { invoke as tauriInvoke } from '@tauri-apps/api/core'
+import { debug } from '@tauri-apps/plugin-log'
 import { shallowRef } from 'vue'
 import { wait } from '@/utils/wait.util'
 import { useToast } from './use-toast'
@@ -19,6 +20,7 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
     error.value = null
     result.value = null
 
+    await debug(`call ${command} command`)
     return Promise.all([
       wait(2000), // wait at least 2 seconds
       tauriInvoke<T>(command, args)

@@ -1,5 +1,5 @@
+import { debug } from '@tauri-apps/plugin-log'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { useLogger } from '@/composables/use-logger'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
@@ -21,15 +21,11 @@ const router = createRouter({
   routes,
 })
 
-const { debug } = useLogger('Router')
-
-debug('Initializing routes')
-
-router.beforeEach((to, from) => {
-  debug(`Navigating from ${from.path} to ${to.path}`)
+router.beforeEach(async (to, from) => {
+  await debug(`Navigating from ${from.path} to ${to.path}`)
 })
 
-router.afterEach(to => {
+router.afterEach(async to => {
   debug(`Navigation complete, now at ${to.path}`)
 })
 

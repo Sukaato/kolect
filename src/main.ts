@@ -1,15 +1,13 @@
+import { info } from '@tauri-apps/plugin-log'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { useLogger } from './composables/use-logger'
 import i18n from './i18n'
 import router from './router'
 
-import './styles/tailwind.css'
 import './styles/index.scss'
+import './styles/tailwind.css'
 import './styles/transitions.scss'
-import { createPinia } from 'pinia'
-
-const { info } = useLogger('Main')
 
 await info('Starting Kolect app...')
 

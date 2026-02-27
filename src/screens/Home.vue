@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useLogger } from '@/composables/use-logger'
 import { useDatasetStore } from '@/stores/dataset.store';
+import { info, warn } from '@tauri-apps/plugin-log';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 
-const logger = useLogger('Home')
 const datasetStore = useDatasetStore()
 const { dataset } = storeToRefs(datasetStore)
 
 onMounted(async () => {
-  logger.info('Home screen mounted')
+  await info('Home screen mounted')
 
   if (!dataset.value) {
-    logger.warn('Dataset is not loaded, fetching dataset...')
+    await warn('Dataset is not loaded, fetching dataset...')
     await datasetStore.fetch()
   }
 })

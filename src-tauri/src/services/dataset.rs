@@ -1,6 +1,6 @@
 use crate::{
     entity::{Album, DatasetDto, Group, Lightstick},
-    services::{database::get_db_connection, logger},
+    services::database::get_db_connection,
 };
 use diesel::{query_dsl::methods::SelectDsl, RunQueryDsl, SelectableHelper};
 use std::{
@@ -9,10 +9,11 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::Manager;
+use tauri_plugin_log::log;
 
 /// Dataset-related services and utilities.
 pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
-    logger::info("[dataset::sync]", Some("Starting dataset synchronization"));
+    log::info!("Starting dataset synchronization");
 
     // Get dataset_url config
     let dataset_url = crate::config::get_dataset_url();
@@ -22,7 +23,7 @@ pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
 
     // if the version is the same, no need to update
     if new_version == current_version {
-        logger::info("[dataset::sync]", Some("Dataset is already up to date"));
+        log::info!("Dataset is already up to date");
         return Ok(false);
     }
 
@@ -34,10 +35,7 @@ pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
             .map_err(|e| format!("Failed to parse current dataset version: {}", e))?;
 
         if current_semver >= new_semver {
-            logger::info(
-                "[dataset::sync]",
-                Some("New dataset version is not greater than the current version"),
-            );
+            log::warn!("New dataset version is not greater than the current version");
             return Err("New dataset version is not greater than the current version".into());
         }
     }
@@ -48,7 +46,7 @@ pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
     // Update dataset in database
     update_dataset_metadata(app, &dataset)?;
 
-    logger::info("[dataset::sync]", Some("Dataset synchronization completed"));
+    log::info!("Dataset synchronization completed");
 
     Ok(true)
 }
@@ -69,10 +67,7 @@ fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     let metadata_path = metadata_dir.join("dataset_metadata.json");
 
     if !metadata_path.exists() {
-        logger::warn(
-            "[dataset::get_dataset_metadata]",
-            Some("Dataset metadata file not found"),
-        );
+        log::warn!("Dataset metadata file not found");
         return Ok(DatasetDto::default());
     }
 
@@ -82,10 +77,7 @@ fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     match serde_json::from_str::<DatasetDto>(&metadata_file) {
         Ok(dataset) => Ok(dataset),
         Err(e) => {
-            logger::warn(
-                "[dataset::get_dataset_metadata]",
-                Some(&format!("Invalid JSON, returning default dataset: {}", e)),
-            );
+            log::error!("Invalid JSON, returning default dataset: {}", e);
             Ok(DatasetDto::default())
         }
     }
@@ -151,10 +143,7 @@ fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(
     let metadata_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let metadata_path = metadata_dir.join("dataset_metadata.json");
 
-    logger::debug(
-        "[dataset::update_dataset_metadata]",
-        Some(metadata_path.to_str().unwrap()),
-    );
+    log::debug!("dataset_metadata path: {}", metadata_path.to_str().unwrap());
 
     // Current timestamp (no external deps)
     let now = SystemTime::now()

@@ -1,43 +1,42 @@
 <script setup lang="ts">
-import { useLogger } from '@/composables/use-logger'
 import { useDatasetStore } from '@/stores/dataset.store'
 import { wait } from '@/utils/wait.util'
+import { info, error } from '@tauri-apps/plugin-log'
 import { storeToRefs } from 'pinia'
 import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const logger = useLogger('Startup')
 const datasetStore = useDatasetStore()
 const { error: datasetSyncError } = storeToRefs(datasetStore)
 
 const loading = shallowRef(true)
-const error = shallowRef<string | null>(null)
+const errorMsg = shallowRef<string | null>(null)
 
 function handleRetry(): void {
   window.location.reload()
 }
 
 onMounted(async () => {
-  logger.info('Initializing app...')
+  info('Initializing app...')
   try {
 
     // Sync dataset from GitHub
-    await logger.info('Syncing dataset from GitHub...')
+    await info('Syncing dataset from GitHub...')
     await datasetStore.sync()
     if (datasetSyncError.value) {
       throw new Error(datasetSyncError.value)
     }
-    await logger.info('Dataset synced successfully')
+    await info('Dataset synced successfully')
 
     // Redirect to home after initialization
     await wait(2000)
-    await logger.info('Redirecting to /home')
+    await info('Redirecting to /home')
     router.replace('/home') // So user can't go back to Startup screen
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : String(err)
-    await logger.error('Initialization failed:', errorMsg)
-    error.value = errorMsg
+    const e = err instanceof Error ? err.message : String(err)
+    await error('Initialization failed:', {})
+    errorMsg.value = e
     loading.value = false
   }
 })
@@ -61,8 +60,8 @@ onMounted(async () => {
       </div>
 
       <!-- Error display -->
-      <div v-else-if="error" class="space-y-4">
-        <p class="text-error text-sm">{{ error }}</p>
+      <div v-else-if="errorMsg" class="space-y-4">
+        <p class="text-error text-sm">{{ errorMsg }}</p>
         <button class="btn btn-sm btn-primary" @click="handleRetry">
           {{ $t('startup.retry') }}
         </button>
