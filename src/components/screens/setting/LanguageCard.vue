@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Setting, useSettingStore } from '@/stores/setting.store'
+import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -7,11 +9,15 @@ const languages = {
   fr: 'Français'
 } as const
 
-const i18n = useI18n()
-const selectedLocale = computed(() => languages[i18n.locale?.value as any as keyof typeof languages] || languages.en)
+const settingStore = useSettingStore()
+const { lang } = storeToRefs(settingStore)
 
-function setLocale(locale: string) {
+const i18n = useI18n()
+const selectedLocale = computed(() => languages[lang.value as any as keyof typeof languages] || languages.en)
+
+function setLocale(locale: Setting['lang']) {
   i18n.locale.value = locale
+  lang.value = locale
 }
 </script>
 

@@ -8,6 +8,8 @@
   "permissions": [
     "core:default",
     "opener:default",
+    "log:default",
+    "store:default",
     "fs:default",
     {
       "identifier": "fs:allow-create",
@@ -32,7 +34,6 @@
           "path": "$APPDATA/*"
         }
       ]
-    },
-    "log:default"
+    }
   ]
 }

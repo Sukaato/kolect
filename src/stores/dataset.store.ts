@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import { useInvoke } from '@/composables/use-invoke'
 
 export const useDatasetStore = defineStore('dataset', () => {
@@ -15,3 +15,7 @@ export const useDatasetStore = defineStore('dataset', () => {
     fetch,
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useDatasetStore, import.meta.hot))
+}

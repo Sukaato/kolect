@@ -11,7 +11,7 @@ export const useCollectionStore = defineStore('collection', () => {
   }
 
   async function add(productId: string, productType: ProductType, path?: string) {
-    return tauriInvoke<string>('add_to_collection', {
+    return tauriInvoke<string>('collection_add', {
       path: path ?? null,
       productId,
       productType,
@@ -22,7 +22,7 @@ export const useCollectionStore = defineStore('collection', () => {
   }
 
   async function remove(id: string, path?: string) {
-    return tauriInvoke<boolean>('remove_from_collection', { path: path ?? null, id }).then(
+    return tauriInvoke<boolean>('collection_remove', { path: path ?? null, id }).then(
       (success: boolean) => {
         if (success) {
           load(path)

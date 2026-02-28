@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useThemeStore } from '@/stores/theme.store';
+import { useSettingStore } from '@/stores/setting.store';
 import { storeToRefs } from 'pinia';
 
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
+const settingStore = useSettingStore()
+const { theme } = storeToRefs(settingStore)
 </script>
 
 <template>
@@ -22,19 +22,19 @@ const { theme } = storeToRefs(themeStore)
         <input type="radio" name="theme-dropdown"
           class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
           :aria-label="$t('screens.setting.sections.appearence.theme.values.system')" value="system"
-          @click="themeStore.setTheme('system')" />
+          @click="theme = 'system'" />
       </li>
       <li>
         <input type="radio" name="theme-dropdown"
           class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
           :aria-label="$t('screens.setting.sections.appearence.theme.values.light')" value="light"
-          @click="themeStore.setTheme('light')" />
+          @click="theme = 'light'" />
       </li>
       <li>
         <input type="radio" name="theme-dropdown"
           class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
           :aria-label="$t('screens.setting.sections.appearence.theme.values.dark')" value="dark"
-          @click="themeStore.setTheme('dark')" />
+          @click="theme = 'dark'" />
       </li>
     </ul>
   </div>

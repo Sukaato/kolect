@@ -7,13 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "./src/**/*.ts",
-      "./src/**/*.js",
-      "./src/**/*.json",
-      "./src-tauri/**/*.json",
-      "./*.json"
-    ]
+    "includes": ["./{src,test}/**/*.{ts,js,json}", "./*.{ts,json,html}"]
   },
   "formatter": {
     "enabled": true,

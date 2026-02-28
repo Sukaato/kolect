@@ -45,7 +45,7 @@ onMounted(async () => {
   filter: drop-shadow(0 0 2em #249b73);
 }
 </style>
-<style>
+<style scoped>
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;

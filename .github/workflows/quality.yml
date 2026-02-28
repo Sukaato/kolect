@@ -22,10 +22,10 @@ jobs:
         run: bun run vue-tsc --noEmit
 
       - name: Format - Front
-        run: bun format:check
+        run: bun format:front:check
 
       - name: Lint
-        run: bun lint:check
+        run: bun lint:front:check
 
       # Rust
       - uses: dtolnay/rust-toolchain@stable
