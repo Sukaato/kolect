@@ -1,5 +1,5 @@
 import { debug } from '@tauri-apps/plugin-log'
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
@@ -16,8 +16,8 @@ const routes: RouteRecordRaw[] = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  linkActiveClass: 'dock-active',
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  linkActiveClass: 'dock-active text-primary',
   routes,
 })
 

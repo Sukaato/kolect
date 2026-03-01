@@ -37,9 +37,11 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
           }
           return [errorMsg, null] as [E, null]
         }),
-    ]).finally(() => {
-      loading.value = false
-    })
+    ])
+      .then(([_, data]) => data)
+      .finally(() => {
+        loading.value = false
+      })
   }
 
   return {

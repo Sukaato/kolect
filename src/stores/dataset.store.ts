@@ -1,9 +1,25 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { shallowRef } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
+import type { Dataset } from '@/types/models'
 
 export const useDatasetStore = defineStore('dataset', () => {
-  const { result, error, loading, invoke: fetch } = useInvoke('dataset_get')
-  const { error: syncError, loading: syncing, invoke: sync } = useInvoke<boolean>('dataset_sync')
+  const {
+    error: syncError,
+    loading: syncing,
+    invoke: syncDataset,
+  } = useInvoke<boolean>('dataset_sync')
+  const { result, error, loading, invoke: getDataset } = useInvoke<Dataset>('dataset_get')
+
+  const fetchedAt = shallowRef<Date>()
+
+  async function sync() {
+    const dataset = await syncDataset()
+    await getDataset()
+
+    fetchedAt.value = new Date()
+    return dataset
+  }
 
   return {
     dataset: result,
@@ -11,8 +27,8 @@ export const useDatasetStore = defineStore('dataset', () => {
     error,
     syncError,
     syncing,
+    fetchedAt,
     sync,
-    fetch,
   }
 })
 

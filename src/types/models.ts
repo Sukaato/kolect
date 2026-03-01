@@ -4,17 +4,19 @@ export enum AlbumType {
   SINGLE = 'Single',
 }
 
+type GroupId = string & { __brand: 'group_id' }
 export type Group = {
-  id: string
+  id: GroupId
   name: string
   agency: string
   debutYear: number
   isActive: boolean
 }
 
+type AlbumId = string & { __brand: 'album_id' }
 export type Album = {
-  id: string
-  groupId: string
+  id: AlbumId
+  groupId: GroupId
   title: string
   type: AlbumType
   releaseDate: string
@@ -23,12 +25,21 @@ export type Album = {
   verified: boolean
 }
 
+type LightstickId = string & { __brand: 'lightstick_id' }
 export type Lightstick = {
-  id: string
-  groupId: string
+  id: LightstickId
+  groupId: GroupId
   name: string
   version: string
   releaseYear: number
   image: string
   verified: boolean
+}
+
+export type Dataset = {
+  datasetVersion: string
+  generatedAt: string
+  groups: Group[]
+  albums: Album[]
+  lightstick: Lightstick[]
 }

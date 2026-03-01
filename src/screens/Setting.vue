@@ -12,7 +12,7 @@ import ThemeCard from '@/components/screens/setting/ThemeCard.vue';
       </div>
     </header>
 
-    <div class="p-4 space-y-4 min-h-screen ">
+    <div class="p-4 space-y-4">
       <!-- Appearance Section -->
       <div class="space-y-1">
         <h2 class="text-lg font-semibold">{{ $t('screens.setting.sections.appearence.title') }}</h2>

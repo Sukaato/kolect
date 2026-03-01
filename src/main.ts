@@ -9,6 +9,7 @@ import './styles/index.scss'
 import './styles/tailwind.css'
 import './styles/transitions.scss'
 
+console.log('MAIN START')
 await info('Starting Kolect app...')
 
 const pinia = createPinia()

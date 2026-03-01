@@ -45,7 +45,7 @@ onMounted(async () => {
     </Transition>
 
     <div class="fixed bottom-24 left-4 right-4 flex justify-center pointer-events-none">
-      <TransitionGroup name="toast" tag="div" class="stack w-full max-w-md pointer-events-auto">
+      <TransitionGroup name="toast" tag="div" class="stack w-full max-w-md">
         <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast" />
       </TransitionGroup>
     </div>

@@ -12,7 +12,7 @@ onMounted(async () => {
 
   if (!dataset.value) {
     await warn('Dataset is not loaded, fetching dataset...')
-    await datasetStore.fetch()
+    await datasetStore.sync()
   }
 })
 </script>

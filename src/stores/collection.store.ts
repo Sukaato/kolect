@@ -15,17 +15,17 @@ export const useCollectionStore = defineStore('collection', () => {
       path: path ?? null,
       productId,
       productType,
-    }).then((id: string) => {
-      load(path)
+    }).then(async id => {
+      await load(path)
       return id
     })
   }
 
   async function remove(id: string, path?: string) {
     return tauriInvoke<boolean>('collection_remove', { path: path ?? null, id }).then(
-      (success: boolean) => {
+      async success => {
         if (success) {
-          load(path)
+          await load(path)
         }
         return success
       },
