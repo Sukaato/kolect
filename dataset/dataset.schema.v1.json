@@ -1,0 +1,207 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/kolect/dataset-v2.schema.json",
+  "title": "Kolect Dataset Schema v2",
+  "type": "object",
+  "required": [
+    "datasetVersion",
+    "generatedAt",
+    "groups",
+    "collectibles"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "datasetVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$",
+      "description": "ISO 8601 UTC timestamp"
+    },
+
+    "groups": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/group" }
+    },
+
+    "members": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/member" },
+      "default": []
+    },
+
+    "contexts": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/context" },
+      "default": []
+    },
+
+    "collectibles": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/collectible" }
+    }
+  },
+
+  "definitions": {
+
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f-]{36}$"
+    },
+
+    "group": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "agency",
+        "debutYear",
+        "isActive"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/uuid" },
+        "name": { "type": "string", "minLength": 1 },
+        "agency": { "type": "string", "minLength": 1 },
+        "debutYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "isActive": { "type": "boolean" }
+      }
+    },
+
+    "member": {
+      "type": "object",
+      "required": [
+        "id",
+        "groupId",
+        "name",
+        "isActive"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/uuid" },
+        "groupId": { "$ref": "#/definitions/uuid" },
+        "name": { "type": "string", "minLength": 1 },
+        "stageName": { "type": "string" },
+        "birthYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "isActive": { "type": "boolean" }
+      }
+    },
+
+    "context": {
+      "type": "object",
+      "required": [
+        "id",
+        "groupId",
+        "type",
+        "name",
+        "startYear"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/uuid" },
+        "groupId": { "$ref": "#/definitions/uuid" },
+
+        "type": {
+          "type": "string",
+          "enum": ["Tour", "Era", "Event"]
+        },
+
+        "name": { "type": "string", "minLength": 1 },
+
+        "startYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        },
+
+        "endYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        }
+      }
+    },
+
+    "collectible": {
+      "type": "object",
+      "required": [
+        "id",
+        "groupId",
+        "type",
+        "name",
+        "releaseYear",
+        "image",
+        "verified"
+      ],
+      "additionalProperties": false,
+      "properties": {
+
+        "id": { "$ref": "#/definitions/uuid" },
+
+        "groupId": { "$ref": "#/definitions/uuid" },
+        "memberId": { "$ref": "#/definitions/uuid" },
+        "contextId": { "$ref": "#/definitions/uuid" },
+        "parentId": { "$ref": "#/definitions/uuid" },
+
+        "type": {
+          "type": "string",
+          "enum": [
+            "Album",
+            "Lightstick",
+            "Photocard",
+            "Merch",
+            "FanclubKit",
+            "LuckyDraw"
+          ]
+        },
+
+        "subType": {
+          "type": "string",
+          "description": "EP, Single, Clothing, etc."
+        },
+
+        "name": { "type": "string", "minLength": 1 },
+
+        "releaseDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+
+        "releaseYear": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        },
+
+        "region": {
+          "type": "string",
+          "description": "KR, JP, US, Global..."
+        },
+
+        "version": { "type": "string" },
+        "edition": { "type": "string" },
+
+        "barcode": {
+          "type": "string",
+          "pattern": "^[0-9]{13}$"
+        },
+
+        "image": { "type": "string", "minLength": 1 },
+
+        "verified": { "type": "boolean" }
+      }
+    }
+  }
+}

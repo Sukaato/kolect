@@ -1,8 +1,8 @@
 use crate::{
-    entity::{Album, DatasetDto, Group, Lightstick},
+    entity::{Collectible, CollectibleDto, DatasetDto, Group, GroupDto},
     services::database::get_db_connection,
 };
-use diesel::{query_dsl::methods::SelectDsl, RunQueryDsl, SelectableHelper};
+use diesel::RunQueryDsl;
 use std::{
     fs::{self, File},
     io::Write,
@@ -84,7 +84,7 @@ fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
 }
 
 fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
-    use crate::schema::{albums, groups, lightsticks};
+    use crate::schema::{collectibles, groups};
 
     let mut connection = get_db_connection();
 
@@ -96,45 +96,29 @@ fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
     // bulk insert new data into groups table
     let groups = dataset
         .groups
-        .iter()
-        .map(|g| g.to_entity())
+        .into_iter()
+        .map(Group::from)
         .collect::<Vec<_>>();
     diesel::insert_into(groups::table)
         .values(groups)
         .execute(&mut *connection)
         .map_err(|e| format!("Failed to insert new groups: {}", e))?;
 
-    // delete all data from albums table
-    diesel::delete(albums::table)
+    // delete all collectibles
+    diesel::delete(collectibles::table)
         .execute(&mut *connection)
         .map_err(|e| format!("Failed to delete old albums: {}", e))?;
 
     // bulk insert new data into albums table
-    let albums = dataset
-        .albums
-        .iter()
-        .map(|a| a.to_entity())
+    let collectibles = dataset
+        .collectibles
+        .into_iter()
+        .map(Collectible::from)
         .collect::<Vec<_>>();
-    diesel::insert_into(albums::table)
-        .values(albums)
+    diesel::insert_into(collectibles::table)
+        .values(collectibles)
         .execute(&mut *connection)
         .map_err(|e| format!("Failed to insert new albums: {}", e))?;
-
-    // delete all data from lightsticks table
-    diesel::delete(lightsticks::table)
-        .execute(&mut *connection)
-        .map_err(|e| format!("Failed to delete old lightsticks: {}", e))?;
-
-    // bulk insert new data into lightsticks table
-    let lightsticks = dataset
-        .lightsticks
-        .iter()
-        .map(|l| l.to_entity())
-        .collect::<Vec<_>>();
-    diesel::insert_into(lightsticks::table)
-        .values(lightsticks)
-        .execute(&mut *connection)
-        .map_err(|e| format!("Failed to insert new lightsticks: {}", e))?;
 
     Ok(())
 }
@@ -172,33 +156,27 @@ fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(
 }
 
 pub fn get_dataset(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
-    use crate::schema::albums::dsl::albums;
+    use crate::schema::collectibles::dsl::collectibles;
     use crate::schema::groups::dsl::groups;
-    use crate::schema::lightsticks::dsl::lightsticks;
 
     let mut connection = get_db_connection();
 
     let dataset = get_dataset_metadata(app)?;
 
     let d_groups = groups
-        .select(Group::as_select())
         .load::<Group>(&mut *connection)
         .map_err(|e| format!("Failed to load groups: {}", e))?;
 
-    let d_albums = albums
-        .select(Album::as_select())
-        .load::<Album>(&mut *connection)
-        .map_err(|e| format!("Failed to load albums: {}", e))?;
-
-    let d_lightsticks = lightsticks
-        .select(Lightstick::as_select())
-        .load::<Lightstick>(&mut *connection)
-        .map_err(|e| format!("Failed to load lightsticks: {}", e))?;
+    let d_collectibles = collectibles
+        .load::<Collectible>(&mut *connection)
+        .map_err(|e| format!("Failed to load collectibles: {}", e))?;
 
     Ok(DatasetDto {
-        groups: d_groups.into_iter().map(|g| g.to_dto()).collect(),
-        albums: d_albums.into_iter().map(|a| a.to_dto()).collect(),
-        lightsticks: d_lightsticks.into_iter().map(|l| l.to_dto()).collect(),
+        groups: d_groups.into_iter().map(GroupDto::from).collect(),
+        collectibles: d_collectibles
+            .into_iter()
+            .map(CollectibleDto::from)
+            .collect(),
         ..dataset
     })
 }
