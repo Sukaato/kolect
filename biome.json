@@ -41,5 +41,17 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["./src/types/*.type.ts"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noUselessTypeConstraint": "off"
+          }
+        }
+      }
+    }
+  ]
 }
