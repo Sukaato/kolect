@@ -63,8 +63,6 @@ impl FromSql<Text, Sqlite> for CollectibleType {
 pub struct CollectibleDto {
     pub id: String,
     pub name: String,
-
-    #[serde(rename = "type")]
     pub kind: CollectibleType,
 
     #[serde(rename = "releaseYear")]

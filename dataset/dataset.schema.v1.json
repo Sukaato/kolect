@@ -3,12 +3,7 @@
   "$id": "https://example.com/kolect/dataset-v2.schema.json",
   "title": "Kolect Dataset Schema v2",
   "type": "object",
-  "required": [
-    "datasetVersion",
-    "generatedAt",
-    "groups",
-    "collectibles"
-  ],
+  "required": ["datasetVersion", "generatedAt", "groups", "collectibles"],
   "additionalProperties": false,
 
   "properties": {
@@ -47,7 +42,6 @@
   },
 
   "definitions": {
-
     "uuid": {
       "type": "string",
       "pattern": "^[0-9A-Fa-f-]{36}$"
@@ -55,13 +49,7 @@
 
     "group": {
       "type": "object",
-      "required": [
-        "id",
-        "name",
-        "agency",
-        "debutYear",
-        "isActive"
-      ],
+      "required": ["id", "name", "agency", "debutYear", "isActive"],
       "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/definitions/uuid" },
@@ -78,12 +66,7 @@
 
     "member": {
       "type": "object",
-      "required": [
-        "id",
-        "groupId",
-        "name",
-        "isActive"
-      ],
+      "required": ["id", "groupId", "name", "isActive"],
       "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/definitions/uuid" },
@@ -101,21 +84,15 @@
 
     "context": {
       "type": "object",
-      "required": [
-        "id",
-        "groupId",
-        "type",
-        "name",
-        "startYear"
-      ],
+      "required": ["id", "groupId", "kind", "name", "startYear"],
       "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/definitions/uuid" },
         "groupId": { "$ref": "#/definitions/uuid" },
 
-        "type": {
+        "kind": {
           "type": "string",
-          "enum": ["Tour", "Era", "Event"]
+          "enum": ["tour", "era", "event"]
         },
 
         "name": { "type": "string", "minLength": 1 },
@@ -139,15 +116,14 @@
       "required": [
         "id",
         "groupId",
-        "type",
+        "kind",
         "name",
-        "releaseYear",
+        "releaseDate",
         "image",
         "verified"
       ],
       "additionalProperties": false,
       "properties": {
-
         "id": { "$ref": "#/definitions/uuid" },
 
         "groupId": { "$ref": "#/definitions/uuid" },
@@ -155,15 +131,15 @@
         "contextId": { "$ref": "#/definitions/uuid" },
         "parentId": { "$ref": "#/definitions/uuid" },
 
-        "type": {
+        "kind": {
           "type": "string",
           "enum": [
-            "Album",
-            "Lightstick",
-            "Photocard",
-            "Merch",
-            "FanclubKit",
-            "LuckyDraw"
+            "album",
+            "lightstick",
+            "photocard",
+            "merch",
+            "fanclub_kit",
+            "lucky_draw"
           ]
         },
 
@@ -177,12 +153,6 @@
         "releaseDate": {
           "type": "string",
           "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-        },
-
-        "releaseYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100
         },
 
         "region": {
