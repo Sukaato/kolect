@@ -1,160 +1,82 @@
 <script setup lang="ts">
-import { useDatasetStore } from '@/stores/dataset.store';
-import { info, warn } from '@tauri-apps/plugin-log';
-import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import GroupCard from "@/components/shared/GroupCard.vue";
+import { useDatasetStore } from "@/stores/dataset.store";
+import { info, warn } from "@tauri-apps/plugin-log";
+import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
 
-const datasetStore = useDatasetStore()
-const { dataset } = storeToRefs(datasetStore)
+const datasetStore = useDatasetStore();
+const { dataset, groups } = storeToRefs(datasetStore);
 
 onMounted(async () => {
-  await info('Home screen mounted')
+  await info("Home screen mounted");
 
   if (!dataset.value) {
-    await warn('Dataset is not loaded, fetching dataset...')
-    await datasetStore.sync()
+    await warn("Dataset is not loaded, fetching dataset...");
+    await datasetStore.sync();
   }
-})
+});
 </script>
 
 <template>
-  <div>
-    <h1>{{ $t('home.title') }}</h1>
-
-    <div class="row">
-      <a href="https://vite.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
+  <div class="screen--home flex flex-col h-full bg-base-100">
+    <!-- Header -->
+    <div class="px-4 pt-6 pb-4">
+      <h1 class="text-2xl font-bold">My Collection</h1>
     </div>
-    <p>{{ $t('home.subtitle') }}</p>
+
+    <!-- Sticky search + filters -->
+    <div class="sticky top-0 z-10 bg-base-100 px-4 pb-4 space-y-3">
+      <!-- Search -->
+      <input
+        type="text"
+        placeholder="Search..."
+        class="input input-bordered w-full"
+      />
+
+      <!-- Horizontal filter pills -->
+      <form class="filter">
+        <input class="btn btn-sm btn-square" type="reset" value="×" />
+        <input
+          class="btn btn-sm"
+          type="radio"
+          name="item-filter"
+          aria-label="Groups"
+        />
+        <input
+          class="btn btn-sm"
+          type="radio"
+          name="item-filter"
+          aria-label="Albums"
+        />
+        <input
+          class="btn btn-sm"
+          type="radio"
+          name="item-filter"
+          aria-label="Lightsticks"
+        />
+      </form>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto px-4 pb-24">
+      <div class="group-list grid grid-cols-2 gap-4">
+        <GroupCard v-for="group in groups" :key="group.id" v-bind="group" />
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+<style lang="scss" scoped>
+.filter:has(input:checked) > input:checked {
+  @apply btn-primary;
 }
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
-}
-</style>
-<style scoped>
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
+.group-list {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-
-  button:active {
-    background-color: #0f0f0f69;
+  @media screen and (width >= 900px) {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
 }
 </style>

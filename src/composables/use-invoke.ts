@@ -11,14 +11,14 @@ interface UseInvokeOptions {
 export function useInvoke<T = unknown, E = string>(command: string, options?: UseInvokeOptions) {
   const toast = useToast()
 
-  const result = shallowRef<T | null>(null)
-  const error = shallowRef<E | null>(null)
+  const result = shallowRef<T>()
+  const error = shallowRef<E>()
   const loading = shallowRef(false)
 
   async function invoke(args?: Record<string, unknown>) {
     loading.value = true
-    error.value = null
-    result.value = null
+    error.value = void 0
+    result.value = void 0
 
     await debug(`call ${command} command`)
     return Promise.all([

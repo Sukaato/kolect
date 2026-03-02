@@ -5,30 +5,60 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Bun
-      - uses: oven-sh/setup-bun@v1
+      # -------------------------
+      # Setup Bun
+      # -------------------------
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
 
-      - name: Install front deps
-        run: bun install
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
 
       - name: Type check (Vue)
         run: bun run vue-tsc --noEmit
 
       - name: Format - Front
-        run: bun format:front:check
+        run: bun run format:front:check
 
-      - name: Lint
-        run: bun lint:front:check
+      - name: Lint - Front
+        run: bun run lint:front:check
 
-      # Rust
-      - uses: dtolnay/rust-toolchain@stable
+      # -------------------------
+      # Setup Rust
+      # -------------------------
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # -------------------------
+      # Install Linux deps (Tauri / GTK)
+      # -------------------------
+      - name: Install Linux dependencies (Tauri)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
       - name: Format - Back
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check

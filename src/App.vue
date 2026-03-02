@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TransitionName } from '@/types/transitions'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted } from 'vue'
+import { computed, onErrorCaptured, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/dock.vue'
@@ -27,6 +27,12 @@ onMounted(async () => {
   await settingStore.init()
 
   i18n.locale.value = lang.value
+})
+
+onErrorCaptured(error => {
+  toastStore.show(error.message, 'error', {
+    title: 'Unexpected Error'
+  })
 })
 </script>
 

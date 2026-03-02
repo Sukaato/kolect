@@ -1,30 +1,59 @@
 name: CI
 
 on:
+  pull_request:
   push:
     branches:
       - main
-  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Setup Bun
+      # -------------------------
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
 
-      - name: Install
-        run: bun install
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
 
-      - name: Quality check
+      - name: Quality check (Biome)
         run: bunx biome check .
 
+      # -------------------------
+      # Setup Rust
+      # -------------------------
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # -------------------------
+      # Install Linux deps (Tauri / GTK)
+      # -------------------------
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
 
       - name: Lint backend
         run: |
@@ -34,25 +63,46 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    needs: lint
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Setup Bun
+      # -------------------------
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
 
       - name: Install frontend dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Build frontend
         run: bun run build:front
 
+      # -------------------------
+      # Setup Rust
+      # -------------------------
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Rust dependencies for Tauri
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # -------------------------
+      # Install Linux deps (Tauri / GTK)
+      # -------------------------
+      - name: Install Linux dependencies (Tauri)
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
       - name: Build application
         run: bun run build

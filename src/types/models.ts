@@ -1,10 +1,12 @@
+import type { Brand } from './brand.type'
+
 export enum AlbumType {
   EP = 'EP',
   ALBUM = 'Album',
   SINGLE = 'Single',
 }
 
-type GroupId = string & { __brand: 'group_id' }
+export type GroupId = Brand<string, 'group_id'>
 export type Group = {
   id: GroupId
   name: string
@@ -13,7 +15,7 @@ export type Group = {
   isActive: boolean
 }
 
-type AlbumId = string & { __brand: 'album_id' }
+export type AlbumId = Brand<string, 'album_id'>
 export type Album = {
   id: AlbumId
   groupId: GroupId
@@ -25,7 +27,7 @@ export type Album = {
   verified: boolean
 }
 
-type LightstickId = string & { __brand: 'lightstick_id' }
+export type LightstickId = Brand<string, 'lightstick_id'>
 export type Lightstick = {
   id: LightstickId
   groupId: GroupId
@@ -41,5 +43,5 @@ export type Dataset = {
   generatedAt: string
   groups: Group[]
   albums: Album[]
-  lightstick: Lightstick[]
+  lightsticks: Lightstick[]
 }

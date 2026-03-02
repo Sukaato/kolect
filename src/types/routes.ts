@@ -3,4 +3,5 @@ export enum RouteName {
   HOME = 'Home',
   COLLECTION = 'Collection',
   SETTING = 'Setting',
+  GROUP = 'Group',
 }

@@ -1,5 +1,5 @@
 import { debug } from '@tauri-apps/plugin-log'
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
@@ -12,11 +12,21 @@ const routes: RouteRecordRaw[] = [
     name: RouteName.COLLECTION,
     component: () => import('@/screens/Collection.vue'),
   },
-  { path: '/setting', name: RouteName.SETTING, component: () => import('@/screens/Setting.vue') },
+  {
+    path: '/setting',
+    name: RouteName.SETTING,
+    component: () => import('@/screens/Setting.vue'),
+  },
+  {
+    path: '/groups/:id-:mode',
+    name: RouteName.GROUP,
+    component: () => import('@/screens/Group.vue'),
+    props: true,
+  },
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL ?? '/'),
   linkActiveClass: 'dock-active text-primary',
   routes,
 })
