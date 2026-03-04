@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/screens/Setting.vue'),
   },
   {
-    path: '/groups/:id-:mode',
+    path: '/groups/:id/:mode',
     name: RouteName.GROUP,
     component: () => import('@/screens/Group.vue'),
     props: true,

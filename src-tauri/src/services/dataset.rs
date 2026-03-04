@@ -107,7 +107,7 @@ fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
     // delete all collectibles
     diesel::delete(collectibles::table)
         .execute(&mut *connection)
-        .map_err(|e| format!("Failed to delete old albums: {}", e))?;
+        .map_err(|e| format!("Failed to delete old collectibles: {}", e))?;
 
     // bulk insert new data into albums table
     let collectibles = dataset
@@ -118,7 +118,7 @@ fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
     diesel::insert_into(collectibles::table)
         .values(collectibles)
         .execute(&mut *connection)
-        .map_err(|e| format!("Failed to insert new albums: {}", e))?;
+        .map_err(|e| format!("Failed to insert collectibles: {}", e))?;
 
     Ok(())
 }

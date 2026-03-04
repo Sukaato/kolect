@@ -105,7 +105,7 @@ describe("Field validation for collectibles", () => {
     for (const col of dataset.collectibles) {
       expect(hasOwn(col, "id")).toBe(true);
       expect(hasOwn(col, "groupId")).toBe(true);
-      expect(hasOwn(col, "type")).toBe(true);
+      expect(hasOwn(col, "kind")).toBe(true);
       expect(hasOwn(col, "name")).toBe(true);
       expect(hasOwn(col, "releaseYear")).toBe(true);
       expect(hasOwn(col, "image")).toBe(true);
@@ -113,7 +113,7 @@ describe("Field validation for collectibles", () => {
 
       expect(typeof col.name).toBe("string");
       expect(col.name.length).toBeGreaterThan(0);
-      expect(Number.isInteger(col.releaseYear)).toBe(true);
+      expect(col.releaseDate).toBe(true);
       expect(typeof col.image).toBe("string");
       expect(col.image.length).toBeGreaterThan(0);
       expect(typeof col.verified).toBe("boolean");
@@ -129,7 +129,7 @@ describe("Field validation for collectibles", () => {
     ]);
 
     for (const col of dataset.collectibles) {
-      if (col.type === "Album") {
+      if (col.kind === "Album") {
         expect(hasOwn(col, "subType")).toBe(true);
         expect(allowedSubTypes.has(col.subType)).toBe(true);
       }
@@ -138,7 +138,7 @@ describe("Field validation for collectibles", () => {
 
   it("Lightstick collectibles do not require subType", () => {
     for (const col of dataset.collectibles) {
-      if (col.type === "Lightstick") {
+      if (col.kind === "Lightstick") {
         expect(typeof col.name).toBe("string");
       }
     }
