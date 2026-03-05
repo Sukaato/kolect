@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Sukaato/kolect/refs/heads/main/dataset/dataset.schema.v1.json",
-  "datasetVersion": "1.0.0",
+  "datasetVersion": "1.0.1",
   "generatedAt": "2026-03-02T12:00:00Z",
   "groups": [
     {
