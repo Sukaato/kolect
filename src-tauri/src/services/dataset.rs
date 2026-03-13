@@ -11,47 +11,19 @@ use std::{
 use tauri::Manager;
 use tauri_plugin_log::log;
 
-/// Dataset-related services and utilities.
-pub async fn sync(app: &tauri::AppHandle) -> Result<bool, String> {
-    log::info!("Starting dataset synchronization");
-
-    // Get dataset_url config
-    let dataset_url = crate::config::get_dataset_url();
-    let dataset = fetch(&dataset_url).await?;
-    let new_version = dataset.dataset_version.clone();
-    let current_version = get_dataset_metadata(app).map(|d| d.dataset_version)?;
-
-    // if the version is the same, no need to update
-    if new_version == current_version {
-        log::info!("Dataset is already up to date");
-        return Ok(false);
-    }
-
-    if !current_version.is_empty() {
-        // Check with semver if the new version is greater than the current version
-        let new_semver = semver::Version::parse(&new_version)
-            .map_err(|e| format!("Failed to parse new dataset version: {}", e))?;
-        let current_semver = semver::Version::parse(&current_version)
-            .map_err(|e| format!("Failed to parse current dataset version: {}", e))?;
-
-        if current_semver >= new_semver {
-            log::warn!("New dataset version is not greater than the current version");
-            return Err("New dataset version is not greater than the current version".into());
-        }
-    }
-
-    // update the data in the database with the new dataset
-    update_dataset(dataset.clone())?;
-
-    // Update dataset in database
-    update_dataset_metadata(app, &dataset)?;
-
-    log::info!("Dataset synchronization completed");
-
-    Ok(true)
-}
-
-async fn fetch(url: &str) -> Result<DatasetDto, String> {
+/// Fetches and deserializes a dataset from a remote URL.
+///
+/// # Arguments
+/// * `url` - The endpoint to fetch the dataset from.
+///
+/// # Returns
+/// * `Ok(DatasetDto)` - The deserialized dataset.
+/// * `Err(String)` - A human-readable error if the request or deserialization fails.
+///
+/// # Errors
+/// * Network error → `"Failed to fetch dataset: ..."`
+/// * Invalid/unexpected JSON → `"Failed to parse dataset: ..."`
+pub async fn fetch(url: &str) -> Result<DatasetDto, String> {
     let response = reqwest::get(url)
         .await
         .map_err(|e| format!("Failed to fetch dataset: {}", e))?;
@@ -62,7 +34,23 @@ async fn fetch(url: &str) -> Result<DatasetDto, String> {
         .map_err(|e| format!("Failed to parse dataset: {}", e))
 }
 
-fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
+/// Reads and deserializes the dataset metadata from the app's local data directory.
+///
+/// Falls back to [`DatasetDto::default`] instead of propagating an error in two cases:
+/// * The metadata file does not exist yet (first launch).
+/// * The file contains invalid JSON (corrupted file).
+///
+/// # Arguments
+/// * `app` - The Tauri application handle, used to resolve the data directory.
+///
+/// # Returns
+/// * `Ok(DatasetDto)` - The deserialized dataset, or a default value as fallback.
+/// * `Err(String)` - Only if the data directory cannot be resolved, or the file cannot be read.
+///
+/// # Errors
+/// * Data directory unresolvable → from [`tauri::path::PathResolver`]
+/// * File read failure → `"Failed to read dataset metadata file: ..."`
+pub fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     let metadata_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let metadata_path = metadata_dir.join("dataset_metadata.json");
 
@@ -83,7 +71,25 @@ fn get_dataset_metadata(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     }
 }
 
-fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
+/// Replaces the entire dataset in the local SQLite database using a delete-then-insert strategy.
+///
+/// Each table is fully cleared before the new data is inserted.
+/// This operation is **not atomic** — if a step fails midway, previously deleted data
+/// will not be restored. Consider wrapping in a transaction if integrity is required.
+///
+/// # Arguments
+/// * `dataset` - The new dataset to persist, consumed by this function.
+///
+/// # Returns
+/// * `Ok(())` - All tables were successfully replaced.
+/// * `Err(String)` - A human-readable error if any delete or insert step fails.
+///
+/// # Errors
+/// * Groups delete failure → `"Failed to delete old groups: ..."`
+/// * Groups insert failure → `"Failed to insert new groups: ..."`
+/// * Collectibles delete failure → `"Failed to delete old collectibles: ..."`
+/// * Collectibles insert failure → `"Failed to insert collectibles: ..."`
+pub fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
     use crate::schema::{collectibles, groups};
 
     let mut connection = get_db_connection();
@@ -123,7 +129,28 @@ fn update_dataset(dataset: DatasetDto) -> Result<(), String> {
     Ok(())
 }
 
-fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(), String> {
+/// Writes dataset metadata to a JSON file in the app's local data directory.
+///
+/// Only a subset of [`DatasetDto`] is persisted: the dataset version, its generation date,
+/// and a `lastFetchedAt` timestamp generated at call time from the system clock.
+///
+/// The file is created if it does not exist, or fully overwritten if it does.
+///
+/// # Arguments
+/// * `app` - The Tauri application handle, used to resolve the data directory.
+/// * `dto` - The dataset DTO to extract metadata from.
+///
+/// # Returns
+/// * `Ok(())` - The metadata file was successfully written.
+/// * `Err(String)` - A human-readable error if any step of the pipeline fails.
+///
+/// # Errors
+/// * Data directory unresolvable → from [`tauri::path::PathResolver`]
+/// * System clock before Unix epoch → `"Time error: ..."`
+/// * Serialization failure → `"Can not pretty string: ..."`
+/// * File creation failure → `"Can not create dataset_metadata file: ..."`
+/// * Write failure → `"Can not write in dataset_metadata file: ..."`
+pub fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(), String> {
     let metadata_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let metadata_path = metadata_dir.join("dataset_metadata.json");
 
@@ -155,6 +182,23 @@ fn update_dataset_metadata(app: &tauri::AppHandle, dto: &DatasetDto) -> Result<(
     Ok(())
 }
 
+/// Assembles a full [`DatasetDto`] from the local SQLite database and metadata file.
+///
+/// Metadata fields (`dataset_version`, `generated_at`, `last_fetched_at`) are sourced
+/// from the metadata file via [`get_dataset_metadata`], while `groups` and `collectibles`
+/// are loaded from the database and override the DTO's corresponding fields.
+///
+/// # Arguments
+/// * `app` - The Tauri application handle, used to resolve the metadata file path.
+///
+/// # Returns
+/// * `Ok(DatasetDto)` - The fully assembled dataset.
+/// * `Err(String)` - A human-readable error if any source fails to load.
+///
+/// # Errors
+/// * Metadata read failure → see [`get_dataset_metadata`]
+/// * Groups load failure → `"Failed to load groups: ..."`
+/// * Collectibles load failure → `"Failed to load collectibles: ..."`
 pub fn get_dataset(app: &tauri::AppHandle) -> Result<DatasetDto, String> {
     use crate::schema::collectibles::dsl::collectibles;
     use crate::schema::groups::dsl::groups;
