@@ -20,7 +20,16 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
     error.value = void 0
     result.value = void 0
 
-    await debug(`call ${command} command`)
+    const stringArgs = Object.fromEntries(
+      Object.entries(args ?? {}).map(([key, value]) => [key, String(value)]),
+    )
+
+    console.debug(`call ${command} command`, {
+      keyValues: stringArgs,
+    })
+    await debug(`call ${command} command`, {
+      keyValues: stringArgs,
+    })
     return Promise.all([
       wait(2000), // wait at least 2 seconds
       tauriInvoke<T>(command, args)

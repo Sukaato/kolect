@@ -36,11 +36,14 @@
             "title": "Dataset",
             "description": "Synchronize the local dataset with the remote server to get the latest K-pop groups and lightsticks.",
             "actions": {
-              "sync": {
-                "text": "Sync Dataset",
-                "syncing": "Syncing..."
-              }
+              "refresh": "Sync"
             }
+          }
+        },
+        "about": {
+          "title": "About",
+          "version": {
+            "title": "Version"
           }
         }
       }

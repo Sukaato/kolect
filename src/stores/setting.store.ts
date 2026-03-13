@@ -3,17 +3,17 @@ import { useTauriStore } from '@/composables/use-tauri-store'
 
 export interface Setting {
   theme: 'system' | 'light' | 'dark'
-  lang: 'en' | 'fr'
+  locale: 'en' | 'fr'
 }
 export const useSettingStore = defineStore('setting', () => {
   const { init, persistentRef } = useTauriStore<Setting>('settings.json')
   const theme = persistentRef('theme', 'light')
-  const lang = persistentRef('lang', 'fr')
+  const locale = persistentRef('locale', 'fr')
 
   return {
     init,
     theme,
-    lang,
+    locale,
   }
 })
 

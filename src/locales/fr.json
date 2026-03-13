@@ -36,11 +36,14 @@
             "title": "Jeu de données",
             "description": "Synchronisez le jeu de données local avec le serveur distant afin d’obtenir les derniers groupes de K-pop et lightsticks.",
             "actions": {
-              "sync": {
-                "text": "Synchroniser",
-                "syncing": "Synchronisation..."
-              }
+              "refresh": "Synchroniser"
             }
+          }
+        },
+        "about": {
+          "title": "A propos",
+          "version": {
+            "title": "Version"
           }
         }
       }

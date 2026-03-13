@@ -16,7 +16,7 @@ const transitionName = computed(() => {
 })
 
 const settingStore = useSettingStore()
-const { theme, lang } = storeToRefs(settingStore)
+const { theme, locale } = storeToRefs(settingStore)
 
 const toastStore = useToastStore()
 const { toasts } = storeToRefs(toastStore)
@@ -26,7 +26,7 @@ const i18n = useI18n()
 onMounted(async () => {
   await settingStore.init()
 
-  i18n.locale.value = lang.value
+  i18n.locale.value = locale.value
 })
 
 onErrorCaptured(error => {
@@ -37,8 +37,8 @@ onErrorCaptured(error => {
 </script>
 
 <template>
-  <div :data-theme="theme">
-    <main class="app-root bg-base-300 h-dvh overflow-y-auto">
+  <div class="flex flex-col h-screen" :data-theme="theme">
+    <main class="app-root grow bg-base-300 h-dvh overflow-y-auto">
       <RouterView v-slot="{ Component }">
         <Transition :name="transitionName" mode="out-in">
           <component :is="Component" />
@@ -50,9 +50,9 @@ onErrorCaptured(error => {
       <Dock v-if="showDock" />
     </Transition>
 
-    <div class="fixed bottom-24 left-4 right-4 flex justify-center pointer-events-none">
-      <TransitionGroup name="toast" tag="div" class="stack w-full max-w-md">
-        <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast" />
+    <div class="toast-container fixed bottom-24 left-4 right-4 flex justify-center pointer-events-none">
+      <TransitionGroup name="toast" tag="div" class="toast-wrapper stack w-full max-w-md">
+        <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast" class="pointer-events-all" />
       </TransitionGroup>
     </div>
   </div>
