@@ -65,7 +65,7 @@ pub struct CollectibleDto {
     pub name: String,
     pub kind: CollectibleType,
 
-    #[serde(rename = "releaseYear")]
+    #[serde(rename = "releaseDate")]
     pub release_date: Option<NaiveDate>,
 
     pub version: Option<String>,

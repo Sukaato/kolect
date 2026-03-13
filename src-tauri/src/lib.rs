@@ -21,11 +21,16 @@ pub fn run() {
                 .format(|out, message, record| {
                     let now = Utc::now().to_rfc3339_opts(SecondsFormat::Secs, false);
 
+                    let mut target = record.target();
+                    if target.starts_with("webview") {
+                      target = "kolect_front";
+                    }
+
                     out.finish(format_args!(
                         "{} [{}] [{}] - {}",
                         now,
                         record.level(),
-                        record.target(),
+                        target,
                         message
                     ))
                 })

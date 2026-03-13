@@ -39,8 +39,15 @@ const lastSync = computed(() => {
 })
 
 const refreshButtonRef = useTemplateRef('refresh-btn')
-onLongPress(refreshButtonRef.value, async () => {
+async function handleLongPress() {
   await datasetStore.sync(true)
+}
+onLongPress(refreshButtonRef, handleLongPress, {
+  async onMouseUp(_duration, _distance, isLongPress) {
+    if (!isLongPress) {
+      return await datasetStore.sync()
+    }
+  },
 })
 
 const appVersion = shallowRef<string>()
@@ -79,7 +86,8 @@ onMounted(async () => {
 
         <SettingRow :label="$t('screens.setting.sections.appearence.language.title')" :icon="GlobeIcon"
           icon-color="text-secondary">
-          <select v-model="locale" class="select select-sm select-bordered w-36 text-sm" @change="setLocale($event.target.value as Setting['locale'])">
+          <select v-model="locale" class="select select-sm select-bordered w-36 text-sm"
+            @change="setLocale($event.target.value as Setting['locale'])">
             <option v-for="[locale, label] in Object.entries(locales)" :key="locale" :value="locale">
               {{ label }}
             </option>
@@ -90,9 +98,9 @@ onMounted(async () => {
 
       <!-- Data -->
       <SettingSection :title="$t('screens.setting.sections.data.title')">
-        <SettingRow :label="$t('screens.setting.sections.data.dataset.title')"
-          :sublabel="lastSync" :icon="DatabaseIcon" icon-color="text-info">
-          <button ref="refresh-btn" class="btn btn-sm btn-outline btn-warning gap-1.5" :disabled="syncing" @click="datasetStore.sync()">
+        <SettingRow :label="$t('screens.setting.sections.data.dataset.title')" :sublabel="lastSync" :icon="DatabaseIcon"
+          icon-color="text-info">
+          <button ref="refresh-btn" class="btn btn-sm btn-outline btn-warning gap-1.5" :disabled="syncing">
             <RefreshCwIcon class="w-3.5 h-3.5" />
             {{ $t('screens.setting.sections.data.dataset.actions.refresh') }}
           </button>
