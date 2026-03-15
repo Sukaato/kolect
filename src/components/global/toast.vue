@@ -55,14 +55,16 @@ function onPointerUp() {
 </script>
 
 <template>
-  <div :class="alertClass" class="shadow-lg flex flex-col select-none" :style="style" @pointerdown="onPointerDown"
+  <div :class="alertClass" class="shadow-lg flex flex-col select-none alert-vertical" :style="style" @pointerdown="onPointerDown"
     @pointermove="onPointerMove" @pointerup="onPointerUp" @pointercancel="onPointerUp">
-    <span v-if="options?.title" class="font-semibold">
-      {{ options.title }}
-    </span>
-    <span class="text-sm">
-      {{ message }}
-    </span>
+      <div>
+        <h3 v-if="options?.title" class="text-bold">
+          {{ options.title }}
+        </h3>
+        <span class="text-xs">
+          {{ message }}
+        </span>
+      </div>
   </div>
 </template>
 

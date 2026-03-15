@@ -1,43 +1,42 @@
 <script setup lang="ts">
 import { useCollectionStore } from '@/stores/collection.store';
-import { LucideScanBarcode } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { PlusIcon } from 'lucide-vue-next'
 
 const collectionStore = useCollectionStore()
-const { collection, loading, error } = storeToRefs(collectionStore)
+const { loading } = storeToRefs(collectionStore)
 
 onMounted(async () => {
-  await collectionStore.load()
+  // await collectionStore.load()
 })
 </script>
 
 <template>
-  <div class="screen--collection">
-    <header class="navbar bg-base-100 shadow-sm">
-      <div class="flex-1">
-        <h1 class="text-left">My Collection</h1>
+  <div class="screen--collection grow relative pb-10">
+
+    <div class="fab absolute">
+      <RouterLink to="/collection/add" tabindex="0" role="button" class="btn btn-lg btn-circle btn-primary">
+        <PlusIcon />
+      </RouterLink>
+    </div>
+
+    <!-- Header -->
+    <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
+      <div class="flex items-center gap-3 px-4 py-4 max-w-lg mx-auto">
+        <h1 class="text-xl font-bold tracking-tight">{{ $t('screens.collection.title') }}</h1>
       </div>
-      <div class="flex-none">
-        <button class="btn btn-primary btn-square">
-          <LucideScanBarcode />
-        </button>
+    </div>
+
+    <div class="max-w-lg mx-auto px-4 pt-6 space-y-5">
+      <!-- Loading -->
+      <div v-if="loading" class="flex justify-center items-center h-40">
+        <span class="loading loading-spinner loading-lg"></span>
       </div>
-    </header>
-    <div>
-      <button @click="collectionStore.load()">Refresh</button>
-      <Transition>
-        <p v-if="loading">Loading...</p>
-      </Transition>
-      <Transition>
-        <p v-if="error" class="text-error">Error: {{ error }}</p>
-      </Transition>
-      <TransitionGroup tag="ul">
-        Collection
-        <li v-for="value in collection" :key="value.id">
-          {{ value.productId }} ({{ value.productType }})
-        </li>
-      </TransitionGroup>
+
+      <div v-else>
+        {{ 'collection synced' }}
+      </div>
     </div>
   </div>
 </template>

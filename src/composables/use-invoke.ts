@@ -4,14 +4,15 @@ import { shallowRef } from 'vue'
 import { wait } from '@/utils/wait.util'
 import { useToast } from './use-toast'
 
-interface UseInvokeOptions {
+interface UseInvokeOptions<T = unknown> {
   showErrorToast?: boolean
+  defaults: T
 }
 
 export function useInvoke<T = unknown, E = string>(command: string, options?: UseInvokeOptions) {
   const toast = useToast()
 
-  const result = shallowRef<T>()
+  const result = shallowRef<T>(options?.defaults ?? null)
   const error = shallowRef<E>()
   const loading = shallowRef(false)
 

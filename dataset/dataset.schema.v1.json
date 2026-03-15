@@ -1,176 +1,242 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/kolect/dataset-v2.schema.json",
-  "title": "Kolect Dataset Schema v2",
-  "type": "object",
-  "required": ["datasetVersion", "generatedAt", "groups", "collectibles"],
-  "additionalProperties": false,
+  "title": "KpopCollector Dataset v2",
+  "description": "Flat dataset aligned with the DB schema. All tables at root level.",
 
-  "properties": {
-    "datasetVersion": {
+  "$defs": {
+    "uuid": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
-
-    "generatedAt": {
+    "uuid_or_null": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "date": {
       "type": "string",
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$",
-      "description": "ISO 8601 UTC timestamp"
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
     },
-
-    "groups": {
-      "type": "array",
-      "items": { "$ref": "#/definitions/group" }
+    "date_or_null": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
     },
-
-    "members": {
-      "type": "array",
-      "items": { "$ref": "#/definitions/member" },
-      "default": []
-    },
-
-    "contexts": {
-      "type": "array",
-      "items": { "$ref": "#/definitions/context" },
-      "default": []
-    },
-
-    "collectibles": {
-      "type": "array",
-      "items": { "$ref": "#/definitions/collectible" }
+    "uri_or_null": {
+      "type": ["string", "null"],
+      "pattern": "^https?://.+"
     }
   },
 
-  "definitions": {
-    "uuid": {
+  "type": "object",
+  "required": [
+    "version",
+    "agencies",
+    "groups",
+    "artists",
+    "artist_aliases",
+    "group_members",
+    "albums",
+    "album_versions",
+    "digipacks",
+    "lightsticks",
+    "fanclub_kits",
+    "photocards"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "version": {
       "type": "string",
-      "pattern": "^[0-9A-Fa-f-]{36}$"
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
 
-    "group": {
-      "type": "object",
-      "required": ["id", "name", "agency", "debutYear", "isActive"],
-      "additionalProperties": false,
-      "properties": {
-        "id": { "$ref": "#/definitions/uuid" },
-        "name": { "type": "string", "minLength": 1 },
-        "agency": { "type": "string", "minLength": 1 },
-        "debutYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100
-        },
-        "isActive": { "type": "boolean" }
-      }
-    },
-
-    "member": {
-      "type": "object",
-      "required": ["id", "groupId", "name", "isActive"],
-      "additionalProperties": false,
-      "properties": {
-        "id": { "$ref": "#/definitions/uuid" },
-        "groupId": { "$ref": "#/definitions/uuid" },
-        "name": { "type": "string", "minLength": 1 },
-        "stageName": { "type": "string" },
-        "birthYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100
-        },
-        "isActive": { "type": "boolean" }
-      }
-    },
-
-    "context": {
-      "type": "object",
-      "required": ["id", "groupId", "kind", "name", "startYear"],
-      "additionalProperties": false,
-      "properties": {
-        "id": { "$ref": "#/definitions/uuid" },
-        "groupId": { "$ref": "#/definitions/uuid" },
-
-        "kind": {
-          "type": "string",
-          "enum": ["tour", "era", "event"]
-        },
-
-        "name": { "type": "string", "minLength": 1 },
-
-        "startYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100
-        },
-
-        "endYear": {
-          "type": "integer",
-          "minimum": 1900,
-          "maximum": 2100
+    "agencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "country"],
+        "additionalProperties": false,
+        "properties": {
+          "id":        { "$ref": "#/$defs/uuid" },
+          "name":      { "type": "string", "minLength": 1 },
+          "country":   { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "image_url": { "$ref": "#/$defs/uri_or_null" }
         }
       }
     },
 
-    "collectible": {
-      "type": "object",
-      "required": [
-        "id",
-        "groupId",
-        "kind",
-        "name",
-        "releaseDate",
-        "image",
-        "verified"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "id": { "$ref": "#/definitions/uuid" },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "debut_date", "agency_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id":          { "$ref": "#/$defs/uuid" },
+          "name":        { "type": "string", "minLength": 1 },
+          "debut_date":  { "$ref": "#/$defs/date" },
+          "agency_id":   { "$ref": "#/$defs/uuid", "description": "FK → agencies.id" },
+          "fandom_name": { "type": ["string", "null"] },
+          "image_url":   { "$ref": "#/$defs/uri_or_null" }
+        }
+      }
+    },
 
-        "groupId": { "$ref": "#/definitions/uuid" },
-        "memberId": { "$ref": "#/definitions/uuid" },
-        "contextId": { "$ref": "#/definitions/uuid" },
-        "parentId": { "$ref": "#/definitions/uuid" },
+    "artists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "real_name"],
+        "additionalProperties": false,
+        "properties": {
+          "id":              { "$ref": "#/$defs/uuid" },
+          "real_name":       { "type": "string", "minLength": 1 },
+          "birth_date":      { "$ref": "#/$defs/date_or_null" },
+          "image_url":       { "$ref": "#/$defs/uri_or_null" },
+          "solo_debut_date": { "$ref": "#/$defs/date_or_null" },
+          "solo_agency_id":  { "$ref": "#/$defs/uuid_or_null", "description": "FK → agencies.id" }
+        }
+      }
+    },
 
-        "kind": {
-          "type": "string",
-          "enum": [
-            "album",
-            "lightstick",
-            "photocard",
-            "merch",
-            "fanclub_kit",
-            "lucky_draw"
-          ]
-        },
+    "artist_aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "artist_id", "name", "kind", "is_primary"],
+        "additionalProperties": false,
+        "properties": {
+          "id":         { "$ref": "#/$defs/uuid" },
+          "artist_id":  { "$ref": "#/$defs/uuid", "description": "FK → artists.id" },
+          "name":       { "type": "string", "minLength": 1 },
+          "kind":       { "type": "string", "enum": ["group_stage", "solo_stage", "original"] },
+          "is_primary": { "type": "boolean" }
+        }
+      }
+    },
 
-        "subType": {
-          "type": "string",
-          "description": "EP, Single, Clothing, etc."
-        },
+    "group_members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artist_id", "group_id"],
+        "additionalProperties": false,
+        "properties": {
+          "artist_id":  { "$ref": "#/$defs/uuid", "description": "FK → artists.id (PK composite)" },
+          "group_id":   { "$ref": "#/$defs/uuid", "description": "FK → groups.id (PK composite)" },
+          "roles":      { "type": ["string", "null"], "description": "CSV: 'vocalist,rapper'" },
+          "join_date":  { "$ref": "#/$defs/date_or_null" },
+          "leave_date": { "$ref": "#/$defs/date_or_null", "description": "null = still active" }
+        }
+      }
+    },
 
-        "name": { "type": "string", "minLength": 1 },
+    "albums": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "release_date", "region"],
+        "additionalProperties": false,
+        "properties": {
+          "id":           { "$ref": "#/$defs/uuid" },
+          "name":         { "type": "string", "minLength": 1 },
+          "release_date": { "$ref": "#/$defs/date" },
+          "region":       { "type": "string", "minLength": 2 },
+          "image_url":    { "$ref": "#/$defs/uri_or_null" },
+          "group_id":     { "$ref": "#/$defs/uuid_or_null", "description": "FK → groups.id. Exactly one of group_id / artist_id must be set." },
+          "artist_id":    { "$ref": "#/$defs/uuid_or_null", "description": "FK → artists.id. Exactly one of group_id / artist_id must be set." }
+        }
+      }
+    },
 
-        "releaseDate": {
-          "type": "string",
-          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-        },
+    "album_versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "album_id", "name", "format", "release_date", "region"],
+        "additionalProperties": false,
+        "properties": {
+          "id":           { "$ref": "#/$defs/uuid" },
+          "album_id":     { "$ref": "#/$defs/uuid", "description": "FK → albums.id" },
+          "name":         { "type": "string", "minLength": 1 },
+          "format":       { "type": "string", "enum": ["cd", "ep", "album", "mini_album", "vinyl", "kit"] },
+          "release_date": { "$ref": "#/$defs/date" },
+          "region":       { "type": "string", "minLength": 2 },
+          "image_url":    { "$ref": "#/$defs/uri_or_null" }
+        }
+      }
+    },
 
-        "region": {
-          "type": "string",
-          "description": "KR, JP, US, Global..."
-        },
+    "digipacks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "album_id", "name", "release_date", "region"],
+        "additionalProperties": false,
+        "properties": {
+          "id":           { "$ref": "#/$defs/uuid" },
+          "album_id":     { "$ref": "#/$defs/uuid", "description": "FK → albums.id" },
+          "artist_id":    { "$ref": "#/$defs/uuid_or_null", "description": "FK → artists.id. Null for group digipacks." },
+          "name":         { "type": "string", "minLength": 1 },
+          "release_date": { "$ref": "#/$defs/date" },
+          "region":       { "type": "string", "minLength": 2 },
+          "image_url":    { "$ref": "#/$defs/uri_or_null" }
+        }
+      }
+    },
 
-        "version": { "type": "string" },
-        "edition": { "type": "string" },
+    "lightsticks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "version", "release_date"],
+        "additionalProperties": false,
+        "properties": {
+          "id":           { "$ref": "#/$defs/uuid" },
+          "name":         { "type": "string", "minLength": 1 },
+          "version":      { "type": "string", "minLength": 1 },
+          "release_date": { "$ref": "#/$defs/date" },
+          "image_url":    { "$ref": "#/$defs/uri_or_null" },
+          "group_id":     { "$ref": "#/$defs/uuid_or_null", "description": "FK → groups.id" },
+          "artist_id":    { "$ref": "#/$defs/uuid_or_null", "description": "FK → artists.id" }
+        }
+      }
+    },
 
-        "barcode": {
-          "type": "string",
-          "pattern": "^[0-9]{13}$"
-        },
+    "fanclub_kits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "release_date", "region"],
+        "additionalProperties": false,
+        "properties": {
+          "id":           { "$ref": "#/$defs/uuid" },
+          "name":         { "type": "string", "minLength": 1 },
+          "release_date": { "$ref": "#/$defs/date" },
+          "region":       { "type": "string", "minLength": 2 },
+          "image_url":    { "$ref": "#/$defs/uri_or_null" },
+          "group_id":     { "$ref": "#/$defs/uuid_or_null", "description": "FK → groups.id" },
+          "artist_id":    { "$ref": "#/$defs/uuid_or_null", "description": "FK → artists.id" }
+        }
+      }
+    },
 
-        "image": { "type": "string", "minLength": 1 },
-
-        "verified": { "type": "boolean" }
+    "photocards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "release_date", "region"],
+        "additionalProperties": false,
+        "properties": {
+          "id":               { "$ref": "#/$defs/uuid" },
+          "name":             { "type": "string", "minLength": 1 },
+          "artist_id":        { "$ref": "#/$defs/uuid_or_null", "description": "FK → artists.id. Null for group photocards." },
+          "album_id":         { "$ref": "#/$defs/uuid_or_null", "description": "FK → albums.id. Always null in v2." },
+          "album_version_id": { "$ref": "#/$defs/uuid_or_null", "description": "FK → album_versions.id." },
+          "digipack_id":      { "$ref": "#/$defs/uuid_or_null", "description": "FK → digipacks.id." },
+          "release_date":     { "$ref": "#/$defs/date" },
+          "region":           { "type": "string", "minLength": 2 },
+          "image_url":        { "$ref": "#/$defs/uri_or_null" }
+        }
       }
     }
   }

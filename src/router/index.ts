@@ -1,4 +1,3 @@
-import { debug } from '@tauri-apps/plugin-log'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
@@ -29,14 +28,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL ?? '/'),
   linkActiveClass: 'dock-active text-primary',
   routes,
-})
-
-router.beforeEach(async (to, from) => {
-  await debug(`Navigating from ${from.path} to ${to.path}`)
-})
-
-router.afterEach(async to => {
-  debug(`Navigation complete, now at ${to.path}`)
 })
 
 export default router

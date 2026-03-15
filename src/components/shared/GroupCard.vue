@@ -88,7 +88,3 @@ function useGroupData() {
     </div>
   </RouterLink>
 </template>
-
-<style>
---mo
-</style>

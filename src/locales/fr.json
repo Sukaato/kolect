@@ -10,7 +10,9 @@
   },
   "screens": {
     "home": {},
-    "collection": {},
+    "collection": {
+      "title": "Ma collection"
+    },
     "setting": {
       "title": "Paramètres",
       "sections": {
@@ -49,18 +51,9 @@
       }
     }
   },
-  "home": {
-    "title": "Bienvenue sur Tauri + Vue 3",
-    "subtitle": "Cliquez sur les logos Tauri, Vite et Vue pour en savoir plus.",
-    "greetButton": "Saluer",
-    "greetInputPlaceholder": "Entrez un nom..."
-  },
   "errors": {
     "datasetSync": "Échec de la synchronisation du dataset",
     "networkError": "Erreur réseau"
-  },
-  "messages": {
-    "syncing": "Synchronisation des données..."
   },
   "startup": {
     "title": "Kolect",

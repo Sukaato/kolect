@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const datasetStore = useDatasetStore()
-const { error: datasetSyncError } = storeToRefs(datasetStore)
+const { error: syncError } = storeToRefs(datasetStore)
 
 const loading = shallowRef(true)
 const errorMsg = shallowRef<string | null>(null)
@@ -24,13 +24,13 @@ onMounted(async () => {
     // Sync dataset from GitHub
     await info('Syncing dataset from GitHub...')
     await datasetStore.sync()
-    if (datasetSyncError.value) {
-      throw new Error(datasetSyncError.value)
+    if (syncError.value) {
+      throw new Error(syncError.value)
     }
     await info('Dataset synced successfully')
 
     // Redirect to home after initialization
-    await wait(2000)
+    await wait(300)
     await info('Redirecting to /home')
     router.replace('/home') // So user can't go back to Startup screen
   } catch (err) {
@@ -51,7 +51,7 @@ onMounted(async () => {
       </div>
 
       <!-- Title -->
-      <h1 class="text-3xl font-bold mb-4">{{ $t('startup.title') }}</h1>
+      <h1 class="text-3xl font-bold mb-4 text-center w-full">{{ $t('startup.title') }}</h1>
 
       <!-- Loading indicator -->
       <div v-if="loading" class="space-y-4">
@@ -62,12 +62,14 @@ onMounted(async () => {
       <!-- Error display -->
       <div v-else-if="errorMsg" class="space-y-4">
         <p class="text-error text-sm">{{ errorMsg }}</p>
-        <button class="btn btn-sm btn-primary" @click="handleRetry">
-          {{ $t('startup.retry') }}
-        </button>
-        <button class="btn btn-sm btn-primary" @click="router.replace('/home')">
-          {{ 'Home' }}
-        </button>
+        <div class="flex gap-2 justify-center">
+          <button class="btn btn-sm btn-primary" @click="handleRetry">
+            {{ $t('startup.retry') }}
+          </button>
+          <button class="btn btn-sm btn-primary" @click="router.replace('/home')">
+            {{ 'Home' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

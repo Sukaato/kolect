@@ -27,7 +27,7 @@ function setLocale(newLocale: Setting['locale']) {
 }
 
 const datasetStore = useDatasetStore()
-const { syncing, fetchedAt } = storeToRefs(datasetStore)
+const { syncing, lastFetchedAt } = storeToRefs(datasetStore)
 const lastSync = computed(() => {
   return Intl.DateTimeFormat(locale.value, {
     day: 'numeric',
@@ -35,7 +35,7 @@ const lastSync = computed(() => {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(fetchedAt.value) ?? 'Never'
+  }).format(lastFetchedAt.value) ?? 'Never'
 })
 
 const refreshButtonRef = useTemplateRef('refresh-btn')
@@ -58,7 +58,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="screen--setting min-h-screen relative pb-10">
+  <div class="screen--setting grow relative pb-10">
 
     <!-- Header -->
     <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">

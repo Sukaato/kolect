@@ -1,35 +1,14 @@
-import { invoke as tauriInvoke } from '@tauri-apps/api/core'
 import { defineStore } from 'pinia'
 import { useInvoke } from '@/composables/use-invoke'
-import type { CollectionItem, ProductType } from '@/types/collection'
+import type { Collectible } from '@/types/dataset'
 
 export const useCollectionStore = defineStore('collection', () => {
-  const { result, error, loading, invoke } = useInvoke<CollectionItem[]>('collection_get')
+  const { result, error, loading, invoke } = useInvoke<Collectible[]>('collection_get', {
+    defaults: [],
+  })
 
   async function load(path?: string) {
     return invoke({ path: path ?? null })
-  }
-
-  async function add(productId: string, productType: ProductType, path?: string) {
-    return tauriInvoke<string>('collection_add', {
-      path: path ?? null,
-      productId,
-      productType,
-    }).then(async id => {
-      await load(path)
-      return id
-    })
-  }
-
-  async function remove(id: string, path?: string) {
-    return tauriInvoke<boolean>('collection_remove', { path: path ?? null, id }).then(
-      async success => {
-        if (success) {
-          await load(path)
-        }
-        return success
-      },
-    )
   }
 
   return {
@@ -37,7 +16,5 @@ export const useCollectionStore = defineStore('collection', () => {
     loading,
     error,
     load,
-    add,
-    remove,
   }
 })

@@ -1,6 +1,5 @@
 use std::fs;
 use std::path::Path;
-use std::sync::{Mutex, OnceLock};
 
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
@@ -8,46 +7,22 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
 const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
-static DB_CONNECTION: OnceLock<Mutex<SqliteConnection>> = OnceLock::new();
-
-pub fn get_db_connection() -> std::sync::MutexGuard<'static, SqliteConnection> {
-    DB_CONNECTION
-        .get()
-        .expect("Database connection not initialized")
-        .lock()
-        .unwrap()
-}
-
 // Check if a database file exists, and create one if it does not.
 pub fn init() {
     if !db_file_exists() {
+        println!("Try to create db file");
         create_db_file();
     }
+}
 
-    let conn = establish_db_connection();
-    if DB_CONNECTION.set(Mutex::new(conn)).is_err() {
-        panic!("Database connection already initialized");
-    }
-
-    run_migrations();
+pub fn migrate(conn: &mut SqliteConnection) {
+    conn.run_pending_migrations(MIGRATIONS).unwrap();
 }
 
 pub fn establish_db_connection() -> SqliteConnection {
     let db_path = get_db_path().clone();
 
     SqliteConnection::establish(db_path.as_str())
-        .unwrap_or_else(|_| panic!("Error connecting to {}", db_path))
-}
-
-fn run_migrations() {
-    let mut connection = establish_connection();
-    connection.run_pending_migrations(MIGRATIONS).unwrap();
-}
-
-fn establish_connection() -> SqliteConnection {
-    let db_path = "sqlite://".to_string() + get_db_path().as_str();
-
-    SqliteConnection::establish(&db_path)
         .unwrap_or_else(|_| panic!("Error connecting to {}", db_path))
 }
 

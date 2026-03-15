@@ -4,7 +4,7 @@ import { LucideHome, LucideLibrary, LucideUser } from 'lucide-vue-next';
 </script>
 
 <template>
-  <div class="dock dock-sm">
+  <div class="dock dock-sm sticky">
     <RouterLink to="/home">
       <LucideHome />
     </RouterLink>
