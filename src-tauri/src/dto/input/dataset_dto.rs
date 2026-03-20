@@ -2,22 +2,13 @@
 // La version est parsée en semver::Version pour permettre
 // des vérifications de compatibilité au démarrage.
 
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use semver::Version;
 use super::{
-    AgencyDto,
-    AlbumDto,
-    AlbumVersionDto,
-    ArtistDto,
-    ArtistAliasDto,
-    DigipackDto,
-    FanclubKitDto,
-    GroupDto,
-    GroupMemberDto,
-    LightstickDto,
-    PhotocardDto,
+    AgencyDto, AlbumDto, AlbumVersionDto, ArtistAliasDto, ArtistDto, DigipackDto, FanclubKitDto,
+    GroupDto, GroupMemberDto, LightstickDto, PhotocardDto,
 };
+use chrono::{DateTime, Utc};
+use semver::Version;
+use serde::{Deserialize, Serialize};
 
 // ─── Désérialiseur custom pour semver::Version ────────────────────────────────
 
@@ -37,20 +28,19 @@ where
 #[derive(Debug, Deserialize)]
 pub struct DatasetDto {
     #[serde(deserialize_with = "deserialize_version")]
-    pub version:        Version,
-    pub agencies:       Vec<AgencyDto>,
-    pub groups:         Vec<GroupDto>,
-    pub artists:        Vec<ArtistDto>,
+    pub version: Version,
+    pub agencies: Vec<AgencyDto>,
+    pub groups: Vec<GroupDto>,
+    pub artists: Vec<ArtistDto>,
     pub artist_aliases: Vec<ArtistAliasDto>,
-    pub group_members:  Vec<GroupMemberDto>,
-    pub albums:         Vec<AlbumDto>,
+    pub group_members: Vec<GroupMemberDto>,
+    pub albums: Vec<AlbumDto>,
     pub album_versions: Vec<AlbumVersionDto>,
-    pub digipacks:      Vec<DigipackDto>,
-    pub lightsticks:    Vec<LightstickDto>,
-    pub fanclub_kits:   Vec<FanclubKitDto>,
-    pub photocards:     Vec<PhotocardDto>,
+    pub digipacks: Vec<DigipackDto>,
+    pub lightsticks: Vec<LightstickDto>,
+    pub fanclub_kits: Vec<FanclubKitDto>,
+    pub photocards: Vec<PhotocardDto>,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatasetMetaDto {

@@ -5,7 +5,7 @@ import { useDatasetStore } from '@/stores/dataset.store';
 import { Setting, useSettingStore } from '@/stores/setting.store';
 import { app } from '@tauri-apps/api';
 import { onLongPress } from '@vueuse/core';
-import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, ImageIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, shallowRef, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -19,7 +19,7 @@ const locales: Record<Setting['locale'], string> = {
 const i18n = useI18n()
 
 const settingStore = useSettingStore()
-const { theme, locale } = storeToRefs(settingStore)
+const { theme, locale, includePhotocardCount } = storeToRefs(settingStore)
 
 function setLocale(newLocale: Setting['locale']) {
   i18n.locale.value = newLocale
@@ -83,7 +83,6 @@ onMounted(async () => {
           </select>
         </SettingRow>
 
-
         <SettingRow :label="$t('screens.setting.sections.appearence.language.title')" :icon="GlobeIcon"
           icon-color="text-secondary">
           <select v-model="locale" class="select select-sm select-bordered w-36 text-sm"
@@ -104,6 +103,11 @@ onMounted(async () => {
             <RefreshCwIcon class="w-3.5 h-3.5" />
             {{ $t('screens.setting.sections.data.dataset.actions.refresh') }}
           </button>
+        </SettingRow>
+        <SettingRow :label="$t('screens.setting.sections.data.photocards.title')"
+          :sublabel="$t('screens.setting.sections.data.photocards.sublabel')" :icon="ImageIcon"
+          icon-color="text-secondary">
+          <input type="checkbox" class="toggle toggle-success toggle-sm" v-model="includePhotocardCount" />
         </SettingRow>
       </SettingSection>
 

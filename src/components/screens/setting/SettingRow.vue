@@ -15,7 +15,7 @@ defineProps<{
       <component :is="icon" class="w-5 h-5 shrink-0" :class="iconColor" />
       <div class="flex-1 min-w-0">
         <span class="text-sm font-medium block">{{ label }}</span>
-        <span v-if="sublabel" class="text-xs text-base-content/50 block truncate">{{ sublabel }}</span>
+        <span v-if="sublabel" class="text-xs text-base-content/50 block">{{ sublabel }}</span>
       </div>
     </div>
     <div v-if="$slots.default" class="shrink-0">

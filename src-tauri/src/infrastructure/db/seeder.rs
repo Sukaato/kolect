@@ -3,12 +3,13 @@
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use std::collections::HashSet;
+use tauri_plugin_log::log;
 
-use crate::infrastructure::db::models::{
-    Agency, Album, AlbumVersion, Artist, ArtistAlias,
-    Digipack, FanclubKit, Group, GroupMember, Lightstick, Photocard,
-};
 use crate::dto::input::DatasetDto;
+use crate::infrastructure::db::models::{
+    Agency, Album, AlbumVersion, Artist, ArtistAlias, Digipack, FanclubKit, Group, GroupMember,
+    Lightstick, Photocard,
+};
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 
@@ -25,15 +26,15 @@ pub type SeederResult<T> = Result<T, SeederError>;
 #[derive(Debug, Default)]
 pub struct SeedReport {
     pub inserted: usize,
-    pub updated:  usize,
-    pub deleted:  usize,
+    pub updated: usize,
+    pub deleted: usize,
 }
 
 impl SeedReport {
     fn merge(&mut self, other: SeedReport) {
         self.inserted += other.inserted;
-        self.updated  += other.updated;
-        self.deleted  += other.deleted;
+        self.updated += other.updated;
+        self.deleted += other.deleted;
     }
 }
 
@@ -56,16 +57,28 @@ impl<'a> DatasetSeeder<'a> {
         let agencies = dto.agencies.into_iter().map(Agency::from).collect();
         let groups = dto.groups.into_iter().map(Group::from).collect();
         let artists = dto.artists.into_iter().map(Artist::from).collect();
-        let artist_aliases = dto.artist_aliases.into_iter().map(ArtistAlias::from).collect();
-        let group_members = dto.group_members.into_iter().map(GroupMember::from).collect();
+        let artist_aliases = dto
+            .artist_aliases
+            .into_iter()
+            .map(ArtistAlias::from)
+            .collect();
+        let group_members = dto
+            .group_members
+            .into_iter()
+            .map(GroupMember::from)
+            .collect();
         let albums = dto.albums.into_iter().map(Album::from).collect();
-        let album_versions = dto.album_versions.into_iter().map(AlbumVersion::from).collect();
+        let album_versions = dto
+            .album_versions
+            .into_iter()
+            .map(AlbumVersion::from)
+            .collect();
         let digipacks = dto.digipacks.into_iter().map(Digipack::from).collect();
         let lightsticks = dto.lightsticks.into_iter().map(Lightstick::from).collect();
         let fanclub_kits = dto.fanclub_kits.into_iter().map(FanclubKit::from).collect();
         let photocards = dto.photocards.into_iter().map(Photocard::from).collect();
 
-        self.conn.transaction(|conn| {
+        let report = self.conn.transaction::<SeedReport, SeederError, _>(|conn| {
             let mut seeder = DatasetSeeder { conn };
             let mut report = SeedReport::default();
 
@@ -82,7 +95,43 @@ impl<'a> DatasetSeeder<'a> {
             report.merge(seeder.seed_photocards(photocards)?);
 
             Ok(report)
-        })
+        });
+
+        // Rebuild des index FTS5 hors transaction (FTS5 + transactions SQLite)
+        self.rebuild_fts()?;
+
+        Ok(report.unwrap())
+    }
+
+    fn rebuild_fts(&mut self) -> SeederResult<()> {
+        // Vider et repeupler groups_fts
+        diesel::sql_query("DELETE FROM groups_fts").execute(self.conn)?;
+        diesel::sql_query(
+            "INSERT INTO groups_fts(group_id, name)
+             SELECT id, name FROM groups WHERE is_deleted = 0",
+        )
+        .execute(self.conn)?;
+
+        // Vider et repeupler artists_fts
+        // Le champ name agrège real_name + tous les aliases séparés par un espace
+        diesel::sql_query("DELETE FROM artists_fts").execute(self.conn)?;
+        diesel::sql_query(
+            "INSERT INTO artists_fts(artist_id, name)
+             SELECT
+                 ar.id,
+                 ar.real_name || ' ' || COALESCE(
+                     (SELECT GROUP_CONCAT(aa.name, ' ')
+                      FROM artist_aliases aa
+                      WHERE aa.artist_id = ar.id AND aa.is_deleted = 0),
+                     ''
+                 )
+             FROM artists ar
+             WHERE ar.is_deleted = 0 AND ar.solo_agency_id IS NOT NULL",
+        )
+        .execute(self.conn)?;
+
+        log::info!("FTS indexes rebuilt (groups_fts, artists_fts)");
+        Ok(())
     }
 
     // ─── Agencies ─────────────────────────────────────────────────────────────
@@ -272,15 +321,22 @@ impl<'a> DatasetSeeder<'a> {
 
         for item in items {
             let exists = group_members
-                .filter(artist_id.eq(&item.artist_id).and(group_id.eq(&item.group_id)))
+                .filter(
+                    artist_id
+                        .eq(&item.artist_id)
+                        .and(group_id.eq(&item.group_id)),
+                )
                 .count()
-                .get_result::<i64>(self.conn)? > 0;
+                .get_result::<i64>(self.conn)?
+                > 0;
 
             if exists {
                 diesel::update(
                     group_members.filter(
-                        artist_id.eq(&item.artist_id).and(group_id.eq(&item.group_id))
-                    )
+                        artist_id
+                            .eq(&item.artist_id)
+                            .and(group_id.eq(&item.group_id)),
+                    ),
                 )
                 .set((
                     roles.eq(&item.roles),

@@ -15,7 +15,7 @@ mod user_favorites;
 pub use self::{
     agency::Agency,
     album::Album,
-    album_version::{AlbumVersion, VersionFormat},
+    album_version::AlbumVersion,
     artist::Artist,
     artist_alias::ArtistAlias,
     digipack::Digipack,
@@ -23,9 +23,7 @@ pub use self::{
     group::Group,
     group_member::GroupMember,
     lightstick::Lightstick,
-    photocard::{Photocard, PhotocardKind},
-    user_collection::{UserCollection, UserCollectionItemKind},
-    user_favorites::{UserFavoriteArtist, UserFavoriteGroup},
+    photocard::Photocard,
 };
 
 // ─── Structs composites (pour les queries avec jointures) ─────────────────────

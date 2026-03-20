@@ -7,11 +7,11 @@ import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const datasetStore = useDatasetStore()
-const { error: syncError } = storeToRefs(datasetStore)
 
-const loading = shallowRef(true)
-const errorMsg = shallowRef<string | null>(null)
+const datasetStore = useDatasetStore()
+const { syncing, syncError } = storeToRefs(datasetStore)
+
+const errorMsg = shallowRef<string>()
 
 function handleRetry(): void {
   window.location.reload()
@@ -19,8 +19,8 @@ function handleRetry(): void {
 
 onMounted(async () => {
   info('Initializing app...')
-  try {
 
+  try {
     // Sync dataset from GitHub
     await info('Syncing dataset from GitHub...')
     await datasetStore.sync()
@@ -33,11 +33,12 @@ onMounted(async () => {
     await wait(300)
     await info('Redirecting to /home')
     router.replace('/home') // So user can't go back to Startup screen
+
   } catch (err) {
     const e = err instanceof Error ? err.message : String(err)
     await error('Initialization failed:', {})
+
     errorMsg.value = e
-    loading.value = false
   }
 })
 </script>
@@ -51,12 +52,12 @@ onMounted(async () => {
       </div>
 
       <!-- Title -->
-      <h1 class="text-3xl font-bold mb-4 text-center w-full">{{ $t('startup.title') }}</h1>
+      <h1 class="text-3xl font-bold mb-4 text-center w-full">{{ $t('screens.startup.title') }}</h1>
 
       <!-- Loading indicator -->
-      <div v-if="loading" class="space-y-4">
+      <div v-if="syncing" class="space-y-4">
         <div class="loading loading-spinner loading-lg"></div>
-        <p class="text-sm opacity-70">{{ $t('startup.initializing') }}</p>
+        <p class="text-sm opacity-70">{{ $t('screens.startup.initializing') }}</p>
       </div>
 
       <!-- Error display -->
@@ -64,10 +65,10 @@ onMounted(async () => {
         <p class="text-error text-sm">{{ errorMsg }}</p>
         <div class="flex gap-2 justify-center">
           <button class="btn btn-sm btn-primary" @click="handleRetry">
-            {{ $t('startup.retry') }}
+            {{ $t('screens.startup.actions.retry') }}
           </button>
           <button class="btn btn-sm btn-primary" @click="router.replace('/home')">
-            {{ 'Home' }}
+            {{ $t('screens.home.title') }}
           </button>
         </div>
       </div>

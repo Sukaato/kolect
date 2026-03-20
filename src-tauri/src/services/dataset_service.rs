@@ -10,7 +10,13 @@ use tauri_plugin_log::log;
 
 use crate::dto::input::{DatasetDto, DatasetMetaDto};
 use crate::infrastructure::config::AppConfig;
+use crate::infrastructure::db::repositories::artist_repository::ArtistSummaryRow;
+use crate::infrastructure::db::repositories::group_repository::GroupSummaryRow;
+use crate::infrastructure::db::repositories::{
+    ArtistRepository, GroupRepository, Page, PaginatedResult,
+};
 use crate::infrastructure::db::seeder::DatasetSeeder;
+use crate::services::collection_service::{CollectionSortBy, CollectionSummaryItem};
 
 pub struct DatasetService<'a> {
     app: &'a AppHandle,
@@ -46,6 +52,63 @@ impl<'a> DatasetService<'a> {
         log::info!("Dataset synchronization completed, report: {:?}", report);
 
         Ok(true)
+    }
+
+    pub fn get_summary(
+        &mut self,
+        page: Page,
+        sort_by: CollectionSortBy,
+        include_photocards: bool,
+    ) -> Result<PaginatedResult<CollectionSummaryItem>, diesel::result::Error> {
+        let mut groups = self.get_groups_summary(None, None, include_photocards)?;
+        let mut artists = self.get_artists_summary(None, None, include_photocards)?;
+
+        // Fusionner et convertir
+        let mut items: Vec<CollectionSummaryItem> = groups
+            .drain(..)
+            .map(|group| CollectionSummaryItem {
+                id: group.id,
+                kind: "group".to_string(),
+                name: group.name,
+                agency_name: group.agency_name,
+                image_url: group.image_url,
+                is_favorite: group.is_favorite,
+                owned_count: group.owned_count,
+                total_count: group.total_count,
+            })
+            .chain(artists.drain(..).map(|artist| CollectionSummaryItem {
+                id: artist.id,
+                kind: "solo".to_string(),
+                name: artist.name,
+                agency_name: artist.agency_name,
+                image_url: artist.image_url,
+                is_favorite: artist.is_favorite,
+                owned_count: artist.owned_count,
+                total_count: artist.total_count,
+            }))
+            .collect();
+
+        // Tri : favoris d'abord, puis critère secondaire ASC
+        items.sort_by(|a, b| {
+            b.is_favorite
+                .cmp(&a.is_favorite)
+                .then_with(|| match sort_by {
+                    CollectionSortBy::Name => a.name.cmp(&b.name),
+                    CollectionSortBy::Agency => a
+                        .agency_name
+                        .cmp(&b.agency_name)
+                        .then_with(|| a.name.cmp(&b.name)),
+                })
+        });
+
+        let total = items.len() as i64;
+
+        // Pagination en mémoire (données déjà chargées pour le tri cross-table)
+        let offset = page.offset() as usize;
+        let limit = page.limit() as usize;
+        let data: Vec<CollectionSummaryItem> = items.into_iter().skip(offset).take(limit).collect();
+
+        Ok(PaginatedResult::new(data, page, total))
     }
 
     // -----------------------------------------------------------------------
@@ -103,5 +166,23 @@ impl<'a> DatasetService<'a> {
             .map_err(|e| format!("Can not write in dataset_metadata file: {}", e))?;
 
         Ok(())
+    }
+
+    fn get_groups_summary(
+        &mut self,
+        query: Option<&str>,
+        agency_ids: Option<&[String]>,
+        include_photocards: bool,
+    ) -> Result<Vec<GroupSummaryRow>, diesel::result::Error> {
+        GroupRepository::new(self.conn).get_summary(false, query, agency_ids, include_photocards)
+    }
+
+    fn get_artists_summary(
+        &mut self,
+        query: Option<&str>,
+        agency_ids: Option<&[String]>,
+        include_photocards: bool,
+    ) -> Result<Vec<ArtistSummaryRow>, diesel::result::Error> {
+        ArtistRepository::new(self.conn).get_summary(false, query, agency_ids, include_photocards)
     }
 }

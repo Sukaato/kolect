@@ -3,15 +3,32 @@
     "title": "Kolect",
     "description": "Your K-pop collection tracker"
   },
-  "nav": {
-    "home": "Home",
-    "collection": "Collection",
-    "settings": "Settings"
+  "common": {
+    "kind": {
+      "solo": "Solo",
+      "group": "Group"
+    }
+  },
+  "errors": {
+    "datasetSync": "Failed to sync dataset",
+    "networkError": "Network error"
   },
   "screens": {
-    "home": {},
+    "startup": {
+      "title": "Kolect",
+      "initializing": "Initializing...",
+      "actions": {
+        "retry": "Retry"
+      }
+    },
+    "home": {
+      "title": "Home"
+    },
     "collection": {
-      "title": "My collection"
+      "title": "My collection",
+      "includePhotocards": "Include PC card",
+      "empty": "Its empty, start Kollect",
+      "endOfList": "Onyl this ? Kollect more"
     },
     "setting": {
       "title": "Settings",
@@ -40,6 +57,10 @@
             "actions": {
               "refresh": "Sync"
             }
+          },
+          "photocards": {
+            "title": "Include photocards",
+            "sublabel": "Count photocards in the item total"
           }
         },
         "about": {
@@ -50,14 +71,5 @@
         }
       }
     }
-  },
-  "errors": {
-    "datasetSync": "Failed to sync dataset",
-    "networkError": "Network error"
-  },
-  "startup": {
-    "title": "Kolect",
-    "initializing": "Initializing...",
-    "retry": "Retry"
   }
 }

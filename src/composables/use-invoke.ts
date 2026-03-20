@@ -1,5 +1,5 @@
 import { invoke as tauriInvoke } from '@tauri-apps/api/core'
-import { debug } from '@tauri-apps/plugin-log'
+import { debug, error as logError } from '@tauri-apps/plugin-log'
 import { shallowRef } from 'vue'
 import { wait } from '@/utils/wait.util'
 import { useToast } from './use-toast'
@@ -12,7 +12,7 @@ interface UseInvokeOptions<T = unknown> {
 export function useInvoke<T = unknown, E = string>(command: string, options?: UseInvokeOptions) {
   const toast = useToast()
 
-  const result = shallowRef<T>(options?.defaults ?? null)
+  const result = shallowRef<T | null>((options?.defaults as T) ?? null)
   const error = shallowRef<E>()
   const loading = shallowRef(false)
 
@@ -22,13 +22,13 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
     result.value = void 0
 
     const stringArgs = Object.fromEntries(
-      Object.entries(args ?? {}).map(([key, value]) => [key, String(value)]),
+      Object.entries(args ?? {}).map(([key, value]) => [key, JSON.stringify(value)]),
     )
 
-    console.debug(`call ${command} command`, {
+    console.debug(`call "${command}" command`, {
       keyValues: stringArgs,
     })
-    await debug(`call ${command} command`, {
+    await debug(`call "${command}" command`, {
       keyValues: stringArgs,
     })
     return Promise.all([
@@ -38,13 +38,15 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
           result.value = res
           return [null, res] as [null, T]
         })
-        .catch(err => {
+        .catch(async err => {
           const errorMsg = err instanceof Error ? err.message : String(err)
           error.value = errorMsg as E
 
           if (options?.showErrorToast !== false) {
             toast.error(errorMsg)
           }
+          console.error(`Error while calling command "${command}":`, err)
+          await logError(`Error while calling command "${command}": ${err}`)
           return [errorMsg, null] as [E, null]
         }),
     ])

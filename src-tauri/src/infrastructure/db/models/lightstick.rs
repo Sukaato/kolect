@@ -5,7 +5,9 @@ use serde::Serialize;
 
 /// Exactement un de group_id / artist_id doit être Some (contrainte applicative).
 /// Ex: lightstick BLACKPINK → group_id, lightstick Lisa → artist_id
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = lightsticks)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Group))]

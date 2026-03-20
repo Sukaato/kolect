@@ -6,7 +6,9 @@ use serde::Serialize;
 /// Table de jonction Artist ↔ Group avec métadonnées d'appartenance.
 /// Clé primaire composite : (artist_id, group_id)
 /// leave_date IS NULL → membre encore actif
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = group_members)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(primary_key(artist_id, group_id))]

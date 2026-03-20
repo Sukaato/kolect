@@ -5,7 +5,9 @@ use serde::Serialize;
 
 /// Un digipack est lié à un album ET à un artiste spécifique.
 /// Ex : digipack Lisa de Born Pink → album_id=born_pink, artist_id=lisa
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = digipacks)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Album))]

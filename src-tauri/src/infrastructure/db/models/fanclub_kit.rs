@@ -4,7 +4,9 @@ use diesel::prelude::*;
 use serde::Serialize;
 
 /// Exactement un de group_id / artist_id doit être Some (contrainte applicative).
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = fanclub_kits)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Group))]

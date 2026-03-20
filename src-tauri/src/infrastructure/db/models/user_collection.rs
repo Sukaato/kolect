@@ -9,7 +9,9 @@ use serde::Serialize;
 /// Exactement une des 6 FK doit être Some (contrainte applicative).
 /// Plusieurs lignes avec la même FK = doublons physiques autorisés.
 /// is_signed pertinent pour : album_version, digipack, photocard.
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = user_collection)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Album))]

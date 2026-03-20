@@ -27,7 +27,7 @@
     "migration:revert": "cd src-tauri && diesel migration revert --database-url ~/.config/kolect/database.db",
     "migration:generate": "cd src-tauri && diesel migration generate --database-url ~/.config/kolect/database.db",
     "migration:run": "cd src-tauri && diesel migration run --database-url ~/.config/kolect/database.db",
-    "migration:schema": "diesel print-schema --database-url ~/.config/kolect/database.db -- --manifest-path src-tauri/Cargo.toml > ./src-tauri/src/infrastructure/db/schema.rs"
+    "migration:schema": "diesel print-schema --config-file src-tauri/diesel.toml --database-url ~/.config/kolect/database.db -- --manifest-path src-tauri/Cargo.toml > ./src-tauri/src/infrastructure/db/schema.rs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.1",

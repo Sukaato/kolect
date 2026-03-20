@@ -1,11 +1,33 @@
 // src-tauri/src/infrastructure/db/repositories/artist_repository.rs
 
 use diesel::prelude::*;
+use diesel::sql_types::{BigInt, Bool, Nullable, Text};
 use diesel::sqlite::SqliteConnection;
 
 use super::{Page, PaginatedResult, RepoResult, Repository, RepositoryError};
 use crate::infrastructure::db::models::Artist;
-use crate::infrastructure::db::schema::artists::dsl::*;
+
+// ─── Row interne pour get_summary ────────────────────────────────────────────
+
+#[derive(QueryableByName, Debug)]
+pub struct ArtistSummaryRow {
+    #[diesel(sql_type = Text)]
+    pub id: String,
+    #[diesel(sql_type = Text)]
+    pub name: String,
+    #[diesel(sql_type = Text)]
+    pub agency_name: String,
+    #[diesel(sql_type = Nullable<Text>)]
+    pub image_url: Option<String>,
+    #[diesel(sql_type = Bool)]
+    pub is_favorite: bool,
+    #[diesel(sql_type = BigInt)]
+    pub total_count: i64,
+    #[diesel(sql_type = BigInt)]
+    pub owned_count: i64,
+}
+
+// ─── Repository ───────────────────────────────────────────────────────────────
 
 pub struct ArtistRepository<'a> {
     conn: &'a mut SqliteConnection,
@@ -15,10 +37,163 @@ impl<'a> ArtistRepository<'a> {
     pub fn new(conn: &'a mut SqliteConnection) -> Self {
         Self { conn }
     }
+
+    /// Retourne le sommaire des artistes solos avec comptage owned/total.
+    /// - owned_only         : true → HAVING owned_count > 0 (collection), false → tous (home)
+    /// - query              : recherche FTS sur le nom (real_name + aliases)
+    /// - agency_ids         : filtre par agences
+    /// - include_photocards : inclure les photocards dans le comptage
+    pub fn get_summary(
+        &mut self,
+        owned_only: bool,
+        query: Option<&str>,
+        agency_ids: Option<&[String]>,
+        include_photocards: bool,
+    ) -> Result<Vec<ArtistSummaryRow>, diesel::result::Error> {
+        let photocard_union = if include_photocards {
+            "UNION ALL
+             SELECT p.id AS item_id, al.artist_id AS owner_id
+             FROM photocards p
+             JOIN album_versions av ON av.id = p.album_version_id AND av.is_deleted = 0
+             JOIN albums al ON al.id = av.album_id AND al.artist_id IS NOT NULL AND al.is_deleted = 0
+             WHERE p.is_deleted = 0
+             UNION ALL
+             SELECT p.id AS item_id, d.artist_id AS owner_id
+             FROM photocards p
+             JOIN digipacks d ON d.id = p.digipack_id AND d.is_deleted = 0
+             WHERE p.is_deleted = 0 AND d.artist_id IS NOT NULL"
+        } else {
+            ""
+        };
+
+        let owned_photocard_union = if include_photocards {
+            "UNION ALL
+             SELECT uc.photocard_id AS item_id, al.artist_id AS owner_id
+             FROM user_collection uc
+             JOIN photocards p ON p.id = uc.photocard_id
+             JOIN album_versions av ON av.id = p.album_version_id
+             JOIN albums al ON al.id = av.album_id AND al.artist_id IS NOT NULL
+             WHERE uc.photocard_id IS NOT NULL
+             UNION ALL
+             SELECT uc.photocard_id AS item_id, d.artist_id AS owner_id
+             FROM user_collection uc
+             JOIN photocards p ON p.id = uc.photocard_id
+             JOIN digipacks d ON d.id = p.digipack_id AND d.artist_id IS NOT NULL
+             WHERE uc.photocard_id IS NOT NULL"
+        } else {
+            ""
+        };
+
+        // Filtre FTS
+        let fts_join = if query.is_some() {
+            "JOIN collection_artists_fts fts ON fts.artist_id = ar.id"
+        } else {
+            ""
+        };
+
+        let fts_where = match query {
+            Some(q) => format!("AND fts.name MATCH '{q}*'"),
+            None => String::new(),
+        };
+
+        // Filtre agence
+        let agency_filter = match agency_ids.filter(|ids| !ids.is_empty()) {
+            Some(ids) => {
+                let placeholders = ids
+                    .iter()
+                    .map(|id| format!("'{id}'"))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                format!("AND ar.solo_agency_id IN ({placeholders})")
+            }
+            None => String::new(),
+        };
+
+        let having = if owned_only {
+            "HAVING owned_count > 0"
+        } else {
+            ""
+        };
+
+        let sql = format!(
+            "SELECT
+                ar.id,
+                COALESCE(
+                    (SELECT aa.name FROM artist_aliases aa
+                     WHERE aa.artist_id = ar.id AND aa.kind = 'solo_stage' AND aa.is_primary = 1
+                     AND aa.is_deleted = 0 LIMIT 1),
+                    (SELECT aa.name FROM artist_aliases aa
+                     WHERE aa.artist_id = ar.id AND aa.kind = 'group_stage' AND aa.is_primary = 1
+                     AND aa.is_deleted = 0 LIMIT 1),
+                    ar.real_name
+                ) AS name,
+                a.name AS agency_name,
+                ar.image_url,
+                CASE WHEN ufa.artist_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite,
+                COUNT(DISTINCT total_items.item_id) AS total_count,
+                COUNT(DISTINCT owned_items.item_id) AS owned_count
+            FROM artists ar
+            JOIN agencies a ON a.id = ar.solo_agency_id
+            {fts_join}
+            LEFT JOIN user_favorites_artists ufa ON ufa.artist_id = ar.id
+            LEFT JOIN (
+                SELECT av.id AS item_id, al.artist_id AS owner_id
+                FROM album_versions av
+                JOIN albums al ON al.id = av.album_id AND al.is_deleted = 0
+                WHERE av.is_deleted = 0 AND al.artist_id IS NOT NULL
+                UNION ALL
+                SELECT d.id AS item_id, d.artist_id AS owner_id
+                FROM digipacks d
+                WHERE d.is_deleted = 0 AND d.artist_id IS NOT NULL
+                UNION ALL
+                SELECT ls.id AS item_id, ls.artist_id AS owner_id
+                FROM lightsticks ls
+                WHERE ls.is_deleted = 0 AND ls.artist_id IS NOT NULL
+                UNION ALL
+                SELECT fk.id AS item_id, fk.artist_id AS owner_id
+                FROM fanclub_kits fk
+                WHERE fk.is_deleted = 0 AND fk.artist_id IS NOT NULL
+                {photocard_union}
+            ) total_items ON total_items.owner_id = ar.id
+            LEFT JOIN (
+                SELECT uc.album_version_id AS item_id, al.artist_id AS owner_id
+                FROM user_collection uc
+                JOIN album_versions av ON av.id = uc.album_version_id
+                JOIN albums al ON al.id = av.album_id AND al.artist_id IS NOT NULL
+                WHERE uc.album_version_id IS NOT NULL
+                UNION ALL
+                SELECT uc.digipack_id AS item_id, d.artist_id AS owner_id
+                FROM user_collection uc
+                JOIN digipacks d ON d.id = uc.digipack_id AND d.artist_id IS NOT NULL
+                WHERE uc.digipack_id IS NOT NULL
+                UNION ALL
+                SELECT uc.lightstick_id AS item_id, ls.artist_id AS owner_id
+                FROM user_collection uc
+                JOIN lightsticks ls ON ls.id = uc.lightstick_id AND ls.artist_id IS NOT NULL
+                WHERE uc.lightstick_id IS NOT NULL
+                UNION ALL
+                SELECT uc.fanclub_kit_id AS item_id, fk.artist_id AS owner_id
+                FROM user_collection uc
+                JOIN fanclub_kits fk ON fk.id = uc.fanclub_kit_id AND fk.artist_id IS NOT NULL
+                WHERE uc.fanclub_kit_id IS NOT NULL
+                {owned_photocard_union}
+            ) owned_items ON owned_items.owner_id = ar.id
+            WHERE ar.is_deleted = 0
+              AND ar.solo_agency_id IS NOT NULL
+            {fts_where}
+            {agency_filter}
+            GROUP BY ar.id
+            {having}",
+        );
+
+        diesel::sql_query(sql).load::<ArtistSummaryRow>(self.conn)
+    }
 }
 
 impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn insert(&mut self, item: Artist) -> RepoResult<Artist> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
         diesel::insert_into(artists)
             .values(&item)
             .execute(self.conn)?;
@@ -27,6 +202,8 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     }
 
     fn find_by_id(&mut self, record_id: &str) -> RepoResult<Option<Artist>> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
         Ok(artists
             .filter(id.eq(record_id))
             .first::<Artist>(self.conn)
@@ -34,6 +211,8 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     }
 
     fn find_all(&mut self, page: Page) -> RepoResult<PaginatedResult<Artist>> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
         let total = artists
             .filter(is_deleted.eq(0))
             .count()
@@ -50,6 +229,8 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     }
 
     fn update(&mut self, item: Artist) -> RepoResult<Artist> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
         diesel::update(artists.filter(id.eq(&item.id)))
             .set((
                 real_name.eq(&item.real_name),
@@ -64,6 +245,8 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     }
 
     fn soft_delete(&mut self, record_id: &str) -> RepoResult<()> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
         diesel::update(artists.filter(id.eq(record_id)))
             .set(is_deleted.eq(1))
             .execute(self.conn)?;

@@ -4,4 +4,6 @@ export enum RouteName {
   COLLECTION = 'Collection',
   SETTING = 'Setting',
   GROUP = 'Group',
+  GROUP_ALBUM = 'GroupAlbum',
 }
+ 

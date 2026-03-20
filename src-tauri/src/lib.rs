@@ -57,9 +57,9 @@ pub fn run() {
 
             log::info!("Fs scope setup successfully");
 
-            services::database::init();
-            let mut conn = services::database::establish_db_connection();
-            services::database::migrate(&mut conn);
+            services::database_service::init();
+            let mut conn = services::database_service::establish_db_connection();
+            services::database_service::migrate(&mut conn);
             log::info!("Local database setup successfully");
 
             app.manage(Mutex::new(AppStore { db_conn: conn }));
@@ -68,7 +68,11 @@ pub fn run() {
             log::info!("Application started successfully");
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![commands::dataset::dataset_sync,])
+        .invoke_handler(tauri::generate_handler![
+            commands::dataset::dataset_sync,
+            commands::dataset::dataset_get_summary,
+            commands::collection::collection_get_summary,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

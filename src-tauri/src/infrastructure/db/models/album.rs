@@ -5,7 +5,9 @@ use serde::Serialize;
 
 /// Exactement un de group_id / artist_id doit être Some
 /// (album de groupe OU album solo — contrainte applicative)
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = albums)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Group))]

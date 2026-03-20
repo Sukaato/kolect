@@ -12,17 +12,8 @@ pub mod group_repository;
 pub mod lightstick_repository;
 pub mod photocard_repository;
 
-pub use agency_repository::AgencyRepository;
-pub use album_repository::AlbumRepository;
-pub use album_version_repository::AlbumVersionRepository;
-pub use artist_alias_repository::ArtistAliasRepository;
 pub use artist_repository::ArtistRepository;
-pub use digipack_repository::DigipackRepository;
-pub use fanclub_kit_repository::FanclubKitRepository;
-pub use group_member_repository::GroupMemberRepository;
 pub use group_repository::GroupRepository;
-pub use lightstick_repository::LightstickRepository;
-pub use photocard_repository::PhotocardRepository;
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 
@@ -42,13 +33,16 @@ pub type RepoResult<T> = Result<T, RepositoryError>;
 /// Paramètres de pagination — page indexée à partir de 1.
 #[derive(Debug, Clone, Copy)]
 pub struct Page {
-    pub page:     u32,
+    pub page: u32,
     pub per_page: u32,
 }
 
 impl Page {
     pub fn new(page: u32, per_page: u32) -> Self {
-        Self { page: page.max(1), per_page }
+        Self {
+            page: page.max(1),
+            per_page,
+        }
     }
 
     pub fn limit(&self) -> i64 {
@@ -72,16 +66,16 @@ impl Default for Page {
 #[derive(Debug, Clone, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PageMeta {
-    pub per_page:       u32,
-    pub current_page:   u32,
-    pub is_first:       bool,
-    pub is_last:        bool,
-    pub is_empty:       bool,
-    pub total:          i64,
-    pub has_total:      bool,
-    pub last_page:      u32,
+    pub per_page: u32,
+    pub current_page: u32,
+    pub is_first: bool,
+    pub is_last: bool,
+    pub is_empty: bool,
+    pub total: i64,
+    pub has_total: bool,
+    pub last_page: u32,
     pub has_more_pages: bool,
-    pub has_pages:      bool,
+    pub has_pages: bool,
 }
 
 impl PageMeta {
@@ -90,20 +84,21 @@ impl PageMeta {
             1
         } else {
             ((total as f64) / (page.per_page as f64)).ceil() as u32
-        }.max(1);
+        }
+        .max(1);
 
         let has_more_pages = page.page < last_page;
-        let is_last        = page.page >= last_page;
-        let has_pages      = total > 0;
+        let is_last = page.page >= last_page;
+        let has_pages = total > 0;
 
         Self {
-            per_page:       page.per_page,
-            current_page:   page.page,
-            is_first:       page.page == 1,
+            per_page: page.per_page,
+            current_page: page.page,
+            is_first: page.page == 1,
             is_last,
-            is_empty:       total == 0,
+            is_empty: total == 0,
             total,
-            has_total:      true,
+            has_total: true,
             last_page,
             has_more_pages,
             has_pages,

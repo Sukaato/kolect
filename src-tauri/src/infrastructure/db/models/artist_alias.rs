@@ -3,7 +3,9 @@ use crate::infrastructure::db::schema::artist_aliases;
 use diesel::prelude::*;
 use serde::Serialize;
 
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = artist_aliases)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Artist))]

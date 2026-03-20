@@ -3,15 +3,36 @@
     "title": "Kolect",
     "description": "Votre gestionnaire de collection K-pop"
   },
-  "nav": {
-    "home": "Accueil",
-    "collection": "Collection",
-    "settings": "Paramètres"
+  "common": {
+    "kind": {
+      "solo": "Solo",
+      "group": "Groupe"
+    }
+  },
+  "errors": {
+    "datasetSync": "Échec de la synchronisation du dataset",
+    "networkError": "Erreur réseau"
   },
   "screens": {
-    "home": {},
+    "startup": {
+      "title": "Kolect",
+      "initializing": "Initialisation...",
+      "actions": {
+        "retry": "Réessayer"
+      }
+    },
+    "home": {
+      "title": "Accueil"
+    },
     "collection": {
-      "title": "Ma collection"
+      "title": "Ma collection",
+      "sort": {
+        "name": "Name",
+        "agency": "Agency"
+      },
+      "includePhotocards": "Inclure les PCs",
+      "empty": "C'est vide, commencer a collectionner",
+      "endOfList": "C'est tous ? Collectione plus"
     },
     "setting": {
       "title": "Paramètres",
@@ -40,6 +61,10 @@
             "actions": {
               "refresh": "Synchroniser"
             }
+          },
+          "photocards": {
+            "title": "Inclure les photocards",
+            "sublabel": "Compter les photocards dans le total des items"
           }
         },
         "about": {
@@ -50,14 +75,5 @@
         }
       }
     }
-  },
-  "errors": {
-    "datasetSync": "Échec de la synchronisation du dataset",
-    "networkError": "Erreur réseau"
-  },
-  "startup": {
-    "title": "Kolect",
-    "initializing": "Initialisation...",
-    "retry": "Réessayer"
   }
 }

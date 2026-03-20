@@ -7,7 +7,9 @@ use serde::Serialize;
 ///   album_id seul           → photocard random toutes versions
 ///   album_version_id seul   → photocard d'une version spécifique
 ///   digipack_id seul        → photocard incluse dans un digipack
-#[derive(Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize)]
+#[derive(
+    Debug, Clone, Queryable, Selectable, Identifiable, Insertable, Associations, Serialize,
+)]
 #[diesel(table_name = photocards)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[diesel(belongs_to(Artist))]
