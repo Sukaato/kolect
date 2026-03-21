@@ -124,9 +124,7 @@ useInfiniteScroll(scrollContainerRef, async () => {
           @click="navigateToItem(item)">
           <!-- Image -->
           <figure class="relative aspect-square bg-base-300">
-            <!-- <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" class="w-full h-full object-cover" /> -->
-            <img v-if="!item.imageUrl" src="https://picsum.photos/200/200" :alt="item.name"
-              class="w-full h-full object-cover" />
+            <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" class="w-full h-full object-cover" />
             <div v-else class="w-full h-full flex items-center justify-center text-4xl text-base-content/20">
               {{ item.kind === 'group' ? '🎤' : '🎧' }}
             </div>

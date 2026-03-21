@@ -11,6 +11,7 @@ import { useGroupStore } from '@/stores/group.store'
 import { RouteName } from '@/types/routes'
 import type { GroupId } from '@/types/schema/group.type'
 import type { PossessionFilter } from '@/types/group.type'
+import type { ArtistId } from '@/types/schema/artist.type'
 
 const { id } = defineProps<{
   id: GroupId
@@ -34,9 +35,8 @@ const isMembersSheetOpen = shallowRef(false)
 
 const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 
-function navigateToSolo(artistId: string) {
-  // TODO: ajouter RouteName.ARTIST quand la route existe
-  router.push({ name: RouteName.ARTIST, params: { artistId }})
+function navigateToSolo(artistId: ArtistId) {
+  router.push({ name: RouteName.ARTIST, params: { id: artistId }})
 }
 
 onMounted(async () => {

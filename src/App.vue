@@ -38,7 +38,7 @@ onErrorCaptured(error => {
 
 <template>
   <div class="flex flex-col h-dvh bg-base-300" :data-theme="theme">
-    <main class="app-root grow overflow-y-auto flex flex-col">
+    <main class="app-root grow overflow-y-auto overflow-x-hidden flex flex-col">
       <RouterView v-slot="{ Component }">
         <Transition :name="transitionName" mode="out-in">
           <component :is="Component" />

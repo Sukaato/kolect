@@ -18,10 +18,13 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/groups/:id/:mode',
-    name: RouteName.GROUP,
-    component: () => import('@/screens/Group.vue'),
-    props: true,
     children: [
+      {
+        path: '',
+        name: RouteName.GROUP,
+        component: () => import('@/screens/Group.vue'),
+        props: true,
+      },
       {
         path: 'albums/:albumId',
         name: RouteName.GROUP_ALBUM,
