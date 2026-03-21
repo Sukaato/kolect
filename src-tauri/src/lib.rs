@@ -69,9 +69,26 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            // dataset
             commands::dataset::dataset_sync,
             commands::dataset::dataset_get_summary,
+            // collection
             commands::collection::collection_get_summary,
+            // group
+            commands::group::group_get_detail,
+            commands::group::group_get_album_summaries,
+            commands::group::group_get_lightsticks,
+            commands::group::group_get_fanclub_kits,
+            // album
+            commands::album::album_get_detail,
+            commands::album::album_get_versions,
+            commands::album::album_get_digipacks,
+            commands::album::album_get_photocards,
+            // artist
+            commands::artist::artist_get_detail,
+            commands::artist::artist_get_album_summaries,
+            commands::artist::artist_get_lightsticks,
+            commands::artist::artist_get_fanclub_kits,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

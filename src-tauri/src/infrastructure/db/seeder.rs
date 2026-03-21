@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/seed/dataset_seeder.rs
-
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use std::collections::HashSet;

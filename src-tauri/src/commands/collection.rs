@@ -1,10 +1,8 @@
-// src-tauri/src/commands/collection.rs
-
 use tauri::State;
 use tokio::sync::Mutex;
 
 use crate::infrastructure::db::repositories::Page;
-use crate::services::collection_service::{CollectionService, CollectionSortBy};
+use crate::services::{CollectionService, CollectionSortBy};
 use crate::AppStore;
 
 #[derive(Debug, serde::Deserialize)]

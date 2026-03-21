@@ -74,6 +74,53 @@
           }
         }
       }
+    },
+    "group": {
+      "filters": {
+        "all": "Tous",
+        "owned": "Possédés",
+        "missing": "Manquants"
+      },
+      "sections": {
+        "albums": "Albums",
+        "lightsticks": "Lightsticks",
+        "fanclub_kits": "Fanclub kits"
+      },
+      "empty": "Aucun item à afficher",
+      "members": {
+        "title": "Membres",
+        "detail": {
+          "birth_date": "Date de naissance",
+          "solo_name": "Nom solo",
+          "solo_debut": "Début carrière solo",
+          "solo_career": "Voir la carrière solo",
+          "photocards": "Photocards"
+        }
+      }
+    },
+    "album": {
+      "filters": {
+        "all": "Tous",
+        "owned": "Possédés",
+        "missing": "Manquants"
+      },
+      "sections": {
+        "versions": "Versions",
+        "digipacks": "Digipacks",
+        "photocards": "Photocards"
+      },
+      "hero": {
+        "progress": "Progression"
+      },
+      "photocards": {
+        "tabs": {
+          "all": "Toutes"
+        },
+        "version_filter": {
+          "all": "Toutes versions"
+        },
+        "empty": "Aucune photocard"
+      }
     }
   }
 }

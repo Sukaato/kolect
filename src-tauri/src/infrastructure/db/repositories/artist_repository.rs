@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/repositories/artist_repository.rs
-
 use diesel::prelude::*;
 use diesel::sql_types::{BigInt, Bool, Nullable, Text};
 use diesel::sqlite::SqliteConnection;
@@ -38,11 +36,18 @@ impl<'a> ArtistRepository<'a> {
         Self { conn }
     }
 
+    /// Retourne plusieurs artistes par leurs IDs.
+    pub fn find_by_ids(&mut self, ids: &[String]) -> RepoResult<Vec<Artist>> {
+        use crate::infrastructure::db::schema::artists::dsl::*;
+
+
+        Ok(artists
+            .filter(id.eq_any(ids))
+            .filter(is_deleted.eq(0))
+            .load::<Artist>(self.conn)?)
+    }
+
     /// Retourne le sommaire des artistes solos avec comptage owned/total.
-    /// - owned_only         : true → HAVING owned_count > 0 (collection), false → tous (home)
-    /// - query              : recherche FTS sur le nom (real_name + aliases)
-    /// - agency_ids         : filtre par agences
-    /// - include_photocards : inclure les photocards dans le comptage
     pub fn get_summary(
         &mut self,
         owned_only: bool,
@@ -84,7 +89,6 @@ impl<'a> ArtistRepository<'a> {
             ""
         };
 
-        // Filtre FTS
         let fts_join = if query.is_some() {
             "JOIN collection_artists_fts fts ON fts.artist_id = ar.id"
         } else {
@@ -96,7 +100,6 @@ impl<'a> ArtistRepository<'a> {
             None => String::new(),
         };
 
-        // Filtre agence
         let agency_filter = match agency_ids.filter(|ids| !ids.is_empty()) {
             Some(ids) => {
                 let placeholders = ids
@@ -109,11 +112,7 @@ impl<'a> ArtistRepository<'a> {
             None => String::new(),
         };
 
-        let having = if owned_only {
-            "HAVING owned_count > 0"
-        } else {
-            ""
-        };
+        let having = if owned_only { "HAVING owned_count > 0" } else { "" };
 
         let sql = format!(
             "SELECT
@@ -194,6 +193,7 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn insert(&mut self, item: Artist) -> RepoResult<Artist> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
+
         diesel::insert_into(artists)
             .values(&item)
             .execute(self.conn)?;
@@ -204,6 +204,7 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn find_by_id(&mut self, record_id: &str) -> RepoResult<Option<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
+
         Ok(artists
             .filter(id.eq(record_id))
             .first::<Artist>(self.conn)
@@ -212,6 +213,7 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
 
     fn find_all(&mut self, page: Page) -> RepoResult<PaginatedResult<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
+
 
         let total = artists
             .filter(is_deleted.eq(0))
@@ -231,6 +233,7 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn update(&mut self, item: Artist) -> RepoResult<Artist> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
+
         diesel::update(artists.filter(id.eq(&item.id)))
             .set((
                 real_name.eq(&item.real_name),
@@ -246,6 +249,7 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
 
     fn soft_delete(&mut self, record_id: &str) -> RepoResult<()> {
         use crate::infrastructure::db::schema::artists::dsl::*;
+
 
         diesel::update(artists.filter(id.eq(record_id)))
             .set(is_deleted.eq(1))

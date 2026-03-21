@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, readonly, ref, shallowRef, watch } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
 import { useToast } from '@/composables/use-toast'
-import type { PageMeta, PaginatedResult } from '@/types/pagination'
+import type { PageMeta, PaginatedResult } from '@/types/pagination.type'
 import type { CollectionSummaryItem } from './collection.store'
 import { useSettingStore } from './setting.store'
 

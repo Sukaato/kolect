@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/repositories/group_repository.rs
-
 use diesel::prelude::*;
 use diesel::sql_types::{BigInt, Bool, Nullable, Text};
 use diesel::sqlite::SqliteConnection;

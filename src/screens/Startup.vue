@@ -30,7 +30,7 @@ onMounted(async () => {
     await info('Dataset synced successfully')
 
     // Redirect to home after initialization
-    await wait(300)
+    await wait(200)
     await info('Redirecting to /home')
     router.replace('/home') // So user can't go back to Startup screen
 

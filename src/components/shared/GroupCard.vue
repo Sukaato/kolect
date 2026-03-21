@@ -2,7 +2,7 @@
 import { useCollectionStore } from "@/stores/collection.store";
 import { useDatasetStore } from "@/stores/dataset.store";
 import { type Collectible, CollectibleKind } from "@/types/dataset";
-import type { Group } from "@/types/group";
+import type { Group } from "@/types/schema/group.type";
 import { RouteName } from "@/types/routes";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";

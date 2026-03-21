@@ -21,6 +21,31 @@ const routes: RouteRecordRaw[] = [
     name: RouteName.GROUP,
     component: () => import('@/screens/Group.vue'),
     props: true,
+    children: [
+      {
+        path: 'albums/:albumId',
+        name: RouteName.GROUP_ALBUM,
+        component: () => import('@/screens/Album.vue'),
+        props: true,
+      },
+    ],
+  },
+  {
+    path: '/artists/:id',
+    children: [
+      {
+        path: '',
+        name: RouteName.ARTIST,
+        component: () => import('@/screens/Artist.vue'),
+        props: true,
+      },
+      {
+        path: 'albums/:albumId',
+        name: RouteName.ARTIST_ALBUM,
+        component: () => import('@/screens/Album.vue'),
+        props: true,
+      },
+    ],
   },
 ]
 

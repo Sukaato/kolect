@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/repositories/agency_repository.rs
-
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 

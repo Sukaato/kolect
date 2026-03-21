@@ -1,0 +1,53 @@
+use tauri::State;
+use tokio::sync::Mutex;
+
+use crate::services::ArtistService;
+use crate::AppStore;
+
+#[tauri::command]
+pub async fn artist_get_detail(
+    state: State<'_, Mutex<AppStore>>,
+    artist_id: String,
+) -> Result<serde_json::Value, String> {
+    let mut store = state.lock().await;
+    let result = ArtistService::new(&mut store.db_conn)
+        .get_detail(&artist_id)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_value(result).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn artist_get_album_summaries(
+    state: State<'_, Mutex<AppStore>>,
+    artist_id: String,
+) -> Result<serde_json::Value, String> {
+    let mut store = state.lock().await;
+    let result = ArtistService::new(&mut store.db_conn)
+        .get_album_summaries(&artist_id)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_value(result).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn artist_get_lightsticks(
+    state: State<'_, Mutex<AppStore>>,
+    artist_id: String,
+) -> Result<serde_json::Value, String> {
+    let mut store = state.lock().await;
+    let result = ArtistService::new(&mut store.db_conn)
+        .get_lightsticks(&artist_id)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_value(result).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn artist_get_fanclub_kits(
+    state: State<'_, Mutex<AppStore>>,
+    artist_id: String,
+) -> Result<serde_json::Value, String> {
+    let mut store = state.lock().await;
+    let result = ArtistService::new(&mut store.db_conn)
+        .get_fanclub_kits(&artist_id)
+        .map_err(|e| e.to_string())?;
+    serde_json::to_value(result).map_err(|e| e.to_string())
+}

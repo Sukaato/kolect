@@ -70,6 +70,53 @@
           }
         }
       }
+    },
+    "group": {
+      "filters": {
+        "all": "All",
+        "owned": "Owned",
+        "missing": "Missing"
+      },
+      "sections": {
+        "albums": "Albums",
+        "lightsticks": "Lightsticks",
+        "fanclub_kits": "Fanclub kits"
+      },
+      "empty": "No items to display",
+      "members": {
+        "title": "Members",
+        "detail": {
+          "birth_date": "Date of birth",
+          "solo_name": "Solo name",
+          "solo_debut": "Solo debut",
+          "solo_career": "View solo career",
+          "photocards": "Photocards"
+        }
+      }
+    },
+    "album": {
+      "filters": {
+        "all": "All",
+        "owned": "Owned",
+        "missing": "Missing"
+      },
+      "sections": {
+        "versions": "Versions",
+        "digipacks": "Digipacks",
+        "photocards": "Photocards"
+      },
+      "hero": {
+        "progress": "Progress"
+      },
+      "photocards": {
+        "tabs": {
+          "all": "All"
+        },
+        "version_filter": {
+          "all": "All versions"
+        },
+        "empty": "No photocards"
+      }
     }
   }
 }

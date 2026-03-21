@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/repositories/group_member_repository.rs
-//
 // Cas spécial : PK composite (artist_id, group_id), pas de soft delete.
 // N'implémente pas le trait Repository<T> (pas d'id propre).
 // Le départ d'un membre se gère via update() en renseignant leave_date.

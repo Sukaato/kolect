@@ -4,8 +4,8 @@ use tokio::sync::Mutex;
 
 use crate::commands::collection::CollectionSummaryParams;
 use crate::infrastructure::db::repositories::Page;
-use crate::services::collection_service::CollectionSortBy;
-use crate::services::dataset_service::DatasetService;
+use crate::services::CollectionSortBy;
+use crate::services::DatasetService;
 use crate::AppStore;
 
 #[tauri::command]

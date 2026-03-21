@@ -5,5 +5,6 @@ export enum RouteName {
   SETTING = 'Setting',
   GROUP = 'Group',
   GROUP_ALBUM = 'GroupAlbum',
+  ARTIST = 'Artist',
+  ARTIST_ALBUM = 'ArtistAlbum',
 }
- 

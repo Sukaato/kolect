@@ -1,11 +1,8 @@
-// src-tauri/src/services/collection_service.rs
-
 use diesel::sqlite::SqliteConnection;
 use serde::Serialize;
 
 use crate::infrastructure::db::repositories::{
-    artist_repository::ArtistSummaryRow, group_repository::GroupSummaryRow, ArtistRepository,
-    GroupRepository, Page, PaginatedResult,
+    ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
 
 // ─── Paramètres de tri ────────────────────────────────────────────────────────

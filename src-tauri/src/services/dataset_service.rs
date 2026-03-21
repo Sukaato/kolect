@@ -10,10 +10,8 @@ use tauri_plugin_log::log;
 
 use crate::dto::input::{DatasetDto, DatasetMetaDto};
 use crate::infrastructure::config::AppConfig;
-use crate::infrastructure::db::repositories::artist_repository::ArtistSummaryRow;
-use crate::infrastructure::db::repositories::group_repository::GroupSummaryRow;
 use crate::infrastructure::db::repositories::{
-    ArtistRepository, GroupRepository, Page, PaginatedResult,
+    ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
 use crate::infrastructure::db::seeder::DatasetSeeder;
 use crate::services::collection_service::{CollectionSortBy, CollectionSummaryItem};

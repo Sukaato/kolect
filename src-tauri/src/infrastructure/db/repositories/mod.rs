@@ -1,5 +1,3 @@
-// src-tauri/src/infrastructure/db/repositories/mod.rs
-
 pub mod agency_repository;
 pub mod album_repository;
 pub mod album_version_repository;
@@ -12,8 +10,16 @@ pub mod group_repository;
 pub mod lightstick_repository;
 pub mod photocard_repository;
 
-pub use artist_repository::ArtistRepository;
-pub use group_repository::GroupRepository;
+pub use album_repository::{AlbumDetailRow, AlbumRepository, AlbumSummaryRow};
+pub use album_version_repository::{AlbumVersionRepository, AlbumVersionWithOwnedRow};
+pub use artist_alias_repository::ArtistAliasRepository;
+pub use artist_repository::{ArtistRepository, ArtistSummaryRow};
+pub use digipack_repository::{DigipackRepository, DigipackWithOwnedRow};
+pub use fanclub_kit_repository::{FanclubKitRepository, FanclubKitWithOwnedRow};
+pub use group_member_repository::GroupMemberRepository;
+pub use group_repository::{GroupRepository, GroupSummaryRow};
+pub use lightstick_repository::{LightstickRepository, LightstickWithOwnedRow};
+pub use photocard_repository::{PhotocardRepository, PhotocardWithOwnedRow};
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 
@@ -30,7 +36,6 @@ pub type RepoResult<T> = Result<T, RepositoryError>;
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
 
-/// Paramètres de pagination — page indexée à partir de 1.
 #[derive(Debug, Clone, Copy)]
 pub struct Page {
     pub page: u32,
@@ -62,7 +67,6 @@ impl Default for Page {
 
 // ─── PageMeta ─────────────────────────────────────────────────────────────────
 
-/// Métadonnées de pagination retournées avec chaque find_all.
 #[derive(Debug, Clone, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PageMeta {
@@ -108,8 +112,6 @@ impl PageMeta {
 
 // ─── PaginatedResult ──────────────────────────────────────────────────────────
 
-/// Résultat paginé générique retourné par find_all.
-/// Sérialisé en { data: [...], meta: { ... } }
 #[derive(Debug, serde::Serialize)]
 pub struct PaginatedResult<T: serde::Serialize> {
     pub data: Vec<T>,
@@ -127,21 +129,10 @@ impl<T: serde::Serialize> PaginatedResult<T> {
 
 // ─── Trait Repository ─────────────────────────────────────────────────────────
 
-/// Contrat minimal pour tous les repositories à id propre.
 pub trait Repository<T: serde::Serialize> {
-    /// Insère un enregistrement et retourne l'enregistrement créé.
     fn insert(&mut self, item: T) -> RepoResult<T>;
-
-    /// Recherche par id — retourne aussi les soft-deletés.
     fn find_by_id(&mut self, id: &str) -> RepoResult<Option<T>>;
-
-    /// Retourne les enregistrements actifs (is_deleted = 0), triés par name ASC,
-    /// avec les métadonnées de pagination.
     fn find_all(&mut self, page: Page) -> RepoResult<PaginatedResult<T>>;
-
-    /// Met à jour tous les champs d'un enregistrement existant.
     fn update(&mut self, item: T) -> RepoResult<T>;
-
-    /// Soft delete — passe is_deleted à 1.
     fn soft_delete(&mut self, id: &str) -> RepoResult<()>;
 }

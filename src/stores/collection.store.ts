@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, readonly, ref, shallowRef, watch } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
-import type { PageMeta, PaginatedResult } from '@/types/pagination'
+import type { PageMeta, PaginatedResult } from '@/types/pagination.type'
 import { useSettingStore } from './setting.store'
 
 export interface CollectionSummaryItem {
