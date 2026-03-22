@@ -28,9 +28,12 @@ on:
         required: false
         default: "1"
 
-jobs:
-  # ─── Étape 1 : Build front ────────────────────────────────────────────────
+# On ne cancel pas une release en cours — trop risqué (tag déjà pushé)
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
+jobs:
   build-front:
     name: Release — Build Frontend
     runs-on: ubuntu-latest
@@ -45,8 +48,6 @@ jobs:
       - name: Build
         uses: ./.github/workflows/actions/build-front
 
-  # ─── Étape 2a : Build backend ─────────────────────────────────────────────
-
   build-back:
     name: Release — Build Backend
     runs-on: ubuntu-latest
@@ -59,8 +60,6 @@ jobs:
 
       - name: Build
         uses: ./.github/workflows/actions/build-back
-
-  # ─── Étape 2b : Build Android ─────────────────────────────────────────────
 
   build-android:
     name: Release — Build Android
@@ -83,8 +82,6 @@ jobs:
           key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
           artifact-suffix: ${{ github.event_name == 'push' && github.ref_name || 'pre-release' }}
-
-  # ─── Étape 3 : Bump version (workflow_dispatch uniquement) ────────────────
 
   bump:
     name: Release — Bump Version
@@ -112,8 +109,6 @@ jobs:
           bump: ${{ inputs.bump }}
           pre-release: ${{ inputs.pre-release }}
           pre-release-number: ${{ inputs.pre-release-number }}
-
-  # ─── Étape 4 : Résoudre la version finale ─────────────────────────────────
 
   resolve-version:
     name: Release — Resolve Version
@@ -152,8 +147,6 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "is-prerelease=$IS_PRE" >> $GITHUB_OUTPUT
 
-  # ─── Étape 5 : Re-upload les artifacts avec le nom de version ─────────────
-
   rename-artifacts:
     name: Release — Rename Artifacts
     runs-on: ubuntu-latest
@@ -185,8 +178,6 @@ jobs:
           path: release-artifacts/*.aab
           retention-days: 90
 
-  # ─── Étape 6 : Créer la release GitHub ────────────────────────────────────
-
   publish:
     name: Release — Publish
     runs-on: ubuntu-latest
@@ -200,7 +191,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download release artifacts
+      - name: Download APK
         uses: actions/download-artifact@v4
         with:
           name: kolect-${{ needs.resolve-version.outputs.tag }}.apk

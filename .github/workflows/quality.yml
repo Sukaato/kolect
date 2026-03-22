@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality-front:
     name: Quality — Frontend
