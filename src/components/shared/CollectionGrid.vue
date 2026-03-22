@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import type { CollectionListStore } from '@/types/collection-list.type'
-import type { CollectionSortBy, CollectionSummaryItem } from '@/stores/collection.store'
+import type { CollectionSummaryItem } from '@/stores/collection.store'
+import type { Agency } from '@/types/schema/agency.type'
 import { RouteName } from '@/types/routes'
-import { useInfiniteScroll } from '@vueuse/core'
+import { useInfiniteScroll, useDebounceFn } from '@vueuse/core'
 import { StarIcon } from 'lucide-vue-next'
-import { computed, useTemplateRef } from 'vue'
+import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useInvoke } from '@/composables/use-invoke'
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
-const { store } = defineProps<{
+const {
+  store,
+  screenClass,
+  agenciesCommand,
+  searchDebounce = 500,
+} = defineProps<{
   store: CollectionListStore
   screenClass: string
+  /** Tauri command name to load the agency list (differs between Home and Collection) */
+  agenciesCommand: string
+  /** Debounce delay in ms for the search input (default: 500) */
+  searchDebounce?: number
 }>()
 
 // ─── Store ───────────────────────────────────────────────────────────────────
@@ -21,12 +32,31 @@ const items = computed(() => store.items)
 const hasMorePages = computed(() => store.hasMorePages)
 const isEmpty = computed(() => store.isEmpty)
 
+// ─── Agencies ─────────────────────────────────────────────────────────────────
+
+const { result: agencies, invoke: fetchAgencies } = useInvoke<Agency[]>(agenciesCommand, {
+  defaults: [],
+})
+
+onMounted(async () => {
+  await fetchAgencies()
+})
+
 // ─── Filters ─────────────────────────────────────────────────────────────────
 
-const sortOptions: { value: CollectionSortBy; label: string }[] = [
-  { value: 'name', label: 'screens.collection.sort.name' },
-  { value: 'agency', label: 'screens.collection.sort.agency' },
-]
+const searchInput = shallowRef<string>('')
+const selectedAgencyId = shallowRef<string | null>(null)
+
+const debouncedSearch = useDebounceFn(async (value: string) => {
+  await store.setSearch(value.trim() || null)
+}, searchDebounce)
+
+watch(searchInput, value => debouncedSearch(value))
+
+async function onAgencyChange(agencyId: string | null) {
+  selectedAgencyId.value = agencyId
+  await store.setAgency(agencyId)
+}
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
 
@@ -79,14 +109,28 @@ useInfiniteScroll(
       </div>
 
       <!-- Filters -->
-      <div class="px-4 pb-3 max-w-lg mx-auto">
-        <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-          <button v-for="opt in sortOptions" :key="opt.value" class="btn btn-sm shrink-0"
-            :class="store.params.sortBy === opt.value ? 'btn-primary' : 'btn-ghost border border-base-300'"
-            @click="store.setSortBy(opt.value)">
-            {{ $t(opt.label) }}
-          </button>
-        </div>
+      <div class="px-4 pb-3 max-w-lg mx-auto flex gap-2">
+
+        <!-- Search input -->
+        <label class="input input-sm flex items-center gap-2 flex-1 border border-base-300">
+          <svg class="h-3.5 w-3.5 shrink-0 text-base-content/40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input v-model="searchInput" type="search" class="grow bg-transparent outline-none text-sm"
+            :placeholder="$t('screens.collection.filters.search_placeholder')" />
+        </label>
+
+        <!-- Agency dropdown -->
+        <select class="select select-sm select-bordered border-base-300 max-w-35" :value="selectedAgencyId ?? ''"
+          @change="onAgencyChange(($event.target as HTMLSelectElement).value || null)">
+          <option value="">{{ $t('screens.collection.filters.all_agencies') }}</option>
+          <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
+            {{ agency.name }}
+          </option>
+        </select>
+
       </div>
     </div>
 

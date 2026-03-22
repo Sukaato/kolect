@@ -14,7 +14,7 @@ use crate::infrastructure::db::repositories::{
     ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
 use crate::infrastructure::db::seeder::DatasetSeeder;
-use crate::services::collection_service::{CollectionSortBy, CollectionSummaryItem};
+use crate::services::collection_service::CollectionSummaryItem;
 
 pub struct DatasetService<'a> {
     app: &'a AppHandle,
@@ -55,13 +55,18 @@ impl<'a> DatasetService<'a> {
     pub fn get_summary(
         &mut self,
         page: Page,
-        sort_by: CollectionSortBy,
+        search: Option<&str>,
+        agency_id: Option<&str>,
         include_photocards: bool,
     ) -> Result<PaginatedResult<CollectionSummaryItem>, diesel::result::Error> {
-        let mut groups = self.get_groups_summary(None, None, include_photocards)?;
-        let mut artists = self.get_artists_summary(None, None, include_photocards)?;
+        let agency_ids: Option<Vec<String>> = agency_id.map(|id| vec![id.to_string()]);
 
-        // Fusionner et convertir
+        let mut groups =
+            self.get_groups_summary(search, agency_ids.as_deref(), include_photocards)?;
+        let mut artists =
+            self.get_artists_summary(search, agency_ids.as_deref(), include_photocards)?;
+
+        // Merge and convert
         let mut items: Vec<CollectionSummaryItem> = groups
             .drain(..)
             .map(|group| CollectionSummaryItem {
@@ -86,22 +91,16 @@ impl<'a> DatasetService<'a> {
             }))
             .collect();
 
-        // Tri : favoris d'abord, puis critère secondaire ASC
+        // Sort: favorites first, then by name
         items.sort_by(|a, b| {
             b.is_favorite
                 .cmp(&a.is_favorite)
-                .then_with(|| match sort_by {
-                    CollectionSortBy::Name => a.name.cmp(&b.name),
-                    CollectionSortBy::Agency => a
-                        .agency_name
-                        .cmp(&b.agency_name)
-                        .then_with(|| a.name.cmp(&b.name)),
-                })
+                .then_with(|| a.name.cmp(&b.name))
         });
 
         let total = items.len() as i64;
 
-        // Pagination en mémoire (données déjà chargées pour le tri cross-table)
+        // In-memory pagination (data already loaded for cross-table sorting)
         let offset = page.offset() as usize;
         let limit = page.limit() as usize;
         let data: Vec<CollectionSummaryItem> = items.into_iter().skip(offset).take(limit).collect();

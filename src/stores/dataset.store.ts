@@ -3,17 +3,8 @@ import { computed, readonly, ref, shallowRef, watch } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
 import { useToast } from '@/composables/use-toast'
 import type { PageMeta, PaginatedResult } from '@/types/pagination.type'
-import type { CollectionSummaryItem } from './collection.store'
+import type { CollectionSummaryItem, CollectionSummaryParams } from './collection.store'
 import { useSettingStore } from './setting.store'
-
-export type CollectionSortBy = 'name' | 'agency'
-
-export interface CollectionSummaryParams {
-  page: number
-  perPage: number
-  sortBy: CollectionSortBy
-  includePhotocards: boolean
-}
 
 const defaultMeta: PageMeta = {
   perPage: 6,
@@ -34,7 +25,7 @@ const defaultSummary: PaginatedResult<CollectionSummaryItem> = {
 }
 
 export const useDatasetStore = defineStore('dataset', () => {
-  // ─── Composable ────────────────────────────────────────────────────────────
+  // ─── Composables ───────────────────────────────────────────────────────────
   const toast = useToast()
   const settingStore = useSettingStore()
   watch(
@@ -50,14 +41,15 @@ export const useDatasetStore = defineStore('dataset', () => {
   const params = ref<CollectionSummaryParams>({
     page: defaultMeta.currentPage,
     perPage: defaultMeta.perPage,
-    sortBy: 'name',
     includePhotocards: settingStore.includePhotocardCount,
+    search: null,
+    agencyId: null,
   })
 
-  // Pages accumulées : Map<pageNumber, items[]>
+  // Accumulated pages: Map<pageNumber, items[]>
   const pages = ref<Map<number, CollectionSummaryItem[]>>(new Map())
 
-  // Meta de la dernière page chargée
+  // Meta of the last loaded page
   const meta = shallowRef<PageMeta>(defaultMeta)
 
   // Last time dataset has been synced
@@ -71,6 +63,7 @@ export const useDatasetStore = defineStore('dataset', () => {
     error: syncError,
     invoke: syncDataset,
   } = useInvoke<boolean>('dataset_sync')
+
   const {
     result: collection,
     loading,
@@ -82,7 +75,7 @@ export const useDatasetStore = defineStore('dataset', () => {
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
-  // Liste aplatie dans l'ordre des pages pour le scroll infini
+  // Flattened list in page order for infinite scroll
   const items = computed<CollectionSummaryItem[]>(() => {
     const sorted = pages.value
       .entries()
@@ -95,7 +88,7 @@ export const useDatasetStore = defineStore('dataset', () => {
 
   const isEmpty = computed(() => meta.value.isEmpty)
 
-  // ─── Helpers privés ────────────────────────────────────────────────────────
+  // ─── Private helpers ───────────────────────────────────────────────────────
 
   function reset() {
     pages.value = new Map()
@@ -110,11 +103,8 @@ export const useDatasetStore = defineStore('dataset', () => {
     if (syncSuccess) {
       toast.success('Dataset synced successfully')
     } else {
-      toast.error(syncError.value ?? '', {
-        title: 'Dataset failed to sync',
-      })
+      toast.error(syncError.value ?? '', { title: 'Dataset failed to sync' })
     }
-
     lastFetchedAt.value = new Date()
   }
 
@@ -136,14 +126,14 @@ export const useDatasetStore = defineStore('dataset', () => {
     await fetch({ page: params.value.page + 1 })
   }
 
-  async function setSortBy(sortBy: CollectionSortBy) {
+  async function setSearch(search: string | null) {
     reset()
-    await fetch({ sortBy })
+    await fetch({ search })
   }
 
-  async function setIncludePhotocards(include: boolean) {
+  async function setAgency(agencyId: string | null) {
     reset()
-    await fetch({ includePhotocards: include })
+    await fetch({ agencyId })
   }
 
   async function refresh() {
@@ -172,8 +162,8 @@ export const useDatasetStore = defineStore('dataset', () => {
     sync,
     fetch,
     loadNextPage,
-    setSortBy,
-    setIncludePhotocards,
+    setSearch,
+    setAgency,
     refresh,
   }
 })

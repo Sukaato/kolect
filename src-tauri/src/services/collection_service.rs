@@ -5,15 +5,7 @@ use crate::infrastructure::db::repositories::{
     ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
 
-// ─── Paramètres de tri ────────────────────────────────────────────────────────
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum CollectionSortBy {
-    Name,
-    Agency,
-}
-
-// ─── DTO de sortie ────────────────────────────────────────────────────────────
+// ─── Output DTO ───────────────────────────────────────────────────────────────
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -29,8 +21,6 @@ pub struct CollectionSummaryItem {
     pub total_count: i64,
 }
 
-// ─── Résultats des raw queries ────────────────────────────────────────────────
-
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 pub struct CollectionService<'a> {
@@ -42,19 +32,24 @@ impl<'a> CollectionService<'a> {
         Self { conn }
     }
 
-    /// Retourne le sommaire paginé de la collection — groupes + solos unifiés.
-    /// Triés : favoris d'abord, puis par nom ASC ou agence ASC.
-    /// include_photocards : si true, les photocards sont comptées dans total/owned.
+    /// Returns the paginated collection summary — groups and solo artists unified.
+    /// Sorted: favorites first, then by name ASC.
+    /// include_photocards: if true, photocards are counted in total/owned.
     pub fn get_summary(
         &mut self,
         page: Page,
-        sort_by: CollectionSortBy,
+        search: Option<&str>,
+        agency_id: Option<&str>,
         include_photocards: bool,
     ) -> Result<PaginatedResult<CollectionSummaryItem>, diesel::result::Error> {
-        let mut groups = self.get_groups_summary(None, None, include_photocards)?;
-        let mut artists = self.get_artists_summary(None, None, include_photocards)?;
+        let agency_ids: Option<Vec<String>> = agency_id.map(|id| vec![id.to_string()]);
 
-        // Fusionner et convertir
+        let mut groups =
+            self.get_groups_summary(search, agency_ids.as_deref(), include_photocards)?;
+        let mut artists =
+            self.get_artists_summary(search, agency_ids.as_deref(), include_photocards)?;
+
+        // Merge and convert
         let mut items: Vec<CollectionSummaryItem> = groups
             .drain(..)
             .map(|r| CollectionSummaryItem {
@@ -79,22 +74,16 @@ impl<'a> CollectionService<'a> {
             }))
             .collect();
 
-        // Tri : favoris d'abord, puis critère secondaire ASC
+        // Sort: favorites first, then by name ASC
         items.sort_by(|a, b| {
             b.is_favorite
                 .cmp(&a.is_favorite)
-                .then_with(|| match sort_by {
-                    CollectionSortBy::Name => a.name.cmp(&b.name),
-                    CollectionSortBy::Agency => a
-                        .agency_name
-                        .cmp(&b.agency_name)
-                        .then_with(|| a.name.cmp(&b.name)),
-                })
+                .then_with(|| a.name.cmp(&b.name))
         });
 
         let total = items.len() as i64;
 
-        // Pagination en mémoire (données déjà chargées pour le tri cross-table)
+        // In-memory pagination (data already loaded for cross-table sorting)
         let offset = page.offset() as usize;
         let limit = page.limit() as usize;
         let data: Vec<CollectionSummaryItem> = items.into_iter().skip(offset).take(limit).collect();
@@ -102,7 +91,7 @@ impl<'a> CollectionService<'a> {
         Ok(PaginatedResult::new(data, page, total))
     }
 
-    // ─── Sous-méthodes privées ────────────────────────────────────────────────
+    // ─── Private helpers ──────────────────────────────────────────────────────
 
     fn get_groups_summary(
         &mut self,

@@ -46,9 +46,9 @@
     },
     "collection": {
       "title": "Ma collection",
-      "sort": {
-        "name": "Nom",
-        "agency": "Agence"
+      "filters": {
+        "search_placeholder": "Rechercher...",
+        "all_agencies": "Toutes les agences"
       },
       "includePhotocards": "Inclure les PCs",
       "empty": "C'est vide, commencer a collectionner",

@@ -1,5 +1,3 @@
-// src-tauri/src/lib.rs
-
 mod commands;
 mod dto;
 mod infrastructure;
@@ -53,6 +51,9 @@ pub fn run() {
             // favorite
             commands::favorite::favorite_toggle_group,
             commands::favorite::favorite_toggle_artist,
+            // agency
+            commands::agency::dataset_get_agencies,
+            commands::agency::collection_get_agencies,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

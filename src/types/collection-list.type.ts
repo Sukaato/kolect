@@ -1,4 +1,4 @@
-import type { CollectionSortBy, CollectionSummaryItem } from '@/stores/collection.store'
+import type { CollectionSummaryItem } from '@/stores/collection.store'
 
 /**
  * Common interface exposed by useCollectionStore and useDatasetStore
@@ -6,7 +6,11 @@ import type { CollectionSortBy, CollectionSummaryItem } from '@/stores/collectio
  */
 export interface CollectionListStore {
   // State
-  params: { readonly sortBy: CollectionSortBy; [key: string]: unknown }
+  params: {
+    readonly search: string | null
+    readonly agencyId: string | null
+    [key: string]: unknown
+  }
 
   // Computed
   items: CollectionSummaryItem[]
@@ -20,9 +24,11 @@ export interface CollectionListStore {
   // Actions
   fetch: (overrides?: {
     page?: number
-    sortBy?: CollectionSortBy
+    search?: string | null
+    agencyId?: string | null
     includePhotocards?: boolean
   }) => Promise<void>
   loadNextPage: () => Promise<void>
-  setSortBy: (sortBy: CollectionSortBy) => Promise<void>
+  setSearch: (search: string | null) => Promise<void>
+  setAgency: (agencyId: string | null) => Promise<void>
 }

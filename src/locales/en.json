@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Kolect",
-    "description": "Your K-pop collection tracker"
+    "description": "Your K-pop collection manager"
   },
   "common": {
     "cancel": "Cancel",
@@ -12,7 +12,7 @@
     }
   },
   "errors": {
-    "datasetSync": "Failed to sync dataset",
+    "datasetSync": "Failed to sync the dataset",
     "networkError": "Network error"
   },
   "modals": {
@@ -26,7 +26,7 @@
         "photocard": "Photocard"
       },
       "owned": "Copies",
-      "owned_hint": "Number of copies owned",
+      "owned_hint": "Number of owned copies",
       "owned_hint_max": "Maximum: {max}",
       "signed": "Signed",
       "signed_hint": "Number of signed copies",
@@ -46,22 +46,22 @@
     },
     "collection": {
       "title": "My collection",
-      "sort": {
-        "name": "Name",
-        "agency": "Agency"
+      "filters": {
+        "search_placeholder": "Search...",
+        "all_agencies": "All agencies"
       },
-      "includePhotocards": "Include PC card",
-      "empty": "Its empty, start Kollect",
-      "endOfList": "Onyl this ? Kollect more"
+      "includePhotocards": "Include PCs",
+      "empty": "Nothing here yet, start collecting",
+      "endOfList": "That's all? Collect more"
     },
     "setting": {
       "title": "Settings",
       "sections": {
         "appearence": {
-          "title": "Appearence",
+          "title": "Appearance",
           "theme": {
             "title": "Theme",
-            "description": "Choose how Kolect looks on your device",
+            "description": "Choose how Kolect appears on your device.",
             "values": {
               "system": "System",
               "light": "Light",
@@ -70,21 +70,21 @@
           },
           "language": {
             "title": "Language",
-            "description": "Select the language used in the interface"
+            "description": "Select the language used in the interface."
           }
         },
         "data": {
           "title": "Data",
           "dataset": {
             "title": "Dataset",
-            "description": "Synchronize the local dataset with the remote server to get the latest K-pop groups and lightsticks.",
+            "description": "Sync the local dataset with the remote server to get the latest K-pop groups and lightsticks.",
             "actions": {
               "refresh": "Sync"
             }
           },
           "photocards": {
             "title": "Include photocards",
-            "sublabel": "Count photocards in the item total"
+            "sublabel": "Count photocards in the total item count"
           }
         },
         "about": {
@@ -114,9 +114,9 @@
       "members": {
         "title": "Members",
         "detail": {
-          "birth_date": "Date of birth",
+          "birth_date": "Birth date",
           "solo_name": "Solo name",
-          "solo_debut": "Solo debut",
+          "solo_debut": "Solo career start",
           "solo_career": "View solo career",
           "photocards": "Photocards"
         }

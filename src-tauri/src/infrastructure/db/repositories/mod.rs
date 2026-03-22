@@ -12,6 +12,7 @@ mod lightstick_repository;
 mod photocard_repository;
 mod user_favorite_repository;
 
+pub use agency_repository::AgencyRepository;
 pub use album_repository::AlbumRepository;
 pub use album_version_repository::AlbumVersionRepository;
 pub use artist_alias_repository::ArtistAliasRepository;

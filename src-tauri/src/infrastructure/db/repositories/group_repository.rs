@@ -5,7 +5,7 @@ use diesel::sqlite::SqliteConnection;
 use super::{Page, PaginatedResult, RepoResult, Repository, RepositoryError};
 use crate::infrastructure::db::models::Group;
 
-// ─── Row interne pour get_summary ────────────────────────────────────────────
+// ─── Internal row for get_summary ────────────────────────────────────────────
 
 #[derive(QueryableByName, Debug)]
 pub struct GroupSummaryRow {
@@ -36,11 +36,12 @@ impl<'a> GroupRepository<'a> {
         Self { conn }
     }
 
-    /// Retourne le sommaire des groupes avec comptage owned/total.
-    /// - owned_only  : true → HAVING owned_count > 0 (collection), false → tous (home)
-    /// - query       : recherche FTS sur le nom
-    /// - agency_ids  : filtre par agences
-    /// - include_photocards : inclure les photocards dans le comptage
+    /// Returns the group summary with owned/total counts.
+    /// - owned_only         : true → HAVING owned_count > 0 (collection screen)
+    /// +                      false → all groups (home screen)
+    /// - query              : LIKE %query% search on group name (case-insensitive)
+    /// - agency_ids         : filter by agency
+    /// - include_photocards : count photocards in total/owned
     pub fn get_summary(
         &mut self,
         owned_only: bool,
@@ -84,29 +85,21 @@ impl<'a> GroupRepository<'a> {
             ""
         };
 
-        // Filtre FTS
-        let fts_join = if query.is_some() {
-            "JOIN collection_groups_fts fts ON fts.group_id = g.id"
-        } else {
-            ""
+        let search_filter = match query {
+            Some(q) => format!("AND g.name LIKE '%{}%'", q.replace('\'', "''")),
+            None => String::new(),
         };
 
-        let fts_where = if let Some(q) = query {
-            format!("AND fts.name MATCH '{q}*'")
-        } else {
-            String::new()
-        };
-
-        // Filtre agence
-        let agency_filter = if let Some(ids) = agency_ids.filter(|ids| !ids.is_empty()) {
-            let placeholders = ids
-                .iter()
-                .map(|a_id| format!("'{a_id}'"))
-                .collect::<Vec<_>>()
-                .join(", ");
-            format!("AND g.agency_id IN ({placeholders})")
-        } else {
-            String::new()
+        let agency_filter = match agency_ids.filter(|ids| !ids.is_empty()) {
+            Some(ids) => {
+                let placeholders = ids
+                    .iter()
+                    .map(|a_id| format!("'{}'", a_id.replace('\'', "''")))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                format!("AND g.agency_id IN ({placeholders})")
+            }
+            None => String::new(),
         };
 
         let having = if owned_only {
@@ -126,7 +119,6 @@ impl<'a> GroupRepository<'a> {
                 COUNT(DISTINCT owned_items.item_id) AS owned_count
             FROM groups g
             JOIN agencies a ON a.id = g.agency_id
-            {fts_join}
             LEFT JOIN user_favorites_groups ufg ON ufg.group_id = g.id
             LEFT JOIN (
                 SELECT av.id AS item_id, al.group_id AS owner_id
@@ -173,7 +165,7 @@ impl<'a> GroupRepository<'a> {
                 {owned_photocard_union}
             ) owned_items ON owned_items.owner_id = g.id
             WHERE g.is_deleted = 0
-            {fts_where}
+            {search_filter}
             {agency_filter}
             GROUP BY g.id
             {having}",

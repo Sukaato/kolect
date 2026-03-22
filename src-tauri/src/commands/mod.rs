@@ -1,3 +1,4 @@
+pub mod agency;
 pub mod album;
 pub mod artist;
 pub mod collection;

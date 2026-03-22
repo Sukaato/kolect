@@ -8,3 +8,8 @@ export type Agency = {
   country: string
   imageUrl: string | null
 }
+
+export type AgencySearch = {
+  id: AgencyId
+  name: string
+}

@@ -5,7 +5,7 @@ use diesel::sqlite::SqliteConnection;
 use super::{Page, PaginatedResult, RepoResult, Repository, RepositoryError};
 use crate::infrastructure::db::models::Artist;
 
-// ─── Row interne pour get_summary ────────────────────────────────────────────
+// ─── Internal row for get_summary ────────────────────────────────────────────
 
 #[derive(QueryableByName, Debug)]
 pub struct ArtistSummaryRow {
@@ -36,7 +36,7 @@ impl<'a> ArtistRepository<'a> {
         Self { conn }
     }
 
-    /// Retourne plusieurs artistes par leurs IDs.
+    /// Returns multiple artists by their IDs.
     pub fn find_by_ids(&mut self, ids: &[String]) -> RepoResult<Vec<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
@@ -46,7 +46,12 @@ impl<'a> ArtistRepository<'a> {
             .load::<Artist>(self.conn)?)
     }
 
-    /// Retourne le sommaire des artistes solos avec comptage owned/total.
+    /// Returns the solo artist summary with owned/total counts.
+    /// - owned_only         : true → HAVING owned_count > 0 (collection screen)
+    /// +                      false → all solo artists (home screen)
+    /// - query              : LIKE %query% search on real name and aliases
+    /// - agency_ids         : filter by solo_agency_id
+    /// - include_photocards : count photocards in total/owned
     pub fn get_summary(
         &mut self,
         owned_only: bool,
@@ -88,14 +93,22 @@ impl<'a> ArtistRepository<'a> {
             ""
         };
 
-        let fts_join = if query.is_some() {
-            "JOIN collection_artists_fts fts ON fts.artist_id = ar.id"
-        } else {
-            ""
-        };
-
-        let fts_where = match query {
-            Some(q) => format!("AND fts.name MATCH '{q}*'"),
+        // Search on real_name and any alias name
+        let search_filter = match query {
+            Some(q) => {
+                let q = q.replace('\'', "''");
+                format!(
+                    "AND (
+                        ar.real_name LIKE '%{q}%'
+                        OR EXISTS (
+                            SELECT 1 FROM artist_aliases aa
+                            WHERE aa.artist_id = ar.id
+                              AND aa.is_deleted = 0
+                              AND aa.name LIKE '%{q}%'
+                        )
+                    )"
+                )
+            }
             None => String::new(),
         };
 
@@ -103,7 +116,7 @@ impl<'a> ArtistRepository<'a> {
             Some(ids) => {
                 let placeholders = ids
                     .iter()
-                    .map(|id| format!("'{id}'"))
+                    .map(|id| format!("'{}'", id.replace('\'', "''")))
                     .collect::<Vec<_>>()
                     .join(", ");
                 format!("AND ar.solo_agency_id IN ({placeholders})")
@@ -136,7 +149,6 @@ impl<'a> ArtistRepository<'a> {
                 COUNT(DISTINCT owned_items.item_id) AS owned_count
             FROM artists ar
             JOIN agencies a ON a.id = ar.solo_agency_id
-            {fts_join}
             LEFT JOIN user_favorites_artists ufa ON ufa.artist_id = ar.id
             LEFT JOIN (
                 SELECT av.id AS item_id, al.artist_id AS owner_id
@@ -182,7 +194,7 @@ impl<'a> ArtistRepository<'a> {
             ) owned_items ON owned_items.owner_id = ar.id
             WHERE ar.is_deleted = 0
               AND ar.solo_agency_id IS NOT NULL
-            {fts_where}
+            {search_filter}
             {agency_filter}
             GROUP BY ar.id
             {having}",

@@ -1,7 +1,9 @@
-pub mod album_dto;
-pub mod artist_dto;
-pub mod group_dto;
+mod agency;
+mod album_dto;
+mod artist_dto;
+mod group_dto;
 
+pub use agency::AgencyDto;
 pub use album_dto::{
     AlbumDetailDto, AlbumSummaryDto, AlbumVersionItemDto, DigipackItemDto, PhotocardItemDto,
 };

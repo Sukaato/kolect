@@ -15,13 +15,12 @@ export interface CollectionSummaryItem {
   totalCount: number
 }
 
-export type CollectionSortBy = 'name' | 'agency'
-
 export interface CollectionSummaryParams {
   page: number
   perPage: number
-  sortBy: CollectionSortBy
   includePhotocards: boolean
+  search: string | null
+  agencyId: string | null
 }
 
 const defaultMeta: PageMeta = {
@@ -57,28 +56,27 @@ export const useCollectionStore = defineStore('collection', () => {
   const params = ref<CollectionSummaryParams>({
     page: defaultMeta.currentPage,
     perPage: defaultMeta.perPage,
-    sortBy: 'name',
     includePhotocards: settingStore.includePhotocardCount,
+    search: null,
+    agencyId: null,
   })
 
-  // Pages accumulées : Map<pageNumber, items[]>
+  // Accumulated pages: Map<pageNumber, items[]>
   const pages = ref<Map<number, CollectionSummaryItem[]>>(new Map())
 
-  // Meta de la dernière page chargée
+  // Meta of the last loaded page
   const meta = shallowRef<PageMeta>(defaultMeta)
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
   const { result, loading, error, invoke } = useInvoke<PaginatedResult<CollectionSummaryItem>>(
     'collection_get_summary',
-    {
-      defaults: defaultSummary,
-    },
+    { defaults: defaultSummary },
   )
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
-  // Liste aplatie dans l'ordre des pages pour le scroll infini
+  // Flattened list in page order for infinite scroll
   const items = computed<CollectionSummaryItem[]>(() => {
     const sorted = pages.value
       .entries()
@@ -91,7 +89,7 @@ export const useCollectionStore = defineStore('collection', () => {
 
   const isEmpty = computed(() => meta.value.isEmpty)
 
-  // ─── Helpers privés ────────────────────────────────────────────────────────
+  // ─── Private helpers ───────────────────────────────────────────────────────
 
   function reset() {
     pages.value = new Map()
@@ -119,14 +117,14 @@ export const useCollectionStore = defineStore('collection', () => {
     await fetch({ page: params.value.page + 1 })
   }
 
-  async function setSortBy(sortBy: CollectionSortBy) {
+  async function setSearch(search: string | null) {
     reset()
-    await fetch({ sortBy })
+    await fetch({ search })
   }
 
-  async function setIncludePhotocards(include: boolean) {
+  async function setAgency(agencyId: string | null) {
     reset()
-    await fetch({ includePhotocards: include })
+    await fetch({ agencyId })
   }
 
   async function refresh() {
@@ -151,8 +149,8 @@ export const useCollectionStore = defineStore('collection', () => {
     // Actions
     fetch,
     loadNextPage,
-    setSortBy,
-    setIncludePhotocards,
+    setSearch,
+    setAgency,
     refresh,
   }
 })
