@@ -1,0 +1,9 @@
+name: Audit Front
+description: Run bun audit on frontend dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Audit dependencies
+      shell: bash
+      run: bun audit

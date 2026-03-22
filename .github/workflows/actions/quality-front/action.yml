@@ -1,0 +1,13 @@
+name: Quality Front
+description: Run Biome format and lint checks
+
+runs:
+  using: composite
+  steps:
+    - name: Biome format check
+      shell: bash
+      run: bun format:front:check
+
+    - name: Biome lint check
+      shell: bash
+      run: bun lint:front:check

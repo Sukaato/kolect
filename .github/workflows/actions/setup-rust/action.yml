@@ -1,0 +1,27 @@
+name: Setup Rust
+description: Install Rust toolchain and restore Cargo cache
+
+inputs:
+  toolchain:
+    description: Rust toolchain (stable, nightly, etc.)
+    required: false
+    default: stable
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        components: rustfmt, clippy
+
+    - name: Cache Cargo registry + build
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          src-tauri/target
+        key: cargo-${{ runner.os }}-${{ hashFiles('src-tauri/Cargo.lock') }}
+        restore-keys: cargo-${{ runner.os }}-

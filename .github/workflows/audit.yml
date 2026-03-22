@@ -1,4 +1,4 @@
-name: Quality
+name: Audit
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  quality-front:
-    name: Quality — Frontend
+  audit-front:
+    name: Audit — Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,11 +16,11 @@ jobs:
       - name: Setup Bun
         uses: ./.github/workflows/actions/setup-bun
 
-      - name: Quality
-        uses: ./.github/workflows/actions/quality-front
+      - name: Audit
+        uses: ./.github/workflows/actions/audit-front
 
-  quality-back:
-    name: Quality — Backend
+  audit-back:
+    name: Audit — Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,5 +28,5 @@ jobs:
       - name: Setup Rust
         uses: ./.github/workflows/actions/setup-rust
 
-      - name: Quality
-        uses: ./.github/workflows/actions/quality-back
+      - name: Audit
+        uses: ./.github/workflows/actions/audit-back

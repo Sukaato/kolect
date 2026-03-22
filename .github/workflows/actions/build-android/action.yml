@@ -1,0 +1,77 @@
+name: Build Android
+description: Build the Tauri Android APK
+
+inputs:
+  keystore-base64:
+    description: Base64-encoded keystore file
+    required: true
+  keystore-password:
+    description: Keystore password
+    required: true
+  key-alias:
+    description: Key alias
+    required: true
+  key-password:
+    description: Key password
+    required: true
+
+outputs:
+  apk-path:
+    description: Path to the built APK
+    value: ${{ steps.find-apk.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Install Android targets
+      shell: bash
+      run: |
+        rustup target add \
+          aarch64-linux-android \
+          armv7-linux-androideabi \
+          i686-linux-android \
+          x86_64-linux-android
+
+    - name: Decode keystore
+      shell: bash
+      run: |
+        echo "${{ inputs.keystore-base64 }}" | base64 --decode \
+          > src-tauri/gen/android/app/kolect.keystore
+
+    - name: Download dist artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: dist/
+
+    - name: Build Android APK
+      shell: bash
+      env:
+        KEYSTORE_PATH: kolect.keystore
+        KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
+        KEY_ALIAS: ${{ inputs.key-alias }}
+        KEY_PASSWORD: ${{ inputs.key-password }}
+      run: bun tauri android build --apk
+
+    - name: Find APK path
+      id: find-apk
+      shell: bash
+      run: |
+        APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n1)
+        echo "path=$APK" >> $GITHUB_OUTPUT
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+        retention-days: 7

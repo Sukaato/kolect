@@ -1,0 +1,16 @@
+name: Build Front
+description: Build the Vue/Vite frontend and upload dist artifact
+
+runs:
+  using: composite
+  steps:
+    - name: Build frontend
+      shell: bash
+      run: bun build:front
+
+    - name: Upload dist artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
+        retention-days: 1

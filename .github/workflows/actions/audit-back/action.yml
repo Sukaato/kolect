@@ -1,0 +1,14 @@
+name: Audit Back
+description: Run cargo audit on Rust dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Install cargo-audit
+      shell: bash
+      run: cargo install cargo-audit --locked
+
+    - name: Audit dependencies
+      shell: bash
+      working-directory: src-tauri
+      run: cargo audit

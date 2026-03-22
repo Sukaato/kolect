@@ -1,0 +1,99 @@
+name: Bump Version
+description: |
+  Compute new version, update package.json / Cargo.toml / tauri.conf.json,
+  commit with chore(version): bump to vX.Y.Z, create and push the tag.
+
+inputs:
+  bump:
+    description: Version bump type (major, minor, patch)
+    required: true
+  pre-release:
+    description: Pre-release identifier (alpha, beta — empty for stable)
+    required: false
+    default: ""
+  pre-release-number:
+    description: Pre-release number (e.g. 5 for beta.5)
+    required: false
+    default: "1"
+
+outputs:
+  version:
+    description: The new version string without the v prefix (e.g. 1.2.3-beta.5)
+    value: ${{ steps.compute.outputs.version }}
+  tag:
+    description: The new git tag (e.g. v1.2.3-beta.5)
+    value: ${{ steps.compute.outputs.tag }}
+
+runs:
+  using: composite
+  steps:
+    - name: Compute new version
+      id: compute
+      shell: bash
+      run: |
+        CURRENT=$(node -p "require('./package.json').version")
+        # Strip any existing pre-release suffix
+        BASE="${CURRENT%%-*}"
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
+
+        case "${{ inputs.bump }}" in
+          major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+          minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+          patch) PATCH=$((PATCH + 1)) ;;
+        esac
+
+        VERSION="$MAJOR.$MINOR.$PATCH"
+
+        PRE="${{ inputs.pre-release }}"
+        if [ -n "$PRE" ]; then
+          VERSION="$VERSION-$PRE.${{ inputs.pre-release-number }}"
+        fi
+
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+        echo "Computed version: v$VERSION"
+
+    - name: Update package.json
+      shell: bash
+      run: |
+        VERSION="${{ steps.compute.outputs.version }}"
+        node -e "
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.version = '$VERSION';
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+        "
+
+    - name: Update Cargo.toml
+      shell: bash
+      run: |
+        VERSION="${{ steps.compute.outputs.version }}"
+        # Remplace uniquement la première occurrence de version = "..."
+        sed -i "0,/^version = \".*\"/s/^version = \".*\"/version = \"$VERSION\"/" \
+          src-tauri/Cargo.toml
+
+    - name: Update tauri.conf.json
+      shell: bash
+      run: |
+        VERSION="${{ steps.compute.outputs.version }}"
+        node -e "
+          const fs = require('fs');
+          const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          conf.version = '$VERSION';
+          fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2) + '\n');
+        "
+
+    - name: Commit, tag and push
+      shell: bash
+      run: |
+        VERSION="${{ steps.compute.outputs.version }}"
+        TAG="${{ steps.compute.outputs.tag }}"
+
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json
+        git commit -m "chore(version): bump to $TAG"
+
+        git tag "$TAG"
+        git push origin HEAD "$TAG"

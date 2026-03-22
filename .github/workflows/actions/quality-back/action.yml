@@ -1,0 +1,13 @@
+name: Quality Back
+description: Run rustfmt and clippy checks
+
+runs:
+  using: composite
+  steps:
+    - name: rustfmt check
+      shell: bash
+      run: bun format:tauri:check
+
+    - name: clippy check
+      shell: bash
+      run: bun lint:tauri:check

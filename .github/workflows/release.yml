@@ -1,0 +1,208 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump type
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      pre-release:
+        description: Pre-release identifier (empty = stable)
+        required: false
+        type: choice
+        default: ""
+        options:
+          - ""
+          - alpha
+          - beta
+      pre-release-number:
+        description: Pre-release number (e.g. 1 for alpha.1)
+        required: false
+        default: "1"
+
+jobs:
+  # ─── Étape 1 : Build front (partagé par back et android) ──────────────────
+
+  build-front:
+    name: Release — Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Sur workflow_dispatch on est sur la branche courante
+          # Sur push tag on checkout le tag directement
+          ref: ${{ github.event_name == 'push' && github.ref || github.sha }}
+
+      - name: Setup Bun
+        uses: ./.github/workflows/actions/setup-bun
+
+      - name: Build
+        uses: ./.github/workflows/actions/build-front
+
+  # ─── Étape 2a : Build backend ─────────────────────────────────────────────
+
+  build-back:
+    name: Release — Build Backend
+    runs-on: ubuntu-latest
+    needs: build-front
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: ./.github/workflows/actions/setup-rust
+
+      - name: Build
+        uses: ./.github/workflows/actions/build-back
+
+  # ─── Étape 2b : Build Android ─────────────────────────────────────────────
+
+  build-android:
+    name: Release — Build Android
+    runs-on: ubuntu-latest
+    needs: build-front
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: ./.github/workflows/actions/setup-bun
+
+      - name: Setup Rust
+        uses: ./.github/workflows/actions/setup-rust
+
+      - name: Build Android APK
+        uses: ./.github/workflows/actions/build-android
+        with:
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+  # ─── Étape 3 : Bump version (uniquement sur workflow_dispatch) ─────────────
+  # Le commit et le tag sont créés ICI, après que les builds ont réussi
+
+  bump:
+    name: Release — Bump Version
+    runs-on: ubuntu-latest
+    needs:
+      - build-back
+      - build-android
+    if: github.event_name == 'workflow_dispatch'
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        uses: ./.github/workflows/actions/setup-bun
+
+      - name: Bump version, commit and tag
+        id: bump
+        uses: ./.github/workflows/actions/bump-version
+        with:
+          bump: ${{ inputs.bump }}
+          pre-release: ${{ inputs.pre-release }}
+          pre-release-number: ${{ inputs.pre-release-number }}
+
+  # ─── Étape 4 : Résoudre la version finale ─────────────────────────────────
+
+  resolve-version:
+    name: Release — Resolve Version
+    runs-on: ubuntu-latest
+    needs:
+      - build-back
+      - build-android
+      - bump
+    if: always() && (needs.build-back.result == 'success') && (needs.build-android.result == 'success')
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      is-prerelease: ${{ steps.resolve.outputs.is-prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: resolve
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TAG="${GITHUB_REF_NAME}"
+            VERSION="${TAG#v}"
+          else
+            TAG="${{ needs.bump.outputs.tag }}"
+            VERSION="${{ needs.bump.outputs.version }}"
+          fi
+
+          # Détecter si pré-release (contient un tiret)
+          if echo "$VERSION" | grep -q '-'; then
+            IS_PRE=true
+          else
+            IS_PRE=false
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "is-prerelease=$IS_PRE" >> $GITHUB_OUTPUT
+
+  # ─── Étape 5 : Créer la release GitHub ────────────────────────────────────
+
+  publish:
+    name: Release — Publish
+    runs-on: ubuntu-latest
+    needs: resolve-version
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: release-artifacts/
+
+      - name: Generate release notes
+        id: notes
+        shell: bash
+        run: |
+          TAG="${{ needs.resolve-version.outputs.tag }}"
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "^$TAG$" | head -n1)
+
+          if [ -n "$PREVIOUS_TAG" ]; then
+            COMMITS=$(git log "$PREVIOUS_TAG..HEAD" \
+              --pretty=format:"- %s (%h)" --no-merges)
+          else
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          {
+            echo "notes<<EOF"
+            echo "## What's changed"
+            echo ""
+            echo "$COMMITS"
+            echo ""
+            echo "**Full changelog**: ${{ github.server_url }}/${{ github.repository }}/compare/$PREVIOUS_TAG...$TAG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.resolve-version.outputs.tag }}
+          name: ${{ needs.resolve-version.outputs.tag }}
+          body: ${{ steps.notes.outputs.notes }}
+          prerelease: ${{ needs.resolve-version.outputs.is-prerelease == 'true' }}
+          files: release-artifacts/*.apk
