@@ -50,6 +50,7 @@
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitest/coverage-v8": "4.1.0",
     "daisyui": "^5.5.19",
+    "lefthook": "^2.1.4",
     "sass": "^1.98.0",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",

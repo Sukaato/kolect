@@ -1,0 +1,31 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome-format
+      run: bun format:front:check
+      glob:
+        - "*.ts"
+        - "*.vue"
+        - "*.json"
+
+    - name: biome-lint
+      run: bun lint:front:check
+      glob:
+        - "*.ts"
+        - "*.vue"
+
+    - name: vue-tsc
+      run: bunx vue-tsc --noEmit
+      glob:
+        - "*.ts"
+        - "*.vue"
+
+    - name: cargo-fmt
+      run: bun format:tauri:check
+      glob:
+        - "src-tauri/**/*.rs"
+
+    - name: cargo-clippy
+      run: cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+      glob:
+        - "src-tauri/**/*.rs"
