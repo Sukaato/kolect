@@ -1,7 +1,7 @@
 use tauri::State;
 use tokio::sync::Mutex;
 
-use crate::dto::input::UpdateItemDto;
+use crate::dto::input::commands::UpdateItemDto;
 use crate::infrastructure::db::repositories::Page;
 use crate::services::{CollectionItemService, CollectionService};
 use crate::AppStore;

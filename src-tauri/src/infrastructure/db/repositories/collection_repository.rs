@@ -3,7 +3,7 @@ use diesel::sqlite::SqliteConnection;
 use uuid::Uuid;
 
 use super::RepoResult;
-use crate::dto::input::CollectibleType;
+use crate::dto::input::commands::CollectibleType;
 
 #[derive(Debug, Clone, Queryable, Selectable)]
 #[diesel(table_name = crate::infrastructure::db::schema::user_collection)]

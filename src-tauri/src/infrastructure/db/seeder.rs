@@ -3,7 +3,7 @@ use diesel::sqlite::SqliteConnection;
 use std::collections::HashSet;
 use tauri_plugin_log::log;
 
-use crate::dto::input::DatasetDto;
+use crate::dto::input::dataset::DatasetDto;
 use crate::infrastructure::db::models::{
     Agency, Album, AlbumVersion, Artist, ArtistAlias, Digipack, FanclubKit, Group, GroupMember,
     Lightstick, Photocard,

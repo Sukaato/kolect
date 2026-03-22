@@ -24,10 +24,10 @@
     "lint:tauri:check": "cargo clippy --manifest-path src-tauri/Cargo.toml --allow-dirty",
     "lint": "bun lint:front && bun lint:tauri",
     "lint:check": "bun lint:front:check && bun lint:tauri:check",
-    "migration:revert": "cd src-tauri && diesel migration revert --database-url ~/.config/kolect/database.db",
-    "migration:generate": "cd src-tauri && diesel migration generate --database-url ~/.config/kolect/database.db",
-    "migration:run": "cd src-tauri && diesel migration run --database-url ~/.config/kolect/database.db",
-    "migration:schema": "diesel print-schema --config-file src-tauri/diesel.toml --database-url ~/.config/kolect/database.db -- --manifest-path src-tauri/Cargo.toml > ./src-tauri/src/infrastructure/db/schema.rs"
+    "migration:revert": "cd src-tauri && diesel migration revert --database-url ~/.local/share/fr.sukaato.kolect/database.db",
+    "migration:generate": "cd src-tauri && diesel migration generate --database-url ~/.local/share/fr.sukaato.kolect/database.db",
+    "migration:run": "cd src-tauri && diesel migration run --database-url ~/.local/share/fr.sukaato.kolect/database.db",
+    "migration:schema": "diesel print-schema --config-file src-tauri/diesel.toml --database-url ~/.local/share/fr.sukaato.kolect/database.db -- --manifest-path src-tauri/Cargo.toml > ./src-tauri/src/infrastructure/db/schema.rs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.1",

@@ -1,6 +1,6 @@
 use diesel::sqlite::SqliteConnection;
 
-use crate::dto::input::UpdateItemDto;
+use crate::dto::input::commands::UpdateItemDto;
 use crate::infrastructure::db::repositories::{CollectionRepository, RepositoryError};
 
 pub struct CollectionItemService<'a> {

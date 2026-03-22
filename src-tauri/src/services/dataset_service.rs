@@ -8,7 +8,7 @@ use tauri::AppHandle;
 use tauri::Manager;
 use tauri_plugin_log::log;
 
-use crate::dto::input::{DatasetDto, DatasetMetaDto};
+use crate::dto::input::dataset::{DatasetDto, DatasetMetaDto};
 use crate::infrastructure::config::AppConfig;
 use crate::infrastructure::db::repositories::{
     ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
