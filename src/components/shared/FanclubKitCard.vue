@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import type { FanclubKitItem } from '@/types/group.type';
+import { usePossessionStore } from '@/stores/possession.store'
+import type { FanclubKitItem } from '@/types/group.type'
 
-defineProps<{
+const { fanclubKit, onSaved } = defineProps<{
   fanclubKit: FanclubKitItem
+  onSaved?: () => void
 }>()
+
+const possessionStore = usePossessionStore()
+
+function handleClick() {
+  possessionStore.open({
+    type: 'fanclubKit',
+    id: fanclubKit.id,
+    name: fanclubKit.name,
+    imageUrl: fanclubKit.imageUrl,
+    ownedCount: fanclubKit.ownedCount,
+    signedCount: 0,
+    hasSigned: false,
+    maxCount: 1,
+    onSaved,
+  })
+}
 </script>
 
 <template>
-  <div class="shrink-0 w-20 text-center">
+  <div class="shrink-0 w-20 text-center cursor-pointer" @click="handleClick">
     <div
-      class="relative w-20 h-20 rounded-xl bg-base-100 border flex items-center justify-center text-2xl transition-colors"
+      class="relative w-20 h-20 rounded-xl bg-base-100 border flex items-center justify-center text-2xl transition-colors active:opacity-70"
       :class="fanclubKit.ownedCount > 0 ? 'border-success bg-success/10' : 'border-base-300'">
       <img v-if="fanclubKit.imageUrl" :src="fanclubKit.imageUrl" :alt="fanclubKit.name"
         class="w-full h-full object-cover rounded-xl" />

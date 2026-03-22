@@ -4,6 +4,8 @@
     "description": "Your K-pop collection tracker"
   },
   "common": {
+    "cancel": "Cancel",
+    "save": "Save",
     "kind": {
       "solo": "Solo",
       "group": "Group"
@@ -12,6 +14,24 @@
   "errors": {
     "datasetSync": "Failed to sync dataset",
     "networkError": "Network error"
+  },
+  "modals": {
+    "possession": {
+      "type": {
+        "album": "Album",
+        "albumVersion": "Version",
+        "digipack": "Digipack",
+        "lightstick": "Lightstick",
+        "fanclubKit": "Fanclub kit",
+        "photocard": "Photocard"
+      },
+      "owned": "Copies",
+      "owned_hint": "Number of copies owned",
+      "owned_hint_max": "Maximum: {max}",
+      "signed": "Signed",
+      "signed_hint": "Number of signed copies",
+      "saved": "Updated"
+    }
   },
   "screens": {
     "startup": {

@@ -4,10 +4,11 @@ import { storeToRefs } from 'pinia'
 import { computed, onErrorCaptured, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import Dock from './components/global/dock.vue'
-import Toast from './components/global/toast.vue'
+import Dock from './components/global/Dock.vue'
+import Toast from './components/global/Toast.vue'
 import { useSettingStore } from './stores/setting.store'
 import { useToastStore } from './stores/toast.store'
+import PossessionModal from './components/global/PossessionModal.vue'
 
 const route = useRoute()
 const showDock = computed(() => route.path !== '/')
@@ -55,5 +56,7 @@ onErrorCaptured(error => {
         <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast" class="pointer-events-all" />
       </TransitionGroup>
     </div>
+
+    <PossessionModal />
   </div>
 </template>

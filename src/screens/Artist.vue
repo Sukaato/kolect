@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import AlbumCard from '@/components/screens/group/AlbumCard.vue'
-import FanclubKitCard from '@/components/screens/group/FanclubKitCard.vue'
-import LightstickCard from '@/components/screens/group/LightstickCard.vue'
-import { useFavoriteStore } from '@/stores/favorite.store'
+import AlbumCard from '@/components/shared/AlbumCard.vue'
+import FanclubKitCard from '@/components/shared/FanclubKitCard.vue'
+import LightstickCard from '@/components/shared/LightstickCard.vue'
 import { useArtistStore } from '@/stores/artist.store'
+import { useFavoriteStore } from '@/stores/favorite.store'
+import { PossessionFilter } from '@/types/group.type'
 import { RouteName } from '@/types/routes'
+import { ArtistId } from '@/types/schema/artist.type'
 import { ChevronLeftIcon, StarIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { shallowRef, onMounted } from 'vue'
+import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
-import { PossessionFilter } from '@/types/group.type'
-import { ArtistId } from '@/types/schema/artist.type'
 
 const { id } = defineProps<{
   id: ArtistId

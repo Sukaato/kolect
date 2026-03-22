@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import AlbumCard from '@/components/screens/group/AlbumCard.vue'
-import FanclubKitCard from '@/components/screens/group/FanclubKitCard.vue'
-import { ChevronLeftIcon, StarIcon, UsersIcon } from 'lucide-vue-next'
-import { storeToRefs } from 'pinia'
-import { shallowRef, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import LightstickCard from '@/components/screens/group/LightstickCard.vue'
+import AlbumCard from '@/components/shared/AlbumCard.vue'
+import FanclubKitCard from '@/components/shared/FanclubKitCard.vue'
+import LightstickCard from '@/components/shared/LightstickCard.vue'
 import MembersSheet from '@/components/screens/group/MembersSheet.vue'
 import { useFavoriteStore } from '@/stores/favorite.store'
 import { useGroupStore } from '@/stores/group.store'
-import { RouteName } from '@/types/routes'
 import type { PossessionFilter } from '@/types/group.type'
+import { RouteName } from '@/types/routes'
 import type { GroupId } from '@/types/schema/group.type'
+import { ChevronLeftIcon, StarIcon, UsersIcon } from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
+import { onMounted, shallowRef } from 'vue'
+import { useRouter } from 'vue-router'
 
 const { id, mode } = defineProps<{
   id: GroupId

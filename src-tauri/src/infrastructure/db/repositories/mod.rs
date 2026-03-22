@@ -1,15 +1,16 @@
-pub mod agency_repository;
-pub mod album_repository;
-pub mod album_version_repository;
-pub mod artist_alias_repository;
-pub mod artist_repository;
-pub mod digipack_repository;
-pub mod fanclub_kit_repository;
-pub mod group_member_repository;
-pub mod group_repository;
-pub mod lightstick_repository;
-pub mod photocard_repository;
-pub mod user_favorite_repository;
+mod agency_repository;
+mod album_repository;
+mod album_version_repository;
+mod artist_alias_repository;
+mod artist_repository;
+mod digipack_repository;
+mod fanclub_kit_repository;
+mod group_member_repository;
+mod group_repository;
+mod lightstick_repository;
+mod photocard_repository;
+mod user_favorite_repository;
+mod collection_repository;
 
 pub use album_repository::AlbumRepository;
 pub use album_version_repository::AlbumVersionRepository;
@@ -22,6 +23,7 @@ pub use group_repository::{GroupRepository, GroupSummaryRow};
 pub use lightstick_repository::LightstickRepository;
 pub use photocard_repository::PhotocardRepository;
 pub use user_favorite_repository::UserFavoriteRepository;
+pub use collection_repository::{CollectionRepository, CollectionRow};
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 

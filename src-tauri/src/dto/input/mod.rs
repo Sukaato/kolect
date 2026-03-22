@@ -10,6 +10,7 @@ mod group_dto;
 mod group_member_dto;
 mod lightstick_dto;
 mod photocard_dto;
+mod collection_item_dto;
 
 pub use agency_dto::AgencyDto;
 pub use album_dto::AlbumDto;
@@ -23,3 +24,4 @@ pub use group_dto::GroupDto;
 pub use group_member_dto::GroupMemberDto;
 pub use lightstick_dto::LightstickDto;
 pub use photocard_dto::PhotocardDto;
+pub use collection_item_dto::{CollectibleType, UpdateItemDto};

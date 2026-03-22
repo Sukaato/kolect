@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import { usePossessionStore } from '@/stores/possession.store'
+import { useAlbumStore } from '@/stores/album.store'
+import type { AlbumVersionItem, PhotocardItem } from '@/types/album.type'
+import type { AlbumId } from '@/types/schema/album.type'
+import type { ArtistWithAliases } from '@/types/schema/artist.type'
 import { computed } from 'vue'
-import type { AlbumVersionItem, PhotocardItem } from '@/types/album.type';
-import type { ArtistWithAliases } from '@/types/schema/artist.type';
 
-const { members, photocard, versions } = defineProps<{
+const { photocard, members, versions, albumId } = defineProps<{
   photocard: PhotocardItem
   members: ArtistWithAliases[]
   versions: AlbumVersionItem[]
+  albumId: AlbumId
 }>()
+
+const possessionStore = usePossessionStore()
+const albumStore = useAlbumStore()
 
 const memberName = computed(() => {
   if (!photocard.artistId) return null
@@ -19,11 +26,25 @@ const versionName = computed(() => {
   if (!photocard.albumVersionId) return null
   return versions.find(v => v.id === photocard.albumVersionId)?.name ?? null
 })
+
+function handleClick() {
+  possessionStore.open({
+    type: 'photocard',
+    id: photocard.id,
+    name: [memberName.value, versionName.value].filter(Boolean).join(' — ') || 'Photocard',
+    imageUrl: photocard.imageUrl,
+    ownedCount: photocard.ownedCount,
+    signedCount: photocard.hasSigned ? 1 : 0,
+    hasSigned: true,
+    onSaved: () => albumStore.load(albumId),
+  })
+}
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-1">
-    <div class="relative w-full aspect-2/3 rounded-lg border flex items-center justify-center text-xl transition-colors"
+  <div class="flex flex-col items-center gap-1 cursor-pointer" @click="handleClick">
+    <div
+      class="relative w-full aspect-2/3 rounded-lg border flex items-center justify-center text-xl transition-colors active:opacity-70"
       :class="photocard.ownedCount > 0 ? 'border-success bg-success/10' : 'bg-base-200 border-base-300'">
       <img v-if="photocard.imageUrl" :src="photocard.imageUrl" class="w-full h-full object-cover rounded-lg" />
       <span v-else>🃏</span>

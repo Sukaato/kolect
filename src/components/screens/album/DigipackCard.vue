@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { usePossessionStore } from '@/stores/possession.store'
+import { useAlbumStore } from '@/stores/album.store'
+import type { DigipackItem } from '@/types/album.type'
+import type { AlbumId } from '@/types/schema/album.type'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { useAlbumStore } from '@/stores/album.store'
-import type { DigipackItem } from '@/types/album.type';
 
-const { digipack } = defineProps<{
+const { digipack, albumId } = defineProps<{
   digipack: DigipackItem
+  albumId: AlbumId
 }>()
 
+const possessionStore = usePossessionStore()
 const albumStore = useAlbumStore()
 const { members } = storeToRefs(albumStore)
 
@@ -16,12 +20,25 @@ const memberName = computed(() => {
   const match = members.value.find(m => m.artist.id === digipack.artistId)
   return match?.aliases.find(a => a.kind === 'group_stage' && a.isPrimary)?.name ?? null
 })
+
+function handleClick() {
+  possessionStore.open({
+    type: 'digipack',
+    id: digipack.id,
+    name: digipack.name,
+    imageUrl: digipack.imageUrl,
+    ownedCount: digipack.ownedCount,
+    signedCount: digipack.hasSigned ? 1 : 0,
+    hasSigned: true,
+    onSaved: () => albumStore.load(albumId),
+  })
+}
 </script>
 
 <template>
-  <div class="shrink-0 w-24 text-center">
+  <div class="shrink-0 w-24 text-center cursor-pointer" @click="handleClick">
     <div
-      class="relative w-24 h-24 rounded-xl bg-base-100 border flex items-center justify-center text-3xl transition-colors"
+      class="relative w-24 h-24 rounded-xl bg-base-100 border flex items-center justify-center text-3xl transition-colors active:opacity-70"
       :class="digipack.ownedCount > 0 ? 'border-success bg-success/10' : 'border-base-300'">
       <img v-if="digipack.imageUrl" :src="digipack.imageUrl" :alt="digipack.name"
         class="w-full h-full object-cover rounded-xl" />

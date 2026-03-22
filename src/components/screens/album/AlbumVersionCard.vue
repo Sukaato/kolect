@@ -1,15 +1,35 @@
 <script setup lang="ts">
-import type { AlbumVersionItem } from '@/types/album.type';
+import { usePossessionStore } from '@/stores/possession.store'
+import { useAlbumStore } from '@/stores/album.store'
+import type { AlbumVersionItem } from '@/types/album.type'
+import type { AlbumId } from '@/types/schema/album.type'
 
-defineProps<{
+const { version, albumId } = defineProps<{
   version: AlbumVersionItem
+  albumId: AlbumId
 }>()
+
+const possessionStore = usePossessionStore()
+const albumStore = useAlbumStore()
+
+function handleClick() {
+  possessionStore.open({
+    type: 'albumVersion',
+    id: version.id,
+    name: version.name,
+    imageUrl: version.imageUrl,
+    ownedCount: version.ownedCount,
+    signedCount: version.hasSigned ? 1 : 0,
+    hasSigned: true,
+    onSaved: () => albumStore.load(albumId),
+  })
+}
 </script>
 
 <template>
-  <div class="shrink-0 w-24 text-center">
+  <div class="shrink-0 w-24 text-center cursor-pointer" @click="handleClick">
     <div
-      class="relative w-24 h-24 rounded-xl bg-base-100 border flex items-center justify-center text-3xl transition-colors"
+      class="relative w-24 h-24 rounded-xl bg-base-100 border flex items-center justify-center text-3xl transition-colors active:opacity-70"
       :class="version.ownedCount > 0 ? 'border-success bg-success/10' : 'border-base-300'">
       <img v-if="version.imageUrl" :src="version.imageUrl" :alt="version.name"
         class="w-full h-full object-cover rounded-xl" />

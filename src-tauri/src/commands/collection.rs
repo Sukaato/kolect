@@ -1,8 +1,9 @@
 use tauri::State;
 use tokio::sync::Mutex;
 
+use crate::dto::input::UpdateItemDto;
 use crate::infrastructure::db::repositories::Page;
-use crate::services::{CollectionService, CollectionSortBy};
+use crate::services::{CollectionItemService, CollectionService, CollectionSortBy};
 use crate::AppStore;
 
 #[derive(Debug, serde::Deserialize)]
@@ -34,4 +35,28 @@ pub async fn collection_get_summary(
         .map_err(|e| e.to_string())?;
 
     serde_json::to_value(result).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn collection_update_item(
+    state: State<'_, Mutex<AppStore>>,
+    item_type: String,
+    item_id: String,
+    owned_count: u32,
+    signed_count: u32,
+) -> Result<(), String> {
+    let item_type = serde_json::from_value(serde_json::Value::String(item_type))
+        .map_err(|e| format!("Type invalide : {}", e))?;
+
+    let dto = UpdateItemDto {
+        item_type,
+        item_id,
+        owned_count,
+        signed_count,
+    };
+
+    let mut store = state.lock().await;
+    CollectionItemService::new(&mut store.db_conn)
+        .update_item(dto)
+        .map_err(|e| e.to_string())
 }

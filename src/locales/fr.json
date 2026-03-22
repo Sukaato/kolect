@@ -4,6 +4,8 @@
     "description": "Votre gestionnaire de collection K-pop"
   },
   "common": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
     "kind": {
       "solo": "Solo",
       "group": "Groupe"
@@ -12,6 +14,24 @@
   "errors": {
     "datasetSync": "Échec de la synchronisation du dataset",
     "networkError": "Erreur réseau"
+  },
+  "modals": {
+    "possession": {
+      "type": {
+        "album": "Album",
+        "albumVersion": "Version",
+        "digipack": "Digipack",
+        "lightstick": "Lightstick",
+        "fanclubKit": "Fanclub kit",
+        "photocard": "Photocard"
+      },
+      "owned": "Exemplaires",
+      "owned_hint": "Nombre de copies possédées",
+      "owned_hint_max": "Maximum : {max}",
+      "signed": "Signés",
+      "signed_hint": "Nombre d'exemplaires dédicacés",
+      "saved": "Mis à jour"
+    }
   },
   "screens": {
     "startup": {

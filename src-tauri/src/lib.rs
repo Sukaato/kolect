@@ -34,6 +34,7 @@ pub fn run() {
             commands::dataset::dataset_get_summary,
             // collection
             commands::collection::collection_get_summary,
+            commands::collection::collection_update_item,
             // group
             commands::group::group_get_detail,
             commands::group::group_get_album_summaries,

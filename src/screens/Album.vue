@@ -2,7 +2,7 @@
 import AlbumHero from '@/components/screens/album/AlbumHero.vue'
 import DigipackCard from '@/components/screens/album/DigipackCard.vue'
 import PhotocardSection from '@/components/screens/album/PhotocardSection.vue'
-import VersionCard from '@/components/screens/album/VersionCard.vue'
+import AlbumVersionCard from '@/components/screens/album/AlbumVersionCard.vue'
 import { useAlbumStore } from '@/stores/album.store'
 import { PossessionFilter } from '@/types/group.type'
 import { AlbumId } from '@/types/schema/album.type'
@@ -87,7 +87,7 @@ onMounted(() => albumStore.load(albumId))
             {{ $t('screens.album.sections.versions') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <VersionCard v-for="version in filteredVersions" :key="version.id" :version="version" />
+            <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :version="version" />
           </div>
         </section>
 
