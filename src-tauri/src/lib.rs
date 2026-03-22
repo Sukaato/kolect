@@ -49,6 +49,9 @@ pub fn run() {
             commands::artist::artist_get_album_summaries,
             commands::artist::artist_get_lightsticks,
             commands::artist::artist_get_fanclub_kits,
+            // favorite
+            commands::favorite::favorite_toggle_group,
+            commands::favorite::favorite_toggle_artist,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -7,6 +7,7 @@ use crate::dto::output::{
 use crate::infrastructure::db::repositories::{
     AlbumRepository, ArtistAliasRepository, ArtistRepository, FanclubKitRepository,
     GroupMemberRepository, GroupRepository, LightstickRepository, Repository, RepositoryError,
+    UserFavoriteRepository,
 };
 
 pub struct GroupService<'a> {
@@ -23,6 +24,8 @@ impl<'a> GroupService<'a> {
         let group = GroupRepository::new(self.conn)
             .find_by_id(group_id)?
             .ok_or_else(|| RepositoryError::NotFound(group_id.to_string()))?;
+
+        let is_favorite = UserFavoriteRepository::new(self.conn).is_group_favorite(group_id)?;
 
         let memberships = GroupMemberRepository::new(self.conn).find_by_group_id(group_id)?;
 
@@ -60,6 +63,7 @@ impl<'a> GroupService<'a> {
                         image_url: artist.image_url,
                         solo_debut_date: artist.solo_debut_date,
                         solo_agency_id: artist.solo_agency_id,
+                        is_favorite: false, // les membres n'ont pas de favori dans ce contexte
                     },
                     aliases: artist_aliases,
                 }
@@ -74,6 +78,7 @@ impl<'a> GroupService<'a> {
                 fandom_name: group.fandom_name,
                 image_url: group.image_url,
                 agency_id: group.agency_id,
+                is_favorite,
             },
             members,
         })

@@ -6,5 +6,5 @@ export type Agency = {
   id: AgencyId
   name: string
   country: string
-  image_url: string | null
+  imageUrl: string | null
 }

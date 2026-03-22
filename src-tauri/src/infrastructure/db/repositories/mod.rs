@@ -9,6 +9,7 @@ pub mod group_member_repository;
 pub mod group_repository;
 pub mod lightstick_repository;
 pub mod photocard_repository;
+pub mod user_favorite_repository;
 
 pub use album_repository::AlbumRepository;
 pub use album_version_repository::AlbumVersionRepository;
@@ -20,6 +21,7 @@ pub use group_member_repository::GroupMemberRepository;
 pub use group_repository::{GroupRepository, GroupSummaryRow};
 pub use lightstick_repository::LightstickRepository;
 pub use photocard_repository::PhotocardRepository;
+pub use user_favorite_repository::UserFavoriteRepository;
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 

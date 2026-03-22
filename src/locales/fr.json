@@ -87,6 +87,10 @@
         "fanclub_kits": "Fanclub kits"
       },
       "empty": "Aucun item à afficher",
+      "favorite": {
+        "added": "Ajouté aux favoris",
+        "removed": "Retiré des favoris"
+      },
       "members": {
         "title": "Membres",
         "detail": {
@@ -133,7 +137,11 @@
         "lightsticks": "Lightsticks",
         "fanclub_kits": "Fanclub kits"
       },
-      "empty": "Aucun item à afficher"
+      "empty": "Aucun item à afficher",
+      "favorite": {
+        "added": "Ajouté aux favoris",
+        "removed": "Retiré des favoris"
+      }
     }
   }
 }

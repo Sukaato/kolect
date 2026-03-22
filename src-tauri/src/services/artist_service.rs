@@ -1,12 +1,12 @@
 use diesel::sqlite::SqliteConnection;
 
 use crate::dto::output::{
-    AlbumSummaryDto, ArtistAliasOutputDto, ArtistOutputDto, ArtistWithAliasesDto,
-    FanclubKitItemDto, LightstickItemDto,
+    AlbumSummaryDto, ArtistAliasOutputDto, ArtistDetailDto, ArtistOutputDto, FanclubKitItemDto,
+    LightstickItemDto,
 };
 use crate::infrastructure::db::repositories::{
     AlbumRepository, ArtistAliasRepository, ArtistRepository, FanclubKitRepository,
-    LightstickRepository, Repository, RepositoryError,
+    LightstickRepository, Repository, RepositoryError, UserFavoriteRepository,
 };
 
 pub struct ArtistService<'a> {
@@ -18,16 +18,18 @@ impl<'a> ArtistService<'a> {
         Self { conn }
     }
 
-    /// Retourne l'artiste avec ses aliases.
-    pub fn get_detail(&mut self, artist_id: &str) -> Result<ArtistWithAliasesDto, RepositoryError> {
+    /// Retourne l'artiste avec ses aliases et son statut favori.
+    pub fn get_detail(&mut self, artist_id: &str) -> Result<ArtistDetailDto, RepositoryError> {
         let artist = ArtistRepository::new(self.conn)
             .find_by_id(artist_id)?
             .ok_or_else(|| RepositoryError::NotFound(artist_id.to_string()))?;
 
+        let is_favorite = UserFavoriteRepository::new(self.conn).is_artist_favorite(artist_id)?;
+
         let aliases =
             ArtistAliasRepository::new(self.conn).find_by_artist_ids(&[artist_id.to_string()])?;
 
-        Ok(ArtistWithAliasesDto {
+        Ok(ArtistDetailDto {
             artist: ArtistOutputDto {
                 id: artist.id,
                 real_name: artist.real_name,
@@ -35,6 +37,7 @@ impl<'a> ArtistService<'a> {
                 image_url: artist.image_url,
                 solo_debut_date: artist.solo_debut_date,
                 solo_agency_id: artist.solo_agency_id,
+                is_favorite,
             },
             aliases: aliases
                 .into_iter()

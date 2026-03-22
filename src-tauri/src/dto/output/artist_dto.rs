@@ -2,6 +2,13 @@ use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ArtistDetailDto {
+    pub artist: ArtistOutputDto,
+    pub aliases: Vec<ArtistAliasOutputDto>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ArtistOutputDto {
     pub id: String,
     pub real_name: String,
@@ -9,6 +16,7 @@ pub struct ArtistOutputDto {
     pub image_url: Option<String>,
     pub solo_debut_date: Option<String>,
     pub solo_agency_id: Option<String>,
+    pub is_favorite: bool,
 }
 
 #[derive(Debug, Clone, Serialize)]

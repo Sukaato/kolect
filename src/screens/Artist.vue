@@ -2,22 +2,25 @@
 import AlbumCard from '@/components/screens/group/AlbumCard.vue'
 import FanclubKitCard from '@/components/screens/group/FanclubKitCard.vue'
 import LightstickCard from '@/components/screens/group/LightstickCard.vue'
+import { useFavoriteStore } from '@/stores/favorite.store'
 import { useArtistStore } from '@/stores/artist.store'
-import { PossessionFilter } from '@/types/group.type'
 import { RouteName } from '@/types/routes'
-import { ChevronLeftIcon } from 'lucide-vue-next'
+import { ChevronLeftIcon, StarIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { shallowRef, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { PossessionFilter } from '@/types/group.type'
+import { ArtistId } from '@/types/schema/artist.type'
 
 const { id } = defineProps<{
-  id: string
+  id: ArtistId
 }>()
 
 const router = useRouter()
 
 const artistStore = useArtistStore()
 const {
+  artist,
   displayName,
   loading,
   possessionFilter,
@@ -26,15 +29,25 @@ const {
   filteredFanclubKits,
 } = storeToRefs(artistStore)
 
+const favoriteStore = useFavoriteStore()
+const isFavorite = shallowRef(false)
+
 const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 
-onMounted(() => artistStore.load(id as any))
+async function handleFavoriteToggle() {
+  const result = await favoriteStore.toggleArtist(id)
+  if (result !== null) isFavorite.value = result
+}
+
+onMounted(async () => {
+  await artistStore.load(id)
+  isFavorite.value = artist.value?.isFavorite ?? false
+})
 </script>
 
 <template>
   <div class="screen--artist grow relative pb-10">
 
-    <!-- Header -->
     <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
       <div class="px-4 py-3 max-w-lg mx-auto space-y-3">
 
@@ -42,9 +55,12 @@ onMounted(() => artistStore.load(id as any))
           <button @click="router.back()" class="btn btn-ghost btn-sm btn-circle">
             <ChevronLeftIcon class="w-5 h-5" />
           </button>
-          <h1 class="text-xl font-bold tracking-tight flex-1">
-            {{ displayName }}
-          </h1>
+          <h1 class="text-xl font-bold tracking-tight flex-1">{{ displayName }}</h1>
+          <button class="btn btn-ghost btn-sm btn-circle" :disabled="favoriteStore.loading"
+            @click="handleFavoriteToggle">
+            <StarIcon class="w-5 h-5 transition-colors"
+              :class="isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-base-content/40'" />
+          </button>
         </div>
 
         <div class="flex gap-2">
@@ -57,7 +73,6 @@ onMounted(() => artistStore.load(id as any))
       </div>
     </div>
 
-    <!-- Skeleton -->
     <div v-if="loading" class="max-w-lg mx-auto px-4 pt-6 space-y-8">
       <div v-for="i in 3" :key="i" class="space-y-3">
         <div class="skeleton h-3 w-20 rounded" />
@@ -67,7 +82,6 @@ onMounted(() => artistStore.load(id as any))
       </div>
     </div>
 
-    <!-- Contenu -->
     <div v-else class="max-w-lg mx-auto px-4 pt-6 space-y-8">
 
       <section v-if="filteredAlbums.length">
@@ -75,10 +89,8 @@ onMounted(() => artistStore.load(id as any))
           {{ $t('screens.artist.sections.albums') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <RouterLink v-for="summary in filteredAlbums" :key="summary.albumId"
-            :to="{ name: RouteName.ARTIST_ALBUM, params: { id: id, albumId: summary.albumId } }">
-            <AlbumCard :summary />
-          </RouterLink>
+          <AlbumCard v-for="summary in filteredAlbums" :key="summary.albumId" :summary="summary"
+            @click="router.push({ name: RouteName.ARTIST_ALBUM, params: { id, albumId: summary.albumId } })" />
         </div>
       </section>
 

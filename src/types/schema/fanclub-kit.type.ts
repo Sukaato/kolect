@@ -1,15 +1,15 @@
-import type { ArtistId } from './artist.type'
 import type { Brand } from '../brand.type'
+import type { ArtistId } from './artist.type'
 import type { GroupId } from './group.type'
 
 export type FanclubKitId = Brand<string, 'fanclub_kit_id'>
 
 export type FanclubKit = {
   id: FanclubKitId
-  group_id: GroupId | null
-  artist_id: ArtistId | null
+  groupId: GroupId | null
+  artistId: ArtistId | null
   name: string
-  release_date: string
+  releaseDate: string
   region: string
-  image_url: string | null
+  imageUrl: string | null
 }

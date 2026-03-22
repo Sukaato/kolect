@@ -10,6 +10,7 @@ export type Artist = {
   imageUrl: string | null
   soloDebutDate: string | null
   soloAgencyId: AgencyId | null
+  isFavorite: boolean
 }
 
 export type ArtistAliasId = Brand<string, 'artist_alias_id'>

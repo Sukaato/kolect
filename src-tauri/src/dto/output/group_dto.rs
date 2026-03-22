@@ -11,6 +11,7 @@ pub struct GroupOutputDto {
     pub fandom_name: Option<String>,
     pub image_url: Option<String>,
     pub agency_id: String,
+    pub is_favorite: bool,
 }
 
 #[derive(Debug, Clone, Serialize)]

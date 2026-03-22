@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ChevronLeftIcon, UsersIcon } from 'lucide-vue-next'
+import AlbumCard from '@/components/screens/group/AlbumCard.vue'
+import FanclubKitCard from '@/components/screens/group/FanclubKitCard.vue'
+import { ChevronLeftIcon, StarIcon, UsersIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { shallowRef, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import AlbumCard from '@/components/screens/group/AlbumCard.vue'
-import FanclubKitCard from '@/components/screens/group/FanclubKitCard.vue'
 import LightstickCard from '@/components/screens/group/LightstickCard.vue'
 import MembersSheet from '@/components/screens/group/MembersSheet.vue'
+import { useFavoriteStore } from '@/stores/favorite.store'
 import { useGroupStore } from '@/stores/group.store'
 import { RouteName } from '@/types/routes'
-import type { GroupId } from '@/types/schema/group.type'
 import type { PossessionFilter } from '@/types/group.type'
-import type { ArtistId } from '@/types/schema/artist.type'
+import type { GroupId } from '@/types/schema/group.type'
 
-const { id } = defineProps<{
+const { id, mode } = defineProps<{
   id: GroupId
   mode: string
 }>()
@@ -31,23 +31,34 @@ const {
   filteredFanclubKits,
 } = storeToRefs(groupStore)
 
+const favoriteStore = useFavoriteStore()
+const isFavorite = shallowRef(false)
 const isMembersSheetOpen = shallowRef(false)
 
 const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 
-function navigateToSolo(artistId: ArtistId) {
-  router.push({ name: RouteName.ARTIST, params: { id: artistId }})
+async function handleFavoriteToggle() {
+  const result = await favoriteStore.toggleGroup(id)
+  if (result !== null) isFavorite.value = result
+}
+
+function navigateToAlbum(albumId: string) {
+  router.push({ name: RouteName.GROUP_ALBUM, params: { id, mode, albumId } })
+}
+
+function navigateToSolo(artistId: string) {
+  router.push({ name: RouteName.ARTIST, params: { id: artistId } })
 }
 
 onMounted(async () => {
   await groupStore.load(id)
+  isFavorite.value = group.value?.isFavorite ?? false
 })
 </script>
 
 <template>
   <div class="screen--group grow relative pb-10">
 
-    <!-- Header -->
     <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
       <div class="px-4 py-3 max-w-lg mx-auto space-y-3">
 
@@ -55,9 +66,12 @@ onMounted(async () => {
           <button @click="router.back()" class="btn btn-ghost btn-sm btn-circle">
             <ChevronLeftIcon class="w-5 h-5" />
           </button>
-          <h1 class="text-xl font-bold tracking-tight flex-1">
-            {{ group?.name ?? '...' }}
-          </h1>
+          <h1 class="text-xl font-bold tracking-tight flex-1">{{ group?.name ?? '...' }}</h1>
+          <button class="btn btn-ghost btn-sm btn-circle" :disabled="favoriteStore.loading"
+            @click="handleFavoriteToggle">
+            <StarIcon class="w-5 h-5 transition-colors"
+              :class="isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-base-content/40'" />
+          </button>
           <button @click="isMembersSheetOpen = true" class="btn btn-ghost btn-sm btn-circle">
             <UsersIcon class="w-5 h-5" />
           </button>
@@ -73,7 +87,6 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Skeleton -->
     <div v-if="loading" class="max-w-lg mx-auto px-4 pt-6 space-y-8">
       <div v-for="i in 3" :key="i" class="space-y-3">
         <div class="skeleton h-3 w-20 rounded" />
@@ -83,7 +96,6 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Contenu -->
     <div v-else class="max-w-lg mx-auto px-4 pt-6 space-y-8">
 
       <section v-if="filteredAlbums.length">
@@ -91,11 +103,8 @@ onMounted(async () => {
           {{ $t('screens.group.sections.albums') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <template v-for="summary in filteredAlbums" :key="summary.albumId">
-            <RouterLink :to="{ name: RouteName.GROUP_ALBUM, params: { albumId: summary.albumId } }">
-              <AlbumCard :summary />
-            </RouterLink>
-          </template>
+          <AlbumCard v-for="summary in filteredAlbums" :key="summary.albumId" :summary="summary"
+            @click="navigateToAlbum(summary.albumId)" />
         </div>
       </section>
 
@@ -129,3 +138,14 @@ onMounted(async () => {
 
   </div>
 </template>
+
+<style scoped>
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
