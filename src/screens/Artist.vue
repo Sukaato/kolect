@@ -4,9 +4,9 @@ import FanclubKitCard from '@/components/shared/FanclubKitCard.vue'
 import LightstickCard from '@/components/shared/LightstickCard.vue'
 import { useArtistStore } from '@/stores/artist.store'
 import { useFavoriteStore } from '@/stores/favorite.store'
-import { PossessionFilter } from '@/types/group.type'
+import type { PossessionFilter } from '@/types/group.type'
 import { RouteName } from '@/types/routes'
-import { ArtistId } from '@/types/schema/artist.type'
+import type { ArtistId } from '@/types/schema/artist.type'
 import { ChevronLeftIcon, StarIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { onMounted, shallowRef } from 'vue'
@@ -89,8 +89,10 @@ onMounted(async () => {
           {{ $t('screens.artist.sections.albums') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <AlbumCard v-for="summary in filteredAlbums" :key="summary.albumId" :summary="summary"
-            @click="router.push({ name: RouteName.ARTIST_ALBUM, params: { id, albumId: summary.albumId } })" />
+          <RouterLink v-for="summary in filteredAlbums" :key="summary.albumId"
+            :to="{ name: RouteName.ARTIST_ALBUM, params: { id, albumId: summary.albumId } }">
+            <AlbumCard :summary />
+          </RouterLink>
         </div>
       </section>
 
@@ -99,7 +101,8 @@ onMounted(async () => {
           {{ $t('screens.artist.sections.lightsticks') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <LightstickCard v-for="ls in filteredLightsticks" :key="ls.id" :lightstick="ls" />
+          <LightstickCard v-for="ls in filteredLightsticks" :key="ls.id" :lightstick="ls"
+            :after-save="() => artistStore.load(id)" />
         </div>
       </section>
 
@@ -108,7 +111,8 @@ onMounted(async () => {
           {{ $t('screens.artist.sections.fanclub_kits') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <FanclubKitCard v-for="fk in filteredFanclubKits" :key="fk.id" :fanclub-kit="fk" />
+          <FanclubKitCard v-for="fk in filteredFanclubKits" :key="fk.id" :fanclub-kit="fk"
+            :after-save="() => artistStore.load(id)" />
         </div>
       </section>
 

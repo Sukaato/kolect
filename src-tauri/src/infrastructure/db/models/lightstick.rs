@@ -19,6 +19,7 @@ pub struct Lightstick {
     pub name: String,
     pub version: String,
     pub release_date: String,
+    pub region: String,
     pub image_url: Option<String>,
     /// SQLite stocke les booleans comme INTEGER (0/1).
     /// Utiliser `.is_primary()` pour obtenir un bool.

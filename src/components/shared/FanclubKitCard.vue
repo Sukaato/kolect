@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { usePossessionStore } from '@/stores/possession.store'
-import type { FanclubKitItem } from '@/types/group.type'
+import RegionChip from '@/components/global/RegionChip.vue';
+import { usePossessionStore } from '@/stores/possession.store';
+import type { FanclubKitItem } from '@/types/group.type';
 
-const { fanclubKit, onSaved } = defineProps<{
+const { fanclubKit, afterSave } = defineProps<{
   fanclubKit: FanclubKitItem
-  onSaved?: () => void
+  afterSave?: () => void
 }>()
 
 const possessionStore = usePossessionStore()
@@ -19,7 +20,7 @@ function handleClick() {
     signedCount: 0,
     hasSigned: false,
     maxCount: 1,
-    onSaved,
+    onSaved: afterSave,
   })
 }
 </script>
@@ -40,5 +41,6 @@ function handleClick() {
         class="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-100" />
     </div>
     <p class="text-[10px] text-base-content/60 mt-1.5 truncate">{{ fanclubKit.name }}</p>
+    <RegionChip :region="fanclubKit.region" />
   </div>
 </template>

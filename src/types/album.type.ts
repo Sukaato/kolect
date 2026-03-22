@@ -20,6 +20,7 @@ export type AlbumVersionItem = {
   name: string
   format: string
   releaseDate: string
+  region: string
   imageUrl: string | null
   ownedCount: number
   hasSigned: boolean
@@ -30,6 +31,7 @@ export type DigipackItem = {
   name: string
   artistId: ArtistId | null
   releaseDate: string
+  region: string
   imageUrl: string | null
   ownedCount: number
   hasSigned: boolean
@@ -40,6 +42,7 @@ export type PhotocardItem = {
   artistId: ArtistId | null
   albumVersionId: AlbumVersionId | null
   digipackId: DigipackId | null
+  region: string
   imageUrl: string | null
   ownedCount: number
   hasSigned: boolean

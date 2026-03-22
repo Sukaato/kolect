@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { usePossessionStore } from '@/stores/possession.store'
+import RegionChip from '@/components/global/RegionChip.vue'
 import { useAlbumStore } from '@/stores/album.store'
+import { usePossessionStore } from '@/stores/possession.store'
 import type { AlbumVersionItem, PhotocardItem } from '@/types/album.type'
 import type { AlbumId } from '@/types/schema/album.type'
 import type { ArtistWithAliases } from '@/types/schema/artist.type'
@@ -64,5 +65,6 @@ function handleClick() {
     <p v-if="versionName" class="text-[10px] text-base-content/40 text-center truncate w-full">
       {{ versionName }}
     </p>
+    <RegionChip :region="photocard.region" />
   </div>
 </template>

@@ -115,6 +115,7 @@ diesel::table! {
         name -> Text,
         version -> Text,
         release_date -> Text,
+        region -> Text,
         image_url -> Nullable<Text>,
         is_deleted -> Integer,
     }

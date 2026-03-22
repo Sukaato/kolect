@@ -18,7 +18,6 @@ impl<'a> ArtistService<'a> {
         Self { conn }
     }
 
-    /// Retourne l'artiste avec ses aliases et son statut favori.
     pub fn get_detail(&mut self, artist_id: &str) -> Result<ArtistDetailDto, RepositoryError> {
         let artist = ArtistRepository::new(self.conn)
             .find_by_id(artist_id)?
@@ -52,7 +51,6 @@ impl<'a> ArtistService<'a> {
         })
     }
 
-    /// Retourne les albums de l'artiste avec comptage owned/total.
     pub fn get_album_summaries(
         &mut self,
         artist_id: &str,
@@ -72,7 +70,6 @@ impl<'a> ArtistService<'a> {
             .collect())
     }
 
-    /// Retourne les lightsticks de l'artiste avec owned_count.
     pub fn get_lightsticks(
         &mut self,
         artist_id: &str,
@@ -88,13 +85,13 @@ impl<'a> ArtistService<'a> {
                 name: r.name,
                 version: r.version,
                 release_date: r.release_date,
+                region: r.region,
                 image_url: r.image_url,
                 owned_count: r.owned_count,
             })
             .collect())
     }
 
-    /// Retourne les fanclub kits de l'artiste avec owned_count.
     pub fn get_fanclub_kits(
         &mut self,
         artist_id: &str,

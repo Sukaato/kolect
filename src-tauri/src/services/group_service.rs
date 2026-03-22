@@ -19,7 +19,6 @@ impl<'a> GroupService<'a> {
         Self { conn }
     }
 
-    /// Retourne le groupe + ses membres actifs avec leurs aliases.
     pub fn get_detail(&mut self, group_id: &str) -> Result<GroupDetailDto, RepositoryError> {
         let group = GroupRepository::new(self.conn)
             .find_by_id(group_id)?
@@ -36,7 +35,6 @@ impl<'a> GroupService<'a> {
             .collect();
 
         let artists = ArtistRepository::new(self.conn).find_by_ids(&active_artist_ids)?;
-
         let aliases =
             ArtistAliasRepository::new(self.conn).find_by_artist_ids(&active_artist_ids)?;
 
@@ -63,7 +61,7 @@ impl<'a> GroupService<'a> {
                         image_url: artist.image_url,
                         solo_debut_date: artist.solo_debut_date,
                         solo_agency_id: artist.solo_agency_id,
-                        is_favorite: false, // les membres n'ont pas de favori dans ce contexte
+                        is_favorite: false,
                     },
                     aliases: artist_aliases,
                 }
@@ -84,7 +82,6 @@ impl<'a> GroupService<'a> {
         })
     }
 
-    /// Retourne les albums du groupe avec comptage owned/total.
     pub fn get_album_summaries(
         &mut self,
         group_id: &str,
@@ -104,7 +101,6 @@ impl<'a> GroupService<'a> {
             .collect())
     }
 
-    /// Retourne les lightsticks du groupe avec owned_count.
     pub fn get_lightsticks(
         &mut self,
         group_id: &str,
@@ -120,13 +116,13 @@ impl<'a> GroupService<'a> {
                 name: r.name,
                 version: r.version,
                 release_date: r.release_date,
+                region: r.region,
                 image_url: r.image_url,
                 owned_count: r.owned_count,
             })
             .collect())
     }
 
-    /// Retourne les fanclub kits du groupe avec owned_count.
     pub fn get_fanclub_kits(
         &mut self,
         group_id: &str,

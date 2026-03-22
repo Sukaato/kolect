@@ -45,6 +45,7 @@ pub struct LightstickItemDto {
     pub name: String,
     pub version: String,
     pub release_date: String,
+    pub region: String,
     pub image_url: Option<String>,
     pub owned_count: i64,
 }

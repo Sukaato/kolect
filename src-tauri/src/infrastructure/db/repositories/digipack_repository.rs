@@ -17,6 +17,8 @@ pub struct DigipackWithOwnedRow {
     pub artist_id: Option<String>,
     #[diesel(sql_type = Text)]
     pub release_date: String,
+    #[diesel(sql_type = Text)]
+    pub region: String,
     #[diesel(sql_type = Nullable<Text>)]
     pub image_url: Option<String>,
     #[diesel(sql_type = BigInt)]
@@ -47,6 +49,7 @@ impl<'a> DigipackRepository<'a> {
                 d.name,
                 d.artist_id,
                 d.release_date,
+                d.region,
                 d.image_url,
                 COUNT(uc.id) AS owned_count,
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed

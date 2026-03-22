@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import MembersSheet from '@/components/screens/group/MembersSheet.vue'
 import AlbumCard from '@/components/shared/AlbumCard.vue'
 import FanclubKitCard from '@/components/shared/FanclubKitCard.vue'
 import LightstickCard from '@/components/shared/LightstickCard.vue'
-import MembersSheet from '@/components/screens/group/MembersSheet.vue'
 import { useFavoriteStore } from '@/stores/favorite.store'
 import { useGroupStore } from '@/stores/group.store'
 import type { PossessionFilter } from '@/types/group.type'
@@ -40,10 +40,6 @@ const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 async function handleFavoriteToggle() {
   const result = await favoriteStore.toggleGroup(id)
   if (result !== null) isFavorite.value = result
-}
-
-function navigateToAlbum(albumId: string) {
-  router.push({ name: RouteName.GROUP_ALBUM, params: { id, mode, albumId } })
 }
 
 function navigateToSolo(artistId: string) {
@@ -103,8 +99,10 @@ onMounted(async () => {
           {{ $t('screens.group.sections.albums') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <AlbumCard v-for="summary in filteredAlbums" :key="summary.albumId" :summary="summary"
-            @click="navigateToAlbum(summary.albumId)" />
+          <RouterLink v-for="summary in filteredAlbums" :key="summary.albumId"
+            :to="{ name: RouteName.GROUP_ALBUM, params: { id, mode, albumId: summary.albumId } }">
+            <AlbumCard :summary />
+          </RouterLink>
         </div>
       </section>
 
@@ -113,7 +111,8 @@ onMounted(async () => {
           {{ $t('screens.group.sections.lightsticks') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <LightstickCard v-for="ls in filteredLightsticks" :key="ls.id" :lightstick="ls" />
+          <LightstickCard v-for="ls in filteredLightsticks" :key="ls.id" :lightstick="ls"
+            :after-save="() => groupStore.load(id)" />
         </div>
       </section>
 
@@ -122,7 +121,8 @@ onMounted(async () => {
           {{ $t('screens.group.sections.fanclub_kits') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <FanclubKitCard v-for="fk in filteredFanclubKits" :key="fk.id" :fanclub-kit="fk" />
+          <FanclubKitCard v-for="fk in filteredFanclubKits" :key="fk.id" :fanclub-kit="fk"
+            :after-save="() => groupStore.load(id)" />
         </div>
       </section>
 

@@ -10,6 +10,7 @@ CREATE TABLE
     name TEXT NOT NULL,
     version TEXT NOT NULL,
     release_date TEXT NOT NULL,
+    region TEXT NOT NULL,
     image_url TEXT,
     is_deleted INTEGER NOT NULL DEFAULT 0
   );

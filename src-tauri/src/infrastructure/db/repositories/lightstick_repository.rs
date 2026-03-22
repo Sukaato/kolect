@@ -21,6 +21,8 @@ pub struct LightstickWithOwnedRow {
     pub version: String,
     #[diesel(sql_type = Text)]
     pub release_date: String,
+    #[diesel(sql_type = Text)]
+    pub region: String,
     #[diesel(sql_type = Nullable<Text>)]
     pub image_url: Option<String>,
     #[diesel(sql_type = BigInt)]
@@ -38,7 +40,6 @@ impl<'a> LightstickRepository<'a> {
         Self { conn }
     }
 
-    /// Retourne les lightsticks d'un groupe avec owned_count.
     pub fn find_by_group_id_with_owned(
         &mut self,
         g_id: &str,
@@ -51,6 +52,7 @@ impl<'a> LightstickRepository<'a> {
                 ls.name,
                 ls.version,
                 ls.release_date,
+                ls.region,
                 ls.image_url,
                 COUNT(uc.lightstick_id) AS owned_count
             FROM lightsticks ls
@@ -65,7 +67,6 @@ impl<'a> LightstickRepository<'a> {
             .load::<LightstickWithOwnedRow>(self.conn)?)
     }
 
-    /// Retourne les lightsticks d'un artiste solo avec owned_count.
     pub fn find_by_artist_id_with_owned(
         &mut self,
         a_id: &str,
@@ -78,6 +79,7 @@ impl<'a> LightstickRepository<'a> {
                 ls.name,
                 ls.version,
                 ls.release_date,
+                ls.region,
                 ls.image_url,
                 COUNT(uc.lightstick_id) AS owned_count
             FROM lightsticks ls

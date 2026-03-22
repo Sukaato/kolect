@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { usePossessionStore } from '@/stores/possession.store'
-import type { LightstickItem } from '@/types/group.type'
+import RegionChip from '@/components/global/RegionChip.vue';
+import { usePossessionStore } from '@/stores/possession.store';
+import type { LightstickItem } from '@/types/group.type';
 
-const { lightstick, onSaved } = defineProps<{
+const { lightstick, afterSave } = defineProps<{
   lightstick: LightstickItem
-  onSaved?: () => void
+  afterSave?: () => void
 }>()
 
 const possessionStore = usePossessionStore()
@@ -18,7 +19,7 @@ function handleClick() {
     ownedCount: lightstick.ownedCount,
     signedCount: 0,
     hasSigned: false,
-    onSaved,
+    onSaved: afterSave,
   })
 }
 </script>
@@ -39,5 +40,6 @@ function handleClick() {
         class="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-100" />
     </div>
     <p class="text-[10px] text-base-content/60 mt-1.5">{{ lightstick.version }}</p>
+    <RegionChip :region="lightstick.region" />
   </div>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
 import PhotocardCard from '@/components/screens/album/PhotocardCard.vue'
 import { useAlbumStore } from '@/stores/album.store'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const PHOTOCARD_FILTER_MODE: 'chips' | 'dropdown' = 'chips'
@@ -10,6 +10,7 @@ const PHOTOCARD_FILTER_MODE: 'chips' | 'dropdown' = 'chips'
 
 const albumStore = useAlbumStore()
 const {
+  detail,
   members,
   versions,
   selectedMemberTab,
@@ -71,8 +72,8 @@ const versionOptions = computed(() => [
 
       <!-- Grille -->
       <div class="grid grid-cols-4 gap-2 p-3">
-        <PhotocardCard v-for="pc in filteredPhotocards" :key="pc.id" :photocard="pc" :members="members"
-          :versions="versions" />
+        <PhotocardCard v-for="pc in filteredPhotocards" :key="pc.id" :album-id="detail!.albumId" :photocard="pc"
+          :members="members" :versions="versions" />
       </div>
 
       <div v-if="!filteredPhotocards.length" class="py-10 text-center text-sm text-base-content/40">

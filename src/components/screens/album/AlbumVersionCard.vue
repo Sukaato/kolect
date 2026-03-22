@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { usePossessionStore } from '@/stores/possession.store'
-import { useAlbumStore } from '@/stores/album.store'
-import type { AlbumVersionItem } from '@/types/album.type'
-import type { AlbumId } from '@/types/schema/album.type'
+import RegionChip from '@/components/global/RegionChip.vue';
+import { useAlbumStore } from '@/stores/album.store';
+import { usePossessionStore } from '@/stores/possession.store';
+import type { AlbumVersionItem } from '@/types/album.type';
+import type { AlbumId } from '@/types/schema/album.type';
 
 const { version, albumId } = defineProps<{
   version: AlbumVersionItem
@@ -48,5 +49,6 @@ function handleClick() {
       </span>
     </div>
     <p class="text-[11px] font-semibold mt-1.5 truncate">{{ version.name }}</p>
+    <RegionChip :region="version.region" />
   </div>
 </template>

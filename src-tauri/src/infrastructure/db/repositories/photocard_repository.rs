@@ -17,6 +17,8 @@ pub struct PhotocardWithOwnedRow {
     pub album_version_id: Option<String>,
     #[diesel(sql_type = Nullable<Text>)]
     pub digipack_id: Option<String>,
+    #[diesel(sql_type = Text)]
+    pub region: String,
     #[diesel(sql_type = Nullable<Text>)]
     pub image_url: Option<String>,
     #[diesel(sql_type = BigInt)]
@@ -36,8 +38,7 @@ impl<'a> PhotocardRepository<'a> {
         Self { conn }
     }
 
-    /// Retourne toutes les photocards liées à un album (via versions, digipacks
-    /// ou rattachement direct) avec owned_count et has_signed.
+    /// Retourne toutes les photocards liées à un album avec owned_count et has_signed.
     pub fn find_by_album_id_with_owned(
         &mut self,
         a_id: &str,
@@ -48,6 +49,7 @@ impl<'a> PhotocardRepository<'a> {
                 p.artist_id,
                 p.album_version_id,
                 p.digipack_id,
+                p.region,
                 p.image_url,
                 COUNT(uc.id) AS owned_count,
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed

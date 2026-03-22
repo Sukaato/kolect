@@ -17,6 +17,8 @@ pub struct AlbumVersionWithOwnedRow {
     pub format: String,
     #[diesel(sql_type = Text)]
     pub release_date: String,
+    #[diesel(sql_type = Text)]
+    pub region: String,
     #[diesel(sql_type = Nullable<Text>)]
     pub image_url: Option<String>,
     #[diesel(sql_type = BigInt)]
@@ -47,6 +49,7 @@ impl<'a> AlbumVersionRepository<'a> {
                 av.name,
                 av.format,
                 av.release_date,
+                av.region,
                 av.image_url,
                 COUNT(uc.id) AS owned_count,
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed

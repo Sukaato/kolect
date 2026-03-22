@@ -27,6 +27,7 @@ export type LightstickItem = {
   name: string
   version: string
   releaseDate: string
+  region: string
   imageUrl: string | null
   ownedCount: number
 }

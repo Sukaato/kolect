@@ -1113,6 +1113,7 @@
       "name": "BLACKPINK Official Lightstick Ver.2",
       "version": "2",
       "release_date": "2022-08-01",
+      "region": "global",
       "image_url": "https://images.example.com/blackpink/lightstick_v2.jpg",
       "group_id": "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa",
       "artist_id": null
@@ -1122,6 +1123,7 @@
       "name": "BTS Official Lightstick Ver.4",
       "version": "4",
       "release_date": "2020-01-01",
+      "region": "GLOBAL",
       "image_url": "https://images.example.com/bts/lightstick_v4.jpg",
       "group_id": "ffffffff-ffff-4fff-afff-ffffffffffff",
       "artist_id": null
@@ -1131,6 +1133,7 @@
       "name": "TWICE Official Lightstick Ver.2",
       "version": "2",
       "release_date": "2021-11-01",
+      "region": "GLOBAL",
       "image_url": "https://images.example.com/twice/lightstick_v2.jpg",
       "group_id": "cccccccc-0000-4000-b000-000000000001",
       "artist_id": null
@@ -1140,6 +1143,7 @@
       "name": "ZICO - Official Lightstick",
       "version": "1",
       "release_date": "2021-01-01",
+      "region": "GLOBAL",
       "image_url": "https://images.example.com/zico/lightstick.jpg",
       "group_id": null,
       "artist_id": "1f9700c5-5a1d-422b-85eb-18e8253971dd"

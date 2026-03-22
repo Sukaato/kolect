@@ -87,7 +87,7 @@ onMounted(() => albumStore.load(albumId))
             {{ $t('screens.album.sections.versions') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :version="version" />
+            <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :album-id="albumId" :version="version" />
           </div>
         </section>
 
@@ -96,7 +96,7 @@ onMounted(() => albumStore.load(albumId))
             {{ $t('screens.album.sections.digipacks') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <DigipackCard v-for="digipack in filteredDigipacks" :key="digipack.id" :digipack="digipack" />
+            <DigipackCard v-for="digipack in filteredDigipacks" :key="digipack.id" :album-id="albumId" :digipack="digipack" />
           </div>
         </section>
 

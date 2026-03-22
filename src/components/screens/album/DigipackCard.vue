@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { usePossessionStore } from '@/stores/possession.store'
+import RegionChip from '@/components/global/RegionChip.vue'
 import { useAlbumStore } from '@/stores/album.store'
+import { usePossessionStore } from '@/stores/possession.store'
 import type { DigipackItem } from '@/types/album.type'
 import type { AlbumId } from '@/types/schema/album.type'
 import { storeToRefs } from 'pinia'
@@ -58,5 +59,6 @@ function handleClick() {
     </div>
     <p class="text-[11px] font-semibold mt-1.5 truncate">{{ digipack.name }}</p>
     <p v-if="memberName" class="text-[10px] text-base-content/50 truncate">{{ memberName }}</p>
+    <RegionChip :region="digipack.region" />
   </div>
 </template>
