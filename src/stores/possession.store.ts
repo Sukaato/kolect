@@ -32,43 +32,47 @@ export const usePossessionStore = defineStore('possession', () => {
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const updateInvoke = useInvoke<void>('collection_update_item', { defaults: null, showErrorToast: false })
+  const updateInvoke = useInvoke<void>('collection_update_item', {
+    defaults: null,
+    showErrorToast: false,
+  })
 
   // ─── State ─────────────────────────────────────────────────────────────────
 
-  const isOpen      = shallowRef(false)
-  const item        = shallowRef<PossessionItem | null>(null)
-  const ownedCount  = shallowRef(0)
+  const isOpen = shallowRef(false)
+  const item = shallowRef<PossessionItem | null>(null)
+  const ownedCount = shallowRef(0)
   const signedCount = shallowRef(0)
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
   const loading = computed(() => updateInvoke.loading.value)
 
-  const canIncrease     = computed(() =>
-    item.value?.maxCount === undefined || ownedCount.value < item.value.maxCount
+  const canIncrease = computed(
+    () => item.value?.maxCount === undefined || ownedCount.value < item.value.maxCount,
   )
-  const canDecrease     = computed(() => ownedCount.value > 0)
+  const canDecrease = computed(() => ownedCount.value > 0)
   const canDecreaseSign = computed(() => signedCount.value > 0)
   const canIncreaseSign = computed(() => signedCount.value < ownedCount.value)
-  const isDirty         = computed(() =>
-    item.value !== null &&
-    (ownedCount.value !== item.value.ownedCount || signedCount.value !== item.value.signedCount)
+  const isDirty = computed(
+    () =>
+      item.value !== null &&
+      (ownedCount.value !== item.value.ownedCount || signedCount.value !== item.value.signedCount),
   )
 
   // ─── Actions ───────────────────────────────────────────────────────────────
 
   function open(newItem: PossessionItem) {
-    item.value        = newItem
-    ownedCount.value  = newItem.ownedCount
+    item.value = newItem
+    ownedCount.value = newItem.ownedCount
     signedCount.value = newItem.signedCount
-    isOpen.value      = true
+    isOpen.value = true
   }
 
   function close() {
-    isOpen.value      = false
-    item.value        = null
-    ownedCount.value  = 0
+    isOpen.value = false
+    item.value = null
+    ownedCount.value = 0
     signedCount.value = 0
   }
 

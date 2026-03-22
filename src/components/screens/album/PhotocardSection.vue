@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import PhotocardCard from '@/components/screens/album/PhotocardCard.vue'
 import { useAlbumStore } from '@/stores/album.store'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import PhotocardCard from './PhotocardCard.vue'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const PHOTOCARD_FILTER_MODE: 'chips' | 'dropdown' = 'chips'
@@ -13,6 +13,7 @@ const {
   detail,
   members,
   versions,
+  isSolo,
   selectedMemberTab,
   selectedVersionFilter,
   filteredPhotocards,
@@ -42,8 +43,8 @@ const versionOptions = computed(() => [
 
     <div class="bg-base-100 rounded-2xl border border-base-300 overflow-hidden">
 
-      <!-- Onglets membres -->
-      <div class="flex overflow-x-auto scrollbar-none border-b border-base-300">
+      <!-- Onglets membres — cachés pour les artistes solo -->
+      <div v-if="!isSolo" class="flex overflow-x-auto scrollbar-none border-b border-base-300">
         <button v-for="tab in memberTabs" :key="tab.id"
           class="shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap" :class="selectedMemberTab === tab.id
             ? 'border-primary text-primary'

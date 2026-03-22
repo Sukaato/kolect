@@ -30,7 +30,6 @@ export const useAlbumStore = defineStore('album', () => {
   const digipacks = computed(() => digipacksInvoke.result.value ?? [])
   const photocards = computed(() => photocardsInvoke.result.value ?? [])
 
-  // Membres : groupe si group_id, artiste seul si artistId
   const members = computed<ArtistWithAliases[]>(() => {
     if (groupDetailInvoke.result.value) {
       return groupDetailInvoke.result.value.members
@@ -45,6 +44,9 @@ export const useAlbumStore = defineStore('album', () => {
     }
     return []
   })
+
+  // true = album d'artiste solo → cacher les tabs membres dans PhotocardSection
+  const isSolo = computed(() => !!detail.value?.artistId && !detail.value?.groupId)
 
   const loading = computed(
     () =>
@@ -107,7 +109,12 @@ export const useAlbumStore = defineStore('album', () => {
   // ─── Actions ───────────────────────────────────────────────────────────────
 
   async function load(albumId: AlbumId) {
-    // 1. Charger le détail + les sections en parallèle
+    // Reset les membres immédiatement pour éviter d'afficher
+    // les données du précédent album pendant le chargement
+    groupDetailInvoke.result.value = null
+    artistDetailInvoke.result.value = null
+    resetFilters()
+
     await Promise.all([
       detailInvoke.invoke({ albumId }),
       versionsInvoke.invoke({ albumId }),
@@ -115,7 +122,6 @@ export const useAlbumStore = defineStore('album', () => {
       photocardsInvoke.invoke({ albumId }),
     ])
 
-    // 2. Une fois le détail connu, fetcher les membres selon le contexte
     const d = detailInvoke.result.value
     if (!d) return
 
@@ -143,6 +149,7 @@ export const useAlbumStore = defineStore('album', () => {
     versions,
     digipacks,
     members,
+    isSolo,
     progressPercent,
     filteredVersions,
     filteredDigipacks,
