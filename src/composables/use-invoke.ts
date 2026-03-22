@@ -21,8 +21,16 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
     error.value = void 0
     result.value = void 0
 
-    console.debug(args ? `call "${command}" command with args: ${JSON.stringify(args)}` : `call "${command}" command`)
-    await debug(args ? `call "${command}" command with args: ${JSON.stringify(args)}` : `call "${command}" command`)
+    console.debug(
+      args
+        ? `call "${command}" command with args: ${JSON.stringify(args)}`
+        : `call "${command}" command`,
+    )
+    await debug(
+      args
+        ? `call "${command}" command with args: ${JSON.stringify(args)}`
+        : `call "${command}" command`,
+    )
     return Promise.all([
       wait(200), // wait at least 2 seconds
       tauriInvoke<T>(command, args)

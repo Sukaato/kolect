@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useScrollLock, onKeyStroke } from '@vueuse/core'
-import { useTemplateRef, watch } from 'vue'
+import { watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   open: boolean
@@ -13,7 +13,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const bodyRef = useTemplateRef('sheet-body')
+// const bodyRef = useTemplateRef('sheet-body')
 const isLocked = useScrollLock(document.body)
 
 watch(() => props.open, (val) => {

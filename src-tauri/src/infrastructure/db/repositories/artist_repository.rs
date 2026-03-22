@@ -40,7 +40,6 @@ impl<'a> ArtistRepository<'a> {
     pub fn find_by_ids(&mut self, ids: &[String]) -> RepoResult<Vec<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
-
         Ok(artists
             .filter(id.eq_any(ids))
             .filter(is_deleted.eq(0))
@@ -112,7 +111,11 @@ impl<'a> ArtistRepository<'a> {
             None => String::new(),
         };
 
-        let having = if owned_only { "HAVING owned_count > 0" } else { "" };
+        let having = if owned_only {
+            "HAVING owned_count > 0"
+        } else {
+            ""
+        };
 
         let sql = format!(
             "SELECT
@@ -193,7 +196,6 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn insert(&mut self, item: Artist) -> RepoResult<Artist> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
-
         diesel::insert_into(artists)
             .values(&item)
             .execute(self.conn)?;
@@ -204,7 +206,6 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn find_by_id(&mut self, record_id: &str) -> RepoResult<Option<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
-
         Ok(artists
             .filter(id.eq(record_id))
             .first::<Artist>(self.conn)
@@ -213,7 +214,6 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
 
     fn find_all(&mut self, page: Page) -> RepoResult<PaginatedResult<Artist>> {
         use crate::infrastructure::db::schema::artists::dsl::*;
-
 
         let total = artists
             .filter(is_deleted.eq(0))
@@ -233,7 +233,6 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
     fn update(&mut self, item: Artist) -> RepoResult<Artist> {
         use crate::infrastructure::db::schema::artists::dsl::*;
 
-
         diesel::update(artists.filter(id.eq(&item.id)))
             .set((
                 real_name.eq(&item.real_name),
@@ -249,7 +248,6 @@ impl<'a> Repository<Artist> for ArtistRepository<'a> {
 
     fn soft_delete(&mut self, record_id: &str) -> RepoResult<()> {
         use crate::infrastructure::db::schema::artists::dsl::*;
-
 
         diesel::update(artists.filter(id.eq(record_id)))
             .set(is_deleted.eq(1))

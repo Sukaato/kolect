@@ -6,8 +6,8 @@ runs:
   steps:
     - name: rustfmt check
       shell: bash
-      run: bun format:tauri:check
+      run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
     - name: clippy check
       shell: bash
-      run: bun lint:tauri:check
+      run: cargo clippy --manifest-path src-tauri/Cargo.toml

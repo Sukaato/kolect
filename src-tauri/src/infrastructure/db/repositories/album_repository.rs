@@ -55,10 +55,7 @@ impl<'a> AlbumRepository<'a> {
     }
 
     /// Retourne les albums d'un groupe avec comptage owned/total des versions.
-    pub fn find_summaries_by_group_id(
-        &mut self,
-        g_id: &str,
-    ) -> RepoResult<Vec<AlbumSummaryRow>> {
+    pub fn find_summaries_by_group_id(&mut self, g_id: &str) -> RepoResult<Vec<AlbumSummaryRow>> {
         let sql = "
             SELECT
                 al.id AS album_id,
@@ -81,10 +78,7 @@ impl<'a> AlbumRepository<'a> {
     }
 
     /// Retourne les albums d'un artiste solo avec comptage owned/total.
-    pub fn find_summaries_by_artist_id(
-        &mut self,
-        a_id: &str,
-    ) -> RepoResult<Vec<AlbumSummaryRow>> {
+    pub fn find_summaries_by_artist_id(&mut self, a_id: &str) -> RepoResult<Vec<AlbumSummaryRow>> {
         let sql = "
             SELECT
                 al.id AS album_id,

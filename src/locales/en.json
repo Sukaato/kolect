@@ -26,6 +26,10 @@
     },
     "collection": {
       "title": "My collection",
+      "sort": {
+        "name": "Name",
+        "agency": "Agency"
+      },
       "includePhotocards": "Include PC card",
       "empty": "Its empty, start Kollect",
       "endOfList": "Onyl this ? Kollect more"
@@ -117,6 +121,19 @@
         },
         "empty": "No photocards"
       }
+    },
+    "artist": {
+      "filters": {
+        "all": "All",
+        "owned": "Owned",
+        "missing": "Missing"
+      },
+      "sections": {
+        "albums": "Albums",
+        "lightsticks": "Lightsticks",
+        "fanclub_kits": "Fanclub kits"
+      },
+      "empty": "No items to display"
     }
   }
 }

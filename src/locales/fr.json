@@ -27,8 +27,8 @@
     "collection": {
       "title": "Ma collection",
       "sort": {
-        "name": "Name",
-        "agency": "Agency"
+        "name": "Nom",
+        "agency": "Agence"
       },
       "includePhotocards": "Inclure les PCs",
       "empty": "C'est vide, commencer a collectionner",
@@ -57,7 +57,7 @@
           "title": "Data",
           "dataset": {
             "title": "Jeu de données",
-            "description": "Synchronisez le jeu de données local avec le serveur distant afin d’obtenir les derniers groupes de K-pop et lightsticks.",
+            "description": "Synchronisez le jeu de données local avec le serveur distant afin d'obtenir les derniers groupes de K-pop et lightsticks.",
             "actions": {
               "refresh": "Synchroniser"
             }
@@ -121,6 +121,19 @@
         },
         "empty": "Aucune photocard"
       }
+    },
+    "artist": {
+      "filters": {
+        "all": "Tous",
+        "owned": "Possédés",
+        "missing": "Manquants"
+      },
+      "sections": {
+        "albums": "Albums",
+        "lightsticks": "Lightsticks",
+        "fanclub_kits": "Fanclub kits"
+      },
+      "empty": "Aucun item à afficher"
     }
   }
 }

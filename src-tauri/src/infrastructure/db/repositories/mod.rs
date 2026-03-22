@@ -10,16 +10,16 @@ pub mod group_repository;
 pub mod lightstick_repository;
 pub mod photocard_repository;
 
-pub use album_repository::{AlbumDetailRow, AlbumRepository, AlbumSummaryRow};
-pub use album_version_repository::{AlbumVersionRepository, AlbumVersionWithOwnedRow};
+pub use album_repository::AlbumRepository;
+pub use album_version_repository::AlbumVersionRepository;
 pub use artist_alias_repository::ArtistAliasRepository;
 pub use artist_repository::{ArtistRepository, ArtistSummaryRow};
-pub use digipack_repository::{DigipackRepository, DigipackWithOwnedRow};
-pub use fanclub_kit_repository::{FanclubKitRepository, FanclubKitWithOwnedRow};
+pub use digipack_repository::DigipackRepository;
+pub use fanclub_kit_repository::FanclubKitRepository;
 pub use group_member_repository::GroupMemberRepository;
 pub use group_repository::{GroupRepository, GroupSummaryRow};
-pub use lightstick_repository::{LightstickRepository, LightstickWithOwnedRow};
-pub use photocard_repository::{PhotocardRepository, PhotocardWithOwnedRow};
+pub use lightstick_repository::LightstickRepository;
+pub use photocard_repository::PhotocardRepository;
 
 // ─── Erreur ───────────────────────────────────────────────────────────────────
 
