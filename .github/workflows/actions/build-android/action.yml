@@ -1,5 +1,5 @@
 name: Build Android
-description: Build the Tauri Android APK
+description: Build Tauri Android APK and AAB
 
 inputs:
   keystore-base64:
@@ -14,11 +14,10 @@ inputs:
   key-password:
     description: Key password
     required: true
-
-outputs:
-  apk-path:
-    description: Path to the built APK
-    value: ${{ steps.find-apk.outputs.path }}
+  artifact-suffix:
+    description: Suffix appended to artifact names (e.g. pr-42-abc1234 or v1.2.3)
+    required: false
+    default: ${{ github.sha }}
 
 runs:
   using: composite
@@ -31,6 +30,13 @@ runs:
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+
+    - name: Install NDK
+      shell: bash
+      run: |
+        sdkmanager "ndk;27.0.12077973"
+        echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.0.12077973" >> $GITHUB_ENV
+        echo "$ANDROID_SDK_ROOT/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Install Android targets
       shell: bash
@@ -53,25 +59,36 @@ runs:
         name: dist
         path: dist/
 
-    - name: Build Android APK
+    - name: Build APK
       shell: bash
       env:
         KEYSTORE_PATH: kolect.keystore
         KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
         KEY_ALIAS: ${{ inputs.key-alias }}
         KEY_PASSWORD: ${{ inputs.key-password }}
+        ANDROID_NDK_HOME: ${{ env.NDK_HOME }}
       run: bun tauri android build --apk
 
-    - name: Find APK path
-      id: find-apk
+    - name: Build AAB
       shell: bash
-      run: |
-        APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n1)
-        echo "path=$APK" >> $GITHUB_OUTPUT
+      env:
+        KEYSTORE_PATH: kolect.keystore
+        KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
+        KEY_ALIAS: ${{ inputs.key-alias }}
+        KEY_PASSWORD: ${{ inputs.key-password }}
+        ANDROID_NDK_HOME: ${{ env.NDK_HOME }}
+      run: bun tauri android build --aab
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: android-apk
+        name: kolect-${{ inputs.artifact-suffix }}.apk
         path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
-        retention-days: 7
+        retention-days: 14
+
+    - name: Upload AAB artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: kolect-${{ inputs.artifact-suffix }}.aab
+        path: src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+        retention-days: 14

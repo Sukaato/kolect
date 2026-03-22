@@ -45,6 +45,19 @@ jobs:
       - name: Setup Rust
         uses: ./.github/workflows/actions/setup-rust
 
+      - name: Compute artifact suffix
+        id: suffix
+        shell: bash
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "value=pr-${{ github.event.pull_request.number }}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          else
+            echo "value=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build
         uses: ./.github/workflows/actions/build-android
         with:
@@ -52,3 +65,4 @@ jobs:
           keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          artifact-suffix: ${{ steps.suffix.outputs.value }}

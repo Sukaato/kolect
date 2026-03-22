@@ -25,6 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Bun
+        uses: ./.github/workflows/actions/setup-bun
+
       - name: Setup Rust
         uses: ./.github/workflows/actions/setup-rust
 

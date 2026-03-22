@@ -29,7 +29,7 @@ on:
         default: "1"
 
 jobs:
-  # ─── Étape 1 : Build front (partagé par back et android) ──────────────────
+  # ─── Étape 1 : Build front ────────────────────────────────────────────────
 
   build-front:
     name: Release — Build Frontend
@@ -37,8 +37,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Sur workflow_dispatch on est sur la branche courante
-          # Sur push tag on checkout le tag directement
           ref: ${{ github.event_name == 'push' && github.ref || github.sha }}
 
       - name: Setup Bun
@@ -77,16 +75,16 @@ jobs:
       - name: Setup Rust
         uses: ./.github/workflows/actions/setup-rust
 
-      - name: Build Android APK
+      - name: Build Android
         uses: ./.github/workflows/actions/build-android
         with:
           keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          artifact-suffix: ${{ github.event_name == 'push' && github.ref_name || 'pre-release' }}
 
-  # ─── Étape 3 : Bump version (uniquement sur workflow_dispatch) ─────────────
-  # Le commit et le tag sont créés ICI, après que les builds ont réussi
+  # ─── Étape 3 : Bump version (workflow_dispatch uniquement) ────────────────
 
   bump:
     name: Release — Bump Version
@@ -144,7 +142,6 @@ jobs:
             VERSION="${{ needs.bump.outputs.version }}"
           fi
 
-          # Détecter si pré-release (contient un tiret)
           if echo "$VERSION" | grep -q '-'; then
             IS_PRE=true
           else
@@ -155,12 +152,47 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "is-prerelease=$IS_PRE" >> $GITHUB_OUTPUT
 
-  # ─── Étape 5 : Créer la release GitHub ────────────────────────────────────
+  # ─── Étape 5 : Re-upload les artifacts avec le nom de version ─────────────
+
+  rename-artifacts:
+    name: Release — Rename Artifacts
+    runs-on: ubuntu-latest
+    needs: resolve-version
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: kolect-pre-release.apk
+          path: release-artifacts/
+
+      - name: Download AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: kolect-pre-release.aab
+          path: release-artifacts/
+
+      - name: Upload APK with version name
+        uses: actions/upload-artifact@v4
+        with:
+          name: kolect-${{ needs.resolve-version.outputs.tag }}.apk
+          path: release-artifacts/*.apk
+          retention-days: 90
+
+      - name: Upload AAB with version name
+        uses: actions/upload-artifact@v4
+        with:
+          name: kolect-${{ needs.resolve-version.outputs.tag }}.aab
+          path: release-artifacts/*.aab
+          retention-days: 90
+
+  # ─── Étape 6 : Créer la release GitHub ────────────────────────────────────
 
   publish:
     name: Release — Publish
     runs-on: ubuntu-latest
-    needs: resolve-version
+    needs:
+      - resolve-version
+      - rename-artifacts
     permissions:
       contents: write
     steps:
@@ -168,10 +200,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download APK artifact
+      - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
-          name: android-apk
+          name: kolect-${{ needs.resolve-version.outputs.tag }}.apk
+          path: release-artifacts/
+
+      - name: Download AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: kolect-${{ needs.resolve-version.outputs.tag }}.aab
           path: release-artifacts/
 
       - name: Generate release notes
@@ -205,4 +243,6 @@ jobs:
           name: ${{ needs.resolve-version.outputs.tag }}
           body: ${{ steps.notes.outputs.notes }}
           prerelease: ${{ needs.resolve-version.outputs.is-prerelease == 'true' }}
-          files: release-artifacts/*.apk
+          files: |
+            release-artifacts/*.apk
+            release-artifacts/*.aab

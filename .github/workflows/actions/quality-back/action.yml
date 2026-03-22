@@ -4,10 +4,14 @@ description: Run rustfmt and clippy checks
 runs:
   using: composite
   steps:
+    - name: Install Linux dependencies
+      uses: ./.github/workflows/actions/install-linux-deps
+
     - name: rustfmt check
       shell: bash
       run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
     - name: clippy check
       shell: bash
-      run: cargo clippy --manifest-path src-tauri/Cargo.toml
+      # run: cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings # TODO: Switch to this when all warning has been fixed
+      run: cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets
