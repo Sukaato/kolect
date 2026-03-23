@@ -43,7 +43,7 @@ function handleClick() {
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-1 cursor-pointer" @click="handleClick">
+  <div class="album--photocard-card flex flex-col items-center gap-1 cursor-pointer" @click="handleClick">
     <div
       class="relative w-full aspect-2/3 rounded-lg border flex items-center justify-center text-xl transition-colors active:opacity-70"
       :class="photocard.ownedCount > 0 ? 'border-success bg-success/10' : 'bg-base-200 border-base-300'">

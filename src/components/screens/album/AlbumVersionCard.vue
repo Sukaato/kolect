@@ -28,7 +28,7 @@ function handleClick() {
 </script>
 
 <template>
-  <div class="shrink-0 w-24 text-center cursor-pointer" @click="handleClick">
+  <div class="album--version-card shrink-0 w-24 text-center cursor-pointer" @click="handleClick">
     <div
       class="relative w-24 h-24 rounded-xl bg-base-100 border flex items-center justify-center text-3xl transition-colors active:opacity-70"
       :class="version.ownedCount > 0 ? 'border-success bg-success/10' : 'border-base-300'">

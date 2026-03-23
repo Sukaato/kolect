@@ -95,8 +95,11 @@ impl<'a> GroupService<'a> {
                 name: r.name,
                 release_date: r.release_date,
                 image_url: r.image_url,
-                owned_count: r.owned_count,
-                total_count: r.total_count,
+                versions_owned_count: r.versions_owned_count,
+                versions_total_count: r.versions_total_count,
+                digipacks_owned_count: r.digipacks_owned_count,
+                digipacks_total_count: r.digipacks_total_count,
+                photocards_owned_count: r.photocards_owned_count,
             })
             .collect())
     }

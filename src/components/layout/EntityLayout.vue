@@ -42,6 +42,12 @@ const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 <template>
   <div class="layout layout--entity grow relative pb-10">
 
+    <Transition name="fade">
+      <div v-if="loading" class="grid place-items-center absolute inset-0 z-20 bg-neutral/60">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+    </Transition>
+
     <!-- Header -->
     <header class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
       <div class="px-4 py-3 max-w-lg mx-auto space-y-3">
@@ -72,18 +78,8 @@ const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
       </div>
     </header>
 
-    <!-- Loading skeleton -->
-    <div v-if="loading" class="max-w-lg mx-auto px-4 pt-6 space-y-8">
-      <div v-for="i in 3" :key="i" class="space-y-3">
-        <div class="skeleton h-3 w-20 rounded" />
-        <div class="flex gap-3">
-          <div v-for="j in 4" :key="j" class="skeleton h-24 w-24 rounded-xl shrink-0" />
-        </div>
-      </div>
-    </div>
-
     <!-- Content -->
-    <div v-else class="max-w-lg mx-auto px-4 pt-6 space-y-8">
+    <div class="max-w-lg mx-auto px-4 pt-6 space-y-8">
 
       <!-- Albums -->
       <section v-if="albums.length">

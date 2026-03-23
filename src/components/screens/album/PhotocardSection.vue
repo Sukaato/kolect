@@ -2,11 +2,10 @@
 import { useAlbumStore } from '@/stores/album.store'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import PhotocardCard from './PhotocardCard.vue'
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-const PHOTOCARD_FILTER_MODE: 'chips' | 'dropdown' = 'chips'
-// ─────────────────────────────────────────────────────────────────────────────
+const { t } = useI18n()
 
 const albumStore = useAlbumStore()
 const {
@@ -21,7 +20,7 @@ const {
 } = storeToRefs(albumStore)
 
 const memberTabs = computed(() => [
-  { id: 'all', label: 'Toutes', count: filteredPhotocards.value.length } as const,
+  { id: 'all', label: t('screen.album.photocard.tab.all'), count: filteredPhotocards.value.length } as const,
   ...members.value.map(m => ({
     id: m.artist.id,
     label: m.aliases.find(a => a.kind === 'group_stage' && a.isPrimary)?.name ?? m.artist.realName,
@@ -30,20 +29,20 @@ const memberTabs = computed(() => [
 ])
 
 const versionOptions = computed(() => [
-  { id: 'all', label: 'Toutes versions' } as const,
+  { id: 'all', label: t('screen.album.photocard.version_filter.all') } as const,
   ...versions.value.map(v => ({ id: v.id, label: v.name } as const)),
 ])
 </script>
 
 <template>
-  <section>
+  <section class="album--photocard-section">
     <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-      {{ $t('screen.album.sections.photocards') }}
+      {{ $t('screen.album.section.photocards') }}
     </h2>
 
     <div class="bg-base-100 rounded-2xl border border-base-300 overflow-hidden">
 
-      <!-- Onglets membres — cachés pour les artistes solo -->
+      <!-- Member tabs — hidden for solo artists -->
       <div v-if="!isSolo" class="flex overflow-x-auto scrollbar-none border-b border-base-300">
         <button v-for="tab in memberTabs" :key="tab.id"
           class="shrink-0 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap" :class="selectedMemberTab === tab.id
@@ -54,33 +53,39 @@ const versionOptions = computed(() => [
         </button>
       </div>
 
-      <!-- Filtre par version -->
+      <!-- Version filter -->
       <div class="px-3 pt-3">
-        <div v-if="PHOTOCARD_FILTER_MODE === 'chips'" class="flex gap-2 flex-wrap">
+        <div class="flex gap-2 flex-wrap">
           <button v-for="opt in versionOptions" :key="opt.id" class="btn btn-xs rounded-full"
             :class="selectedVersionFilter === opt.id ? 'btn-primary' : 'btn-ghost'"
             @click="selectedVersionFilter = opt.id">
             {{ opt.label }}
           </button>
         </div>
-
-        <select v-else v-model="selectedVersionFilter" class="select select-sm select-bordered w-full">
-          <option v-for="opt in versionOptions" :key="opt.id" :value="opt.id">
-            {{ opt.label }}
-          </option>
-        </select>
       </div>
 
-      <!-- Grille -->
+      <!-- Grid -->
       <div class="grid grid-cols-4 gap-2 p-3">
         <PhotocardCard v-for="pc in filteredPhotocards" :key="pc.id" :album-id="detail!.albumId" :photocard="pc"
           :members="members" :versions="versions" />
       </div>
 
+      <!-- Empty state -->
       <div v-if="!filteredPhotocards.length" class="py-10 text-center text-sm text-base-content/40">
-        {{ $t('screen.album.photocards.empty') }}
+        {{ $t('screen.album.photocard.empty') }}
       </div>
 
     </div>
   </section>
 </template>
+
+<style scoped>
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

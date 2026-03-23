@@ -1,30 +1,28 @@
 <script setup lang="ts">
 import AlbumHero from '@/components/screens/album/AlbumHero.vue'
+import AlbumVersionCard from '@/components/screens/album/AlbumVersionCard.vue'
 import DigipackCard from '@/components/screens/album/DigipackCard.vue'
 import PhotocardSection from '@/components/screens/album/PhotocardSection.vue'
-import AlbumVersionCard from '@/components/screens/album/AlbumVersionCard.vue'
 import { useAlbumStore } from '@/stores/album.store'
-import { PossessionFilter } from '@/types/group.type'
-import { AlbumId } from '@/types/schema/album.type'
+import type { PossessionFilter } from '@/types/group.type'
+import type { AlbumId } from '@/types/schema/album.type'
 import { ChevronLeftIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 const { albumId } = defineProps<{
   albumId: AlbumId
 }>()
 
-const router = useRouter()
-
 const albumStore = useAlbumStore()
 const {
   detail,
   loading,
-  possessionFilter,
   filteredVersions,
   filteredDigipacks,
 } = storeToRefs(albumStore)
+
+const possessionFilter = defineModel<PossessionFilter>('possessionFilter', { default: 'all' })
 
 const FILTERS: PossessionFilter[] = ['all', 'owned', 'missing']
 
@@ -33,13 +31,18 @@ onMounted(() => albumStore.load(albumId))
 
 <template>
   <div class="screen--album grow relative pb-10">
+    <Transition name="fade">
+      <div v-if="loading" class="grid place-items-center absolute inset-0 z-20 bg-neutral/60">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+    </Transition>
 
     <!-- Header -->
     <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
       <div class="px-4 py-3 max-w-lg mx-auto space-y-3">
 
         <div class="flex items-center gap-3">
-          <button @click="router.back()" class="btn btn-ghost btn-sm btn-circle">
+          <button class="btn btn-ghost btn-sm btn-circle" @click="$router.back()">
             <ChevronLeftIcon class="w-5 h-5" />
           </button>
           <h1 class="text-xl font-bold tracking-tight flex-1">
@@ -47,44 +50,28 @@ onMounted(() => albumStore.load(albumId))
           </h1>
         </div>
 
+        <!-- Possession filter chips -->
         <div class="flex gap-2">
           <button v-for="filter in FILTERS" :key="filter" class="btn btn-xs rounded-full"
             :class="possessionFilter === filter ? 'btn-neutral' : 'btn-ghost'" @click="possessionFilter = filter">
-            {{ $t(`screen.album.filters.${filter}`) }}
+            {{ $t(`common.filter.${filter}`) }}
           </button>
         </div>
 
       </div>
     </div>
 
-    <!-- Skeleton -->
-    <div v-if="loading" class="max-w-lg mx-auto px-4 pt-4 space-y-8">
-      <div class="flex gap-4">
-        <div class="skeleton w-20 h-20 rounded-xl shrink-0" />
-        <div class="flex-1 space-y-2 pt-1">
-          <div class="skeleton h-4 w-32 rounded" />
-          <div class="skeleton h-3 w-24 rounded" />
-          <div class="skeleton h-2 w-full rounded mt-3" />
-        </div>
-      </div>
-      <div v-for="i in 3" :key="i" class="space-y-3">
-        <div class="skeleton h-3 w-20 rounded" />
-        <div class="flex gap-3">
-          <div v-for="j in 4" :key="j" class="skeleton h-24 w-24 rounded-xl shrink-0" />
-        </div>
-      </div>
-    </div>
+    <!-- Content -->
+    <div class="max-w-lg mx-auto">
 
-    <!-- Contenu -->
-    <div v-else class="max-w-lg mx-auto">
-
-      <AlbumHero v-if="detail" :detail="detail" />
+      <AlbumHero v-if="detail" />
 
       <div class="px-4 pt-6 space-y-8">
 
+        <!-- Versions -->
         <section v-if="filteredVersions.length">
           <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-            {{ $t('screen.album.sections.versions') }}
+            {{ $t('screen.album.section.versions') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
             <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :album-id="albumId"
@@ -92,9 +79,10 @@ onMounted(() => albumStore.load(albumId))
           </div>
         </section>
 
+        <!-- Digipacks -->
         <section v-if="filteredDigipacks.length">
           <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-            {{ $t('screen.album.sections.digipacks') }}
+            {{ $t('screen.album.section.digipacks') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
             <DigipackCard v-for="digipack in filteredDigipacks" :key="digipack.id" :album-id="albumId"
@@ -102,7 +90,20 @@ onMounted(() => albumStore.load(albumId))
           </div>
         </section>
 
+        <!-- Photocards -->
         <PhotocardSection />
+
+        <!-- Empty state -->
+        <div v-if="!filteredVersions.length && !filteredDigipacks.length"
+          class="text-center py-16 text-base-content/40 text-sm">
+          {{
+            possessionFilter === 'owned'
+              ? $t('screen.album.list.empty_owned')
+              : possessionFilter === 'missing'
+                ? $t('screen.album.list.empty_missing')
+                : $t('screen.album.list.empty')
+          }}
+        </div>
 
       </div>
     </div>

@@ -1,21 +1,25 @@
-import type { AlbumId, AlbumVersionId, DigipackId } from './schema/album.type'
-import type { ArtistId } from './schema/artist.type'
-import type { GroupId } from './schema/group.type'
+import type { AlbumId, AlbumVersionId } from '@/types/schema/album.type'
+import type { ArtistId } from '@/types/schema/artist.type'
 
-export type PhotocardFilterMode = 'chips' | 'dropdown'
-
-export type AlbumDetail = {
+export interface AlbumDetail {
   albumId: AlbumId
   name: string
   releaseDate: string
   imageUrl: string | null
-  groupId: GroupId | null
-  artistId: ArtistId | null
-  ownedCount: number
-  totalCount: number
+  groupId: string | null
+  artistId: string | null
+  // Versions progress
+  versionsOwnedCount: number
+  versionsTotalCount: number
+  // Digipacks progress
+  digipacksOwnedCount: number
+  digipacksTotalCount: number
+  // Photocards progress
+  photocardsOwnedCount: number
+  photocardsTotalCount: number
 }
 
-export type AlbumVersionItem = {
+export interface AlbumVersionItem {
   id: AlbumVersionId
   name: string
   format: string
@@ -26,10 +30,10 @@ export type AlbumVersionItem = {
   hasSigned: boolean
 }
 
-export type DigipackItem = {
-  id: DigipackId
+export interface DigipackItem {
+  id: string
   name: string
-  artistId: ArtistId | null
+  artistId: string | null
   releaseDate: string
   region: string
   imageUrl: string | null
@@ -37,11 +41,11 @@ export type DigipackItem = {
   hasSigned: boolean
 }
 
-export type PhotocardItem = {
-  id: DigipackId
+export interface PhotocardItem {
+  id: string
   artistId: ArtistId | null
   albumVersionId: AlbumVersionId | null
-  digipackId: DigipackId | null
+  digipackId: string | null
   region: string
   imageUrl: string | null
   ownedCount: number

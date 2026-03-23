@@ -153,27 +153,29 @@
       }
     },
     "album": {
-      "filters": {
-        "all": "All",
-        "owned": "Owned",
-        "missing": "Missing"
-      },
-      "sections": {
+      "section": {
         "versions": "Versions",
         "digipacks": "Digipacks",
         "photocards": "Photocards"
       },
       "hero": {
-        "progress": "Progress"
+        "versions": "Versions",
+        "digipacks": "Digipacks",
+        "photocards": "Photocards"
       },
-      "photocards": {
-        "tabs": {
+      "photocard": {
+        "tab": {
           "all": "All"
         },
         "version_filter": {
           "all": "All versions"
         },
         "empty": "No photocards"
+      },
+      "list": {
+        "empty": "No items available.",
+        "empty_owned": "You don't own anything for this album yet.",
+        "empty_missing": "Congratulations, you have everything! 🎉"
       }
     }
   }

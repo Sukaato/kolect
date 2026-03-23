@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TransitionName } from '@/types/transitions'
 import { storeToRefs } from 'pinia'
-import { computed, onErrorCaptured, onMounted } from 'vue'
+import { computed, onErrorCaptured, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/Dock.vue'
@@ -18,6 +18,9 @@ const transitionName = computed(() => {
 
 const settingStore = useSettingStore()
 const { theme, locale } = storeToRefs(settingStore)
+watch(theme, theme => {
+  document.body.dataset.theme = theme
+})
 
 const toastStore = useToastStore()
 const { toasts } = storeToRefs(toastStore)
@@ -38,7 +41,7 @@ onErrorCaptured(error => {
 </script>
 
 <template>
-  <div class="flex flex-col h-dvh bg-base-300" :data-theme="theme">
+  <div class="flex flex-col h-dvh bg-base-300">
     <main class="app-root grow overflow-y-auto overflow-x-hidden flex flex-col">
       <RouterView v-slot="{ Component }">
         <Transition :name="transitionName" mode="out-in">

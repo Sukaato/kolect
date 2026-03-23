@@ -7,8 +7,14 @@ pub struct AlbumSummaryDto {
     pub name: String,
     pub release_date: String,
     pub image_url: Option<String>,
-    pub owned_count: i64,
-    pub total_count: i64,
+    // Versions
+    pub versions_owned_count: i64,
+    pub versions_total_count: i64,
+    // Digipacks
+    pub digipacks_owned_count: i64,
+    pub digipacks_total_count: i64,
+    // Photocards (always returned, frontend decides whether to show)
+    pub photocards_owned_count: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -20,8 +26,15 @@ pub struct AlbumDetailDto {
     pub image_url: Option<String>,
     pub group_id: Option<String>,
     pub artist_id: Option<String>,
-    pub owned_count: i64,
-    pub total_count: i64,
+    // Versions progress
+    pub versions_owned_count: i64,
+    pub versions_total_count: i64,
+    // Digipacks progress
+    pub digipacks_owned_count: i64,
+    pub digipacks_total_count: i64,
+    // Photocards progress (included only when setting is enabled)
+    pub photocards_owned_count: i64,
+    pub photocards_total_count: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]

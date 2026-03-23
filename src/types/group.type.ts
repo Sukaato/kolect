@@ -11,13 +11,16 @@ export type GroupDetail = {
   members: ArtistWithAliases[]
 }
 
-export type AlbumSummary = {
+export interface AlbumSummary {
   albumId: AlbumId
   name: string
   releaseDate: string
   imageUrl: string | null
-  ownedCount: number
-  totalCount: number
+  versionsOwnedCount: number
+  versionsTotalCount: number
+  digipacksOwnedCount: number
+  digipacksTotalCount: number
+  photocardsOwnedCount: number
 }
 
 export type LightstickItem = {

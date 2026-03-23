@@ -15,7 +15,7 @@ impl<'a> AlbumService<'a> {
         Self { conn }
     }
 
-    /// Retourne les infos de base de l'album + progression globale.
+    /// Returns album info with separate owned/total counts for versions, digipacks and photocards.
     pub fn get_detail(&mut self, album_id: &str) -> Result<AlbumDetailDto, RepositoryError> {
         let row = AlbumRepository::new(self.conn)
             .find_detail_by_id(album_id)?
@@ -28,12 +28,16 @@ impl<'a> AlbumService<'a> {
             image_url: row.image_url,
             group_id: row.group_id,
             artist_id: row.artist_id,
-            owned_count: row.owned_count,
-            total_count: row.total_count,
+            versions_owned_count: row.versions_owned_count,
+            versions_total_count: row.versions_total_count,
+            digipacks_owned_count: row.digipacks_owned_count,
+            digipacks_total_count: row.digipacks_total_count,
+            photocards_owned_count: row.photocards_owned_count,
+            photocards_total_count: row.photocards_total_count,
         })
     }
 
-    /// Retourne les versions de l'album avec owned_count et has_signed.
+    /// Returns album versions with owned_count and has_signed.
     pub fn get_versions(
         &mut self,
         album_id: &str,
@@ -55,7 +59,7 @@ impl<'a> AlbumService<'a> {
             .collect())
     }
 
-    /// Retourne les digipacks de l'album avec owned_count et has_signed.
+    /// Returns album digipacks with owned_count and has_signed.
     pub fn get_digipacks(
         &mut self,
         album_id: &str,
@@ -77,7 +81,7 @@ impl<'a> AlbumService<'a> {
             .collect())
     }
 
-    /// Retourne les photocards liées à l'album avec owned_count et has_signed.
+    /// Returns photocards linked to the album with owned_count and has_signed.
     pub fn get_photocards(
         &mut self,
         album_id: &str,

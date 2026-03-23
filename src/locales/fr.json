@@ -153,27 +153,29 @@
       }
     },
     "album": {
-      "filters": {
-        "all": "Tous",
-        "owned": "Possédés",
-        "missing": "Manquants"
-      },
-      "sections": {
+      "section": {
         "versions": "Versions",
         "digipacks": "Digipacks",
         "photocards": "Photocards"
       },
       "hero": {
-        "progress": "Progression"
+        "versions": "Versions",
+        "digipacks": "Digipacks",
+        "photocards": "Photocards"
       },
-      "photocards": {
-        "tabs": {
+      "photocard": {
+        "tab": {
           "all": "Toutes"
         },
         "version_filter": {
-          "all": "Toutes versions"
+          "all": "Toutes les versions"
         },
         "empty": "Aucune photocard"
+      },
+      "list": {
+        "empty": "Aucun item disponible.",
+        "empty_owned": "Vous ne possédez rien pour cet album pour l'instant.",
+        "empty_missing": "Félicitations, vous avez tout ! 🎉"
       }
     }
   }
