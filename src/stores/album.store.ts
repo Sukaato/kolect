@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, readonly, shallowRef } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
+import { useSettingStore } from '@/stores/setting.store'
 import type { AlbumDetail, AlbumVersionItem, DigipackItem, PhotocardItem } from '@/types/album.type'
 import type { ArtistDetail } from '@/types/artist.type'
 import type { GroupDetail, PossessionFilter } from '@/types/group.type'
@@ -8,7 +9,11 @@ import type { AlbumId, AlbumVersionId } from '@/types/schema/album.type'
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type'
 
 export const useAlbumStore = defineStore('album', () => {
-  // ─── Invoke ────────────────────────────────────────────────────────────────
+  // ─── Composables ──────────────────────────────────────────────────────────
+
+  const settingStore = useSettingStore()
+
+  // ─── Invoke ───────────────────────────────────────────────────────────────
 
   const detailInvoke = useInvoke<AlbumDetail>('album_get_detail', { defaults: null })
   const versionsInvoke = useInvoke<AlbumVersionItem[]>('album_get_versions', { defaults: [] })
@@ -17,35 +22,35 @@ export const useAlbumStore = defineStore('album', () => {
   const groupDetailInvoke = useInvoke<GroupDetail>('group_get_detail', { defaults: null })
   const artistDetailInvoke = useInvoke<ArtistDetail>('artist_get_detail', { defaults: null })
 
-  // ─── State ─────────────────────────────────────────────────────────────────
+  // ─── State ────────────────────────────────────────────────────────────────
 
   const possessionFilter = shallowRef<PossessionFilter>('all')
   const selectedMemberTab = shallowRef<ArtistId | 'all'>('all')
   const selectedVersionFilter = shallowRef<AlbumVersionId | 'all'>('all')
 
-  // ─── Computed ──────────────────────────────────────────────────────────────
+  // ─── Computed ─────────────────────────────────────────────────────────────
 
-  const detail = computed(() => detailInvoke.result.value)
-  const versions = computed(() => versionsInvoke.result.value ?? [])
-  const digipacks = computed(() => digipacksInvoke.result.value ?? [])
-  const photocards = computed(() => photocardsInvoke.result.value ?? [])
+  const detail = computed(() => detailInvoke.data.value)
+  const versions = computed(() => versionsInvoke.data.value ?? [])
+  const digipacks = computed(() => digipacksInvoke.data.value ?? [])
+  const photocards = computed(() => photocardsInvoke.data.value ?? [])
 
   const members = computed<ArtistWithAliases[]>(() => {
-    if (groupDetailInvoke.result.value) {
-      return groupDetailInvoke.result.value.members
+    if (groupDetailInvoke.data.value) {
+      return groupDetailInvoke.data.value.members
     }
-    if (artistDetailInvoke.result.value) {
+    if (artistDetailInvoke.data.value) {
       return [
         {
-          artist: artistDetailInvoke.result.value.artist,
-          aliases: artistDetailInvoke.result.value.aliases,
+          artist: artistDetailInvoke.data.value.artist,
+          aliases: artistDetailInvoke.data.value.aliases,
         },
       ]
     }
     return []
   })
 
-  // true = album d'artiste solo → cacher les tabs membres dans PhotocardSection
+  // true = solo artist album → hide member tabs in PhotocardSection
   const isSolo = computed(() => !!detail.value?.artistId && !detail.value?.groupId)
 
   const loading = computed(
@@ -58,10 +63,41 @@ export const useAlbumStore = defineStore('album', () => {
       artistDetailInvoke.loading.value,
   )
 
-  const progressPercent = computed(() => {
-    if (!detail.value || detail.value.totalCount === 0) return 0
-    return Math.round((detail.value.ownedCount / detail.value.totalCount) * 100)
-  })
+  // ─── Progress ─────────────────────────────────────────────────────────────
+
+  const versionsProgress = computed(() => ({
+    owned: detail.value?.versionsOwnedCount ?? 0,
+    total: detail.value?.versionsTotalCount ?? 0,
+    percent:
+      detail.value && detail.value.versionsTotalCount > 0
+        ? Math.round((detail.value.versionsOwnedCount / detail.value.versionsTotalCount) * 100)
+        : 0,
+  }))
+
+  const digipacksProgress = computed(() => ({
+    owned: detail.value?.digipacksOwnedCount ?? 0,
+    total: detail.value?.digipacksTotalCount ?? 0,
+    percent:
+      detail.value && detail.value.digipacksTotalCount > 0
+        ? Math.round((detail.value.digipacksOwnedCount / detail.value.digipacksTotalCount) * 100)
+        : 0,
+  }))
+
+  // Only relevant when the includePhotocards setting is enabled
+  const photocardsProgress = computed(() => ({
+    owned: detail.value?.photocardsOwnedCount ?? 0,
+    total: detail.value?.photocardsTotalCount ?? 0,
+    percent:
+      detail.value && detail.value.photocardsTotalCount > 0
+        ? Math.round((detail.value.photocardsOwnedCount / detail.value.photocardsTotalCount) * 100)
+        : 0,
+  }))
+
+  const showPhotocardsProgress = computed(
+    () => settingStore.includePhotocardCount && (detail.value?.photocardsTotalCount ?? 0) > 0,
+  )
+
+  // ─── Filtered lists ───────────────────────────────────────────────────────
 
   const filteredVersions = computed(() => {
     if (possessionFilter.value === 'all') return versions.value
@@ -106,29 +142,28 @@ export const useAlbumStore = defineStore('album', () => {
     return counts
   })
 
-  // ─── Actions ───────────────────────────────────────────────────────────────
+  // ─── Actions ──────────────────────────────────────────────────────────────
 
-  async function load(albumId: AlbumId) {
-    // Reset les membres immédiatement pour éviter d'afficher
-    // les données du précédent album pendant le chargement
-    groupDetailInvoke.result.value = null
-    artistDetailInvoke.result.value = null
+  async function load(albumId: AlbumId, refresh = false) {
+    // Reset members immediately to avoid showing stale data from the previous album
+    groupDetailInvoke.data.value = null
+    artistDetailInvoke.data.value = null
     resetFilters()
 
     await Promise.all([
-      detailInvoke.invoke({ albumId }),
-      versionsInvoke.invoke({ albumId }),
-      digipacksInvoke.invoke({ albumId }),
-      photocardsInvoke.invoke({ albumId }),
+      detailInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
+      versionsInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
+      digipacksInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
+      photocardsInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
     ])
 
-    const d = detailInvoke.result.value
+    const d = detailInvoke.data.value
     if (!d) return
 
     if (d.groupId) {
-      await groupDetailInvoke.invoke({ groupId: d.groupId })
+      await groupDetailInvoke.invoke({ groupId: d.groupId }, { resetBeforeInvoke: !refresh })
     } else if (d.artistId) {
-      await artistDetailInvoke.invoke({ artistId: d.artistId })
+      await artistDetailInvoke.invoke({ artistId: d.artistId }, { resetBeforeInvoke: !refresh })
     }
   }
 
@@ -150,7 +185,10 @@ export const useAlbumStore = defineStore('album', () => {
     digipacks,
     members,
     isSolo,
-    progressPercent,
+    versionsProgress,
+    digipacksProgress,
+    photocardsProgress,
+    showPhotocardsProgress,
     filteredVersions,
     filteredDigipacks,
     filteredPhotocards,

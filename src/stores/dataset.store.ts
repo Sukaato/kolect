@@ -58,14 +58,14 @@ export const useDatasetStore = defineStore('dataset', () => {
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
   const {
-    result: syncSuccess,
+    data: syncSuccess,
     loading: syncing,
     error: syncError,
     invoke: syncDataset,
   } = useInvoke<boolean>('dataset_sync')
 
   const {
-    result: collection,
+    data: collection,
     loading,
     error,
     invoke,
@@ -108,12 +108,12 @@ export const useDatasetStore = defineStore('dataset', () => {
     lastFetchedAt.value = new Date()
   }
 
-  async function fetch(overrides?: Partial<CollectionSummaryParams>) {
+  async function fetch(overrides?: Partial<CollectionSummaryParams>, refresh = false) {
     if (overrides) {
       params.value = { ...params.value, ...overrides }
     }
 
-    await invoke({ params: params.value })
+    await invoke({ params: params.value }, { resetBeforeInvoke: !refresh })
 
     if (collection.value) {
       pages.value = new Map(pages.value).set(params.value.page, collection.value.data)
@@ -138,7 +138,7 @@ export const useDatasetStore = defineStore('dataset', () => {
 
   async function refresh() {
     reset()
-    await fetch()
+    await fetch({}, true)
   }
 
   return {

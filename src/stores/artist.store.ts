@@ -31,8 +31,8 @@ export const useArtistStore = defineStore('artist', () => {
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
-  const artist = computed(() => detailInvoke.result.value?.artist ?? null)
-  const aliases = computed(() => detailInvoke.result.value?.aliases ?? [])
+  const artist = computed(() => detailInvoke.data.value?.artist ?? null)
+  const aliases = computed(() => detailInvoke.data.value?.aliases ?? [])
 
   const displayName = computed(() => {
     const a = aliases.value
@@ -48,8 +48,11 @@ export const useArtistStore = defineStore('artist', () => {
 
   // ─── Actions ───────────────────────────────────────────────────────────────
 
-  async function load(artistId: ArtistId) {
-    await Promise.all([detailInvoke.invoke({ artistId }), loadCollectibles(artistId)])
+  async function load(artistId: ArtistId, refresh = false) {
+    await Promise.all([
+      detailInvoke.invoke({ artistId }, { resetBeforeInvoke: !refresh }),
+      loadCollectibles(artistId, refresh),
+    ])
   }
 
   return {

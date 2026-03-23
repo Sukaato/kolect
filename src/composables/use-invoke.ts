@@ -4,22 +4,36 @@ import { shallowRef } from 'vue'
 import { wait } from '@/utils/wait.util'
 import { useToast } from './use-toast'
 
-interface UseInvokeOptions<T = unknown> {
+type UseInvokeOptions<T = unknown> = {
   showErrorToast?: boolean
-  defaults: T
+  defaults?: T
+} & InvokeOptions
+
+type InvokeOptions = {
+  resetBeforeInvoke?: boolean
+  resetOnError?: boolean
 }
 
-export function useInvoke<T = unknown, E = string>(command: string, options?: UseInvokeOptions) {
+export function useInvoke<T = unknown, E = string>(command: string, useOptions?: UseInvokeOptions) {
   const toast = useToast()
 
-  const result = shallowRef<T | null>((options?.defaults as T) ?? null)
+  const result = shallowRef<T | null>((useOptions?.defaults as T) ?? null)
   const error = shallowRef<E>()
   const loading = shallowRef(false)
 
-  async function invoke(args?: Record<string, unknown>) {
+  async function invoke(args?: Record<string, unknown>, options?: InvokeOptions) {
+    const mergedOptions = {
+      ...useOptions,
+      ...options,
+    }
+
     loading.value = true
     error.value = void 0
-    result.value = void 0
+    console.log(mergedOptions)
+    if (mergedOptions?.resetBeforeInvoke !== false) {
+      console.log('reset data')
+      result.value = mergedOptions?.defaults ?? void 0
+    }
 
     console.debug(
       args
@@ -42,8 +56,11 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
           const errorMsg = err instanceof Error ? err.message : String(err)
           error.value = errorMsg as E
 
-          if (options?.showErrorToast !== false) {
+          if (mergedOptions?.showErrorToast !== false) {
             toast.error(errorMsg)
+          }
+          if (mergedOptions?.resetOnError) {
+            result.value = mergedOptions.defaults ?? void 0
           }
           console.error(`Error while calling command "${command}":`, err)
           await logError(`Error while calling command "${command}": ${err}`)
@@ -57,7 +74,7 @@ export function useInvoke<T = unknown, E = string>(command: string, options?: Us
   }
 
   return {
-    result,
+    data: result,
     error,
     loading,
     invoke,

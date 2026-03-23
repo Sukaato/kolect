@@ -31,9 +31,9 @@ export function useEntityStore(commands: EntityStoreCommands) {
 
   // ─── Computed ────────────────────────────────────────────────────────────
 
-  const albums = computed(() => albumsInvoke.result.value ?? [])
-  const lightsticks = computed(() => lightsticksInvoke.result.value ?? [])
-  const fanclubKits = computed(() => fanclubKitsInvoke.result.value ?? [])
+  const albums = computed(() => albumsInvoke.data.value ?? [])
+  const lightsticks = computed(() => lightsticksInvoke.data.value ?? [])
+  const fanclubKits = computed(() => fanclubKitsInvoke.data.value ?? [])
 
   const collectiblesLoading = computed(
     () =>
@@ -45,7 +45,9 @@ export function useEntityStore(commands: EntityStoreCommands) {
   const filteredAlbums = computed(() => {
     if (possessionFilter.value === 'all') return albums.value
     return albums.value.filter(s =>
-      possessionFilter.value === 'owned' ? s.ownedCount > 0 : s.ownedCount === 0,
+      possessionFilter.value === 'owned'
+        ? s.digipacksOwnedCount + s.versionsOwnedCount > 0
+        : s.digipacksOwnedCount + s.versionsOwnedCount === 0,
     )
   })
 
@@ -65,11 +67,11 @@ export function useEntityStore(commands: EntityStoreCommands) {
 
   // ─── Actions ─────────────────────────────────────────────────────────────
 
-  async function loadCollectibles(id: string) {
+  async function loadCollectibles(id: string, refresh = false) {
     await Promise.all([
-      albumsInvoke.invoke({ [commands.idParam]: id }),
-      lightsticksInvoke.invoke({ [commands.idParam]: id }),
-      fanclubKitsInvoke.invoke({ [commands.idParam]: id }),
+      albumsInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
+      lightsticksInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
+      fanclubKitsInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
     ])
   }
 

@@ -52,7 +52,7 @@ onMounted(async () => {
     :favorite-loading="favoriteStore.loading" :albums="filteredAlbums" :lightsticks="filteredLightsticks"
     :fanclub-kits="filteredFanclubKits"
     :album-route="(albumId) => ({ name: RouteName.GROUP_ALBUM, params: { id, mode, albumId } })" class="screen--group"
-    @toggle-favorite="handleFavoriteToggle" @on-saved="groupStore.load(id)">
+    @toggle-favorite="handleFavoriteToggle" @on-saved="groupStore.load(id, true)">
     <template #title>{{ group?.name ?? '...' }}</template>
 
     <template #header-actions>

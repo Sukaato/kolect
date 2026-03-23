@@ -37,7 +37,7 @@ const hasActiveFilters = computed(
 
 // ─── Agencies ─────────────────────────────────────────────────────────────────
 
-const { result: agencies, invoke: fetchAgencies } = useInvoke<Agency[]>(agenciesCommand, {
+const { data: agencies, invoke: fetchAgencies } = useInvoke<Agency[]>(agenciesCommand, {
   defaults: [],
 })
 

@@ -31,15 +31,18 @@ export const useGroupStore = defineStore('group', () => {
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
-  const group = computed(() => detailInvoke.result.value?.group ?? null)
-  const members = computed(() => detailInvoke.result.value?.members ?? [])
+  const group = computed(() => detailInvoke.data.value?.group ?? null)
+  const members = computed(() => detailInvoke.data.value?.members ?? [])
 
   const loading = computed(() => detailInvoke.loading.value || collectiblesLoading.value)
 
   // ─── Actions ───────────────────────────────────────────────────────────────
 
-  async function load(groupId: GroupId) {
-    await Promise.all([detailInvoke.invoke({ groupId }), loadCollectibles(groupId)])
+  async function load(groupId: GroupId, refresh = false) {
+    await Promise.all([
+      detailInvoke.invoke({ groupId }, { resetBeforeInvoke: !refresh }),
+      loadCollectibles(groupId, refresh),
+    ])
   }
 
   return {

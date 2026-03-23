@@ -69,7 +69,7 @@ export const useCollectionStore = defineStore('collection', () => {
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const { result, loading, error, invoke } = useInvoke<PaginatedResult<CollectionSummaryItem>>(
+  const { data, loading, error, invoke } = useInvoke<PaginatedResult<CollectionSummaryItem>>(
     'collection_get_summary',
     { defaults: defaultSummary },
   )
@@ -99,16 +99,16 @@ export const useCollectionStore = defineStore('collection', () => {
 
   // ─── Actions ───────────────────────────────────────────────────────────────
 
-  async function fetch(overrides?: Partial<CollectionSummaryParams>) {
+  async function fetch(overrides?: Partial<CollectionSummaryParams>, refresh = false) {
     if (overrides) {
       params.value = { ...params.value, ...overrides }
     }
 
-    await invoke({ params: params.value })
+    await invoke({ params: params.value }, { resetBeforeInvoke: !refresh })
 
-    if (result.value) {
-      pages.value = new Map(pages.value).set(params.value.page, result.value.data)
-      meta.value = result.value.meta
+    if (data.value) {
+      pages.value = new Map(pages.value).set(params.value.page, data.value.data)
+      meta.value = data.value.meta
     }
   }
 
@@ -129,7 +129,7 @@ export const useCollectionStore = defineStore('collection', () => {
 
   async function refresh() {
     reset()
-    await fetch()
+    await fetch({}, true)
   }
 
   return {

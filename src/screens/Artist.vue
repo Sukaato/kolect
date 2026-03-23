@@ -41,7 +41,7 @@ onMounted(async () => {
     :favorite-loading="favoriteStore.loading" :albums="filteredAlbums" :lightsticks="filteredLightsticks"
     :fanclub-kits="filteredFanclubKits"
     :album-route="(albumId) => ({ name: RouteName.ARTIST_ALBUM, params: { id, albumId } })" class="screen--artist"
-    @toggle-favorite="handleFavoriteToggle" @on-saved="artistStore.load(id)">
+    @toggle-favorite="handleFavoriteToggle" @on-saved="artistStore.load(id, true)">
     <template #title>{{ displayName }}</template>
 
     <template #empty="{ possessionFilter }">
