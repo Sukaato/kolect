@@ -50,7 +50,7 @@ onMounted(() => albumStore.load(albumId))
         <div class="flex gap-2">
           <button v-for="filter in FILTERS" :key="filter" class="btn btn-xs rounded-full"
             :class="possessionFilter === filter ? 'btn-neutral' : 'btn-ghost'" @click="possessionFilter = filter">
-            {{ $t(`screens.album.filters.${filter}`) }}
+            {{ $t(`screen.album.filters.${filter}`) }}
           </button>
         </div>
 
@@ -84,19 +84,21 @@ onMounted(() => albumStore.load(albumId))
 
         <section v-if="filteredVersions.length">
           <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-            {{ $t('screens.album.sections.versions') }}
+            {{ $t('screen.album.sections.versions') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :album-id="albumId" :version="version" />
+            <AlbumVersionCard v-for="version in filteredVersions" :key="version.id" :album-id="albumId"
+              :version="version" />
           </div>
         </section>
 
         <section v-if="filteredDigipacks.length">
           <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-            {{ $t('screens.album.sections.digipacks') }}
+            {{ $t('screen.album.sections.digipacks') }}
           </h2>
           <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <DigipackCard v-for="digipack in filteredDigipacks" :key="digipack.id" :album-id="albumId" :digipack="digipack" />
+            <DigipackCard v-for="digipack in filteredDigipacks" :key="digipack.id" :album-id="albumId"
+              :digipack="digipack" />
           </div>
         </section>
 

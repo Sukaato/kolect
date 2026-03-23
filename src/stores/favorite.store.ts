@@ -43,7 +43,7 @@ export const useFavoriteStore = defineStore('favorite', () => {
 
     await Promise.all([datasetStore.refresh(), collectionStore.refresh()])
     toast.success(
-      isFavorite ? t('screens.group.favorite.added') : t('screens.group.favorite.removed'),
+      isFavorite ? t('screen.group.favorite.added') : t('screen.group.favorite.removed'),
     )
 
     return isFavorite
@@ -58,7 +58,7 @@ export const useFavoriteStore = defineStore('favorite', () => {
     }
 
     toast.success(
-      isFavorite ? t('screens.artist.favorite.added') : t('screens.artist.favorite.removed'),
+      isFavorite ? t('screen.artist.favorite.added') : t('screen.artist.favorite.removed'),
     )
 
     await Promise.all([datasetStore.refresh(), collectionStore.refresh()])

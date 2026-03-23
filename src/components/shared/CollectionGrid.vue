@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { CollectionListStore } from '@/types/collection-list.type'
+import { useInvoke } from '@/composables/use-invoke'
 import type { CollectionSummaryItem } from '@/stores/collection.store'
-import type { Agency } from '@/types/schema/agency.type'
+import type { CollectionListStore } from '@/types/collection-list.type'
 import { RouteName } from '@/types/routes'
-import { useInfiniteScroll, useDebounceFn } from '@vueuse/core'
-import { StarIcon } from 'lucide-vue-next'
+import type { Agency } from '@/types/schema/agency.type'
+import { useDebounceFn, useInfiniteScroll } from '@vueuse/core'
+import { SearchIcon, StarIcon } from 'lucide-vue-next'
 import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useInvoke } from '@/composables/use-invoke'
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
@@ -31,6 +31,9 @@ const loading = computed(() => store.loading)
 const items = computed(() => store.items)
 const hasMorePages = computed(() => store.hasMorePages)
 const isEmpty = computed(() => store.isEmpty)
+const hasActiveFilters = computed(
+  () => !!(store.params.search || store.params.agencyId),
+)
 
 // ─── Agencies ─────────────────────────────────────────────────────────────────
 
@@ -113,19 +116,15 @@ useInfiniteScroll(
 
         <!-- Search input -->
         <label class="input input-sm flex items-center gap-2 flex-1 border border-base-300">
-          <svg class="h-3.5 w-3.5 shrink-0 text-base-content/40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
+          <SearchIcon class="h-3.5 w-3.5 shrink-0 text-base-content/40" />
           <input v-model="searchInput" type="search" class="grow bg-transparent outline-none text-sm"
-            :placeholder="$t('screens.collection.filters.search_placeholder')" />
+            :placeholder="$t('common.filter.search.placeholder')" />
         </label>
 
         <!-- Agency dropdown -->
         <select class="select select-sm select-bordered border-base-300 max-w-35" :value="selectedAgencyId ?? ''"
-          @change="onAgencyChange(($event.target as HTMLSelectElement).value || null)">
-          <option value="">{{ $t('screens.collection.filters.all_agencies') }}</option>
+          @change="onAgencyChange($event.target.value || null)">
+          <option value="">{{ $t('common.filter.agency.all') }}</option>
           <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
             {{ agency.name }}
           </option>
@@ -144,7 +143,7 @@ useInfiniteScroll(
       <!-- Empty state -->
       <div v-else-if="isEmpty" class="flex flex-col items-center justify-center h-40 gap-2 text-base-content/50">
         <span class="text-4xl">📭</span>
-        <p class="text-sm">{{ $t('screens.collection.empty') }}</p>
+        <slot name="empty" :has-active-filters="hasActiveFilters"></slot>
       </div>
 
       <!-- 2-column grid -->
@@ -190,7 +189,7 @@ useInfiniteScroll(
 
       <!-- End of list -->
       <div v-if="!hasMorePages && items.length > 0" class="text-center py-6 text-xs text-base-content/30">
-        {{ $t('screens.collection.endOfList') }}
+        <slot name="end-of-list"></slot>
       </div>
 
     </div>

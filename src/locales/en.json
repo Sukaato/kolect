@@ -1,11 +1,17 @@
 {
-  "app": {
-    "title": "Kolect",
-    "description": "Your K-pop collection manager"
-  },
   "common": {
-    "cancel": "Cancel",
-    "save": "Save",
+    "action": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "filter": {
+      "search": {
+        "placeholder": "Search..."
+      },
+      "agency": {
+        "all": "All agencies"
+      }
+    },
     "kind": {
       "solo": "Solo",
       "group": "Group"
@@ -15,7 +21,7 @@
     "datasetSync": "Failed to sync the dataset",
     "networkError": "Network error"
   },
-  "modals": {
+  "modal": {
     "possession": {
       "type": {
         "album": "Album",
@@ -25,38 +31,43 @@
         "fanclubKit": "Fanclub kit",
         "photocard": "Photocard"
       },
+      "toast": {
+        "saved": "Updated"
+      },
       "owned": "Copies",
       "owned_hint": "Number of owned copies",
       "owned_hint_max": "Maximum: {max}",
       "signed": "Signed",
-      "signed_hint": "Number of signed copies",
-      "saved": "Updated"
+      "signed_hint": "Number of signed copies"
     }
   },
-  "screens": {
+  "screen": {
     "startup": {
       "title": "Kolect",
       "initializing": "Initializing...",
-      "actions": {
+      "action": {
         "retry": "Retry"
       }
     },
     "home": {
-      "title": "Home"
+      "title": "Accueil",
+      "list": {
+        "empty": "No groups or artists available.",
+        "empty_filtered": "No results for these filters.",
+        "end": "You've seen it all - time to collect more!"
+      }
     },
     "collection": {
-      "title": "My collection",
-      "filters": {
-        "search_placeholder": "Search...",
-        "all_agencies": "All agencies"
-      },
-      "includePhotocards": "Include PCs",
-      "empty": "Nothing here yet, start collecting",
-      "endOfList": "That's all? Collect more"
+      "title": "Ma collection",
+      "list": {
+        "empty": "Nothing here yet, start collecting",
+        "empty_filtered": "No results for these filters.",
+        "end": "Your whole collection is right here - keep growing it!"
+      }
     },
     "setting": {
       "title": "Settings",
-      "sections": {
+      "section": {
         "appearence": {
           "title": "Appearance",
           "theme": {

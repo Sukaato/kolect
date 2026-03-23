@@ -114,7 +114,7 @@ export const usePossessionStore = defineStore('possession', () => {
       return false
     }
 
-    toast.success(t('modals.possession.saved'))
+    toast.success(t('modal.possession.toast.saved'))
 
     // Notifier le contexte appelant pour qu'il recharge ses données
     item.value.onSaved?.()

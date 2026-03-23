@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ExternalLinkIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type';
+import { ExternalLinkIcon } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { member } = defineProps<{
   member: ArtistWithAliases
@@ -73,19 +73,19 @@ const hasSoloCareer = computed(() => !!member.artist.soloDebutDate)
     <div class="bg-base-200/50 rounded-xl overflow-hidden divide-y divide-base-300">
 
       <div v-if="birthDate" class="flex justify-between items-center px-4 py-3 text-sm">
-        <span class="text-base-content/50">{{ $t('screens.group.members.detail.birth_date') }}</span>
+        <span class="text-base-content/50">{{ $t('screen.group.members.detail.birth_date') }}</span>
         <span class="font-medium">{{ birthDate }}</span>
       </div>
 
       <!-- TODO: roles viennent de GroupMember, à enrichir ArtistWithAliases si besoin -->
 
       <div v-if="hasSoloCareer && soloStageName" class="flex justify-between items-center px-4 py-3 text-sm">
-        <span class="text-base-content/50">{{ $t('screens.group.members.detail.solo_name') }}</span>
+        <span class="text-base-content/50">{{ $t('screen.group.members.detail.solo_name') }}</span>
         <span class="font-medium">{{ soloStageName }}</span>
       </div>
 
       <div v-if="hasSoloCareer && soloDebutDate" class="flex justify-between items-center px-4 py-3 text-sm">
-        <span class="text-base-content/50">{{ $t('screens.group.members.detail.solo_debut') }}</span>
+        <span class="text-base-content/50">{{ $t('screen.group.members.detail.solo_debut') }}</span>
         <span class="font-medium">{{ soloDebutDate }}</span>
       </div>
 
@@ -96,7 +96,7 @@ const hasSoloCareer = computed(() => !!member.artist.soloDebutDate)
     <!--
     <div class="bg-base-200/50 rounded-xl px-4 py-3">
       <p class="text-xs text-base-content/50 uppercase tracking-widest mb-2">
-        {{ $t('screens.group.members.detail.photocards') }}
+        {{ $t('screen.group.members.detail.photocards') }}
       </p>
       <p class="text-2xl font-bold">{{ ownedCount }} <span class="text-sm font-normal text-base-content/40">/ {{ totalCount }}</span></p>
     </div>
@@ -106,7 +106,7 @@ const hasSoloCareer = computed(() => !!member.artist.soloDebutDate)
     <button v-if="hasSoloCareer" class="btn btn-outline btn-sm w-full gap-2"
       @click="emit('navigateToSolo', member.artist.id)">
       <ExternalLinkIcon class="w-4 h-4" />
-      {{ $t('screens.group.members.detail.solo_career') }}
+      {{ $t('screen.group.members.detail.solo_career') }}
     </button>
 
   </div>

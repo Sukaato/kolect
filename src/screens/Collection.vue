@@ -13,7 +13,7 @@ onMounted(async () => {
 
 <template>
   <CollectionGrid :store="collectionStore" agencies-command="collection_get_agencies" screen-class="screen--collection">
-    <template #title>{{ $t('screens.collection.title') }}</template>
+    <template #title>{{ $t('screen.collection.title') }}</template>
 
     <template #fab>
       <div class="absolute bottom-6 right-4 z-20">
@@ -21,6 +21,16 @@ onMounted(async () => {
           <PlusIcon />
         </RouterLink>
       </div>
+    </template>
+
+    <template #empty="{ hasActiveFilters }">
+      <p class="text-sm">
+        {{ $t(hasActiveFilters ? 'screen.collection.list.empty_filtered' : 'screen.collection.list.empty') }}
+      </p>
+    </template>
+
+    <template #end-of-list>
+      {{ $t('screen.collection.list.end') }}
     </template>
   </CollectionGrid>
 </template>

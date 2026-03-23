@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RegionChip from '@/components/global/RegionChip.vue';
+import RegionChip from '@/components/shared/RegionChip.vue';
 import { useAlbumStore } from '@/stores/album.store';
 import { usePossessionStore } from '@/stores/possession.store';
 import type { AlbumVersionItem } from '@/types/album.type';

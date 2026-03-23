@@ -1,11 +1,17 @@
 {
-  "app": {
-    "title": "Kolect",
-    "description": "Votre gestionnaire de collection K-pop"
-  },
   "common": {
-    "cancel": "Annuler",
-    "save": "Enregistrer",
+    "action": {
+      "cancel": "Annuler",
+      "save": "Enregistrer"
+    },
+    "filter": {
+      "search": {
+        "placeholder": "Rechercher..."
+      },
+      "agency": {
+        "all": "Toutes les agences"
+      }
+    },
     "kind": {
       "solo": "Solo",
       "group": "Groupe"
@@ -15,7 +21,7 @@
     "datasetSync": "Échec de la synchronisation du dataset",
     "networkError": "Erreur réseau"
   },
-  "modals": {
+  "modal": {
     "possession": {
       "type": {
         "album": "Album",
@@ -25,38 +31,43 @@
         "fanclubKit": "Fanclub kit",
         "photocard": "Photocard"
       },
+      "toast": {
+        "saved": "Mis à jour"
+      },
       "owned": "Exemplaires",
       "owned_hint": "Nombre de copies possédées",
       "owned_hint_max": "Maximum : {max}",
       "signed": "Signés",
-      "signed_hint": "Nombre d'exemplaires dédicacés",
-      "saved": "Mis à jour"
+      "signed_hint": "Nombre d'exemplaires dédicacés"
     }
   },
-  "screens": {
+  "screen": {
     "startup": {
       "title": "Kolect",
       "initializing": "Initialisation...",
-      "actions": {
+      "action": {
         "retry": "Réessayer"
       }
     },
     "home": {
-      "title": "Accueil"
+      "title": "Accueil",
+      "list": {
+        "empty": "Aucun groupe ou artiste disponible.",
+        "empty_filtered": "Aucun résultat pour ces filtres.",
+        "end": "Vous avez tout vu - il est temps de collectionner plus !"
+      }
     },
     "collection": {
       "title": "Ma collection",
-      "filters": {
-        "search_placeholder": "Rechercher...",
-        "all_agencies": "Toutes les agences"
-      },
-      "includePhotocards": "Inclure les PCs",
-      "empty": "C'est vide, commencer a collectionner",
-      "endOfList": "C'est tous ? Collectione plus"
+      "list": {
+        "empty": "C'est vide, commencer a collectionner",
+        "empty_filtered": "Aucun résultat pour ces filtres.",
+        "end": "Toute votre collection est là - continuez à la faire grandir !"
+      }
     },
     "setting": {
       "title": "Paramètres",
-      "sections": {
+      "section": {
         "appearence": {
           "title": "Apparence",
           "theme": {

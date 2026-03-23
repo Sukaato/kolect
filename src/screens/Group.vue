@@ -76,7 +76,7 @@ onMounted(async () => {
         <div class="flex gap-2">
           <button v-for="filter in FILTERS" :key="filter" class="btn btn-xs rounded-full"
             :class="possessionFilter === filter ? 'btn-neutral' : 'btn-ghost'" @click="possessionFilter = filter">
-            {{ $t(`screens.group.filters.${filter}`) }}
+            {{ $t(`screen.group.filters.${filter}`) }}
           </button>
         </div>
 
@@ -96,7 +96,7 @@ onMounted(async () => {
 
       <section v-if="filteredAlbums.length">
         <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-          {{ $t('screens.group.sections.albums') }}
+          {{ $t('screen.group.sections.albums') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
           <RouterLink v-for="summary in filteredAlbums" :key="summary.albumId"
@@ -108,7 +108,7 @@ onMounted(async () => {
 
       <section v-if="filteredLightsticks.length">
         <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-          {{ $t('screens.group.sections.lightsticks') }}
+          {{ $t('screen.group.sections.lightsticks') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
           <LightstickCard v-for="ls in filteredLightsticks" :key="ls.id" :lightstick="ls"
@@ -118,7 +118,7 @@ onMounted(async () => {
 
       <section v-if="filteredFanclubKits.length">
         <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-          {{ $t('screens.group.sections.fanclub_kits') }}
+          {{ $t('screen.group.sections.fanclub_kits') }}
         </h2>
         <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
           <FanclubKitCard v-for="fk in filteredFanclubKits" :key="fk.id" :fanclub-kit="fk"
@@ -128,7 +128,7 @@ onMounted(async () => {
 
       <div v-if="!filteredAlbums.length && !filteredLightsticks.length && !filteredFanclubKits.length"
         class="text-center py-16 text-base-content/40 text-sm">
-        {{ $t('screens.group.empty') }}
+        {{ $t('screen.group.empty') }}
       </div>
 
     </div>

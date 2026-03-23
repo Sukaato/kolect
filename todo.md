@@ -16,6 +16,7 @@
 - [x] Replace sort chips with a text input filter (name search)
 - [x] Add an agency dropdown filter
   - [x] On Collection screen: only list agencies that have at least one owned item
+- [ ] Make common component for Home and Collection
 
 ---
 
@@ -39,7 +40,7 @@
 ### Manual item entry
 - [ ] Design a stepper flow for adding an item manually to the collection
 - [ ] Implement barcode scanner support (`tauri-plugin-barcode-scanner`)
-- [ ] Clean up backend before wiring the UI (commands, services, repositories)
+- [x] Clean up backend before wiring the UI (commands, services, repositories)
 
 ### Profile screen
 - [ ] Create a dedicated Profile screen

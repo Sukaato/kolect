@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { AlbumDetail } from '@/types/album.type';
+import { computed } from 'vue';
 
 const { detail } = defineProps<{
   detail: AlbumDetail
@@ -31,7 +31,7 @@ const progressPercent = computed(() =>
 
         <div class="mt-3 space-y-1">
           <div class="flex justify-between text-xs text-base-content/50">
-            <span>{{ $t('screens.album.hero.progress') }}</span>
+            <span>{{ $t('screen.album.hero.progress') }}</span>
             <span class="text-primary font-semibold">
               {{ detail.ownedCount }} / {{ detail.totalCount }}
             </span>

@@ -52,12 +52,12 @@ onMounted(async () => {
       </div>
 
       <!-- Title -->
-      <h1 class="text-3xl font-bold mb-4 text-center w-full">{{ $t('screens.startup.title') }}</h1>
+      <h1 class="text-3xl font-bold mb-4 text-center w-full">{{ $t('screen.startup.title') }}</h1>
 
       <!-- Loading indicator -->
       <div v-if="syncing" class="space-y-4">
         <div class="loading loading-spinner loading-lg"></div>
-        <p class="text-sm opacity-70">{{ $t('screens.startup.initializing') }}</p>
+        <p class="text-sm opacity-70">{{ $t('screen.startup.initializing') }}</p>
       </div>
 
       <!-- Error display -->
@@ -65,10 +65,10 @@ onMounted(async () => {
         <p class="text-error text-sm">{{ errorMsg }}</p>
         <div class="flex gap-2 justify-center">
           <button class="btn btn-sm btn-primary" @click="handleRetry">
-            {{ $t('screens.startup.actions.retry') }}
+            {{ $t('screen.startup.action.retry') }}
           </button>
           <button class="btn btn-sm btn-primary" @click="router.replace('/home')">
-            {{ $t('screens.home.title') }}
+            {{ $t('screen.home.title') }}
           </button>
         </div>
       </div>

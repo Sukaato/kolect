@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import RegionChip from '@/components/global/RegionChip.vue';
 import { usePossessionStore } from '@/stores/possession.store';
 import type { LightstickItem } from '@/types/group.type';
+import RegionChip from './RegionChip.vue';
 
 const { lightstick, afterSave } = defineProps<{
   lightstick: LightstickItem

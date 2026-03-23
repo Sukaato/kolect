@@ -66,24 +66,24 @@ onMounted(async () => {
         <button @click="$emit('back')" class="btn btn-ghost btn-sm btn-circle">
           <ChevronLeftIcon class="w-5 h-5" />
         </button>
-        <h1 class="text-xl font-bold tracking-tight">{{ $t('screens.setting.title') }}</h1>
+        <h1 class="text-xl font-bold tracking-tight">{{ $t('screen.setting.title') }}</h1>
       </div>
     </div>
 
     <div class="max-w-lg mx-auto px-4 pt-6 space-y-5">
 
       <!-- Appearance -->
-      <SettingSection :title="$t('screens.setting.sections.appearence.title')">
-        <SettingRow :label="$t('screens.setting.sections.appearence.theme.title')"
+      <SettingSection :title="$t('screen.setting.section.appearence.title')">
+        <SettingRow :label="$t('screen.setting.section.appearence.theme.title')"
           :icon="theme === 'dark' ? MoonIcon : SunIcon" icon-color="text-primary">
           <select v-model="theme" class="select select-sm select-bordered w-36 text-sm">
             <option v-for="theme in themes" :key="theme" :value="theme">
-              {{ $t(`screens.setting.sections.appearence.theme.values.${theme}`) }}
+              {{ $t(`screen.setting.section.appearence.theme.values.${theme}`) }}
             </option>
           </select>
         </SettingRow>
 
-        <SettingRow :label="$t('screens.setting.sections.appearence.language.title')" :icon="GlobeIcon"
+        <SettingRow :label="$t('screen.setting.section.appearence.language.title')" :icon="GlobeIcon"
           icon-color="text-secondary">
           <select v-model="locale" class="select select-sm select-bordered w-36 text-sm"
             @change="setLocale($event.target.value as Setting['locale'])">
@@ -96,24 +96,24 @@ onMounted(async () => {
       </SettingSection>
 
       <!-- Data -->
-      <SettingSection :title="$t('screens.setting.sections.data.title')">
-        <SettingRow :label="$t('screens.setting.sections.data.dataset.title')" :sublabel="lastSync" :icon="DatabaseIcon"
+      <SettingSection :title="$t('screen.setting.section.data.title')">
+        <SettingRow :label="$t('screen.setting.section.data.dataset.title')" :sublabel="lastSync" :icon="DatabaseIcon"
           icon-color="text-info">
           <button ref="refresh-btn" class="btn btn-sm btn-outline btn-warning gap-1.5" :disabled="syncing">
             <RefreshCwIcon class="w-3.5 h-3.5" />
-            {{ $t('screens.setting.sections.data.dataset.actions.refresh') }}
+            {{ $t('screen.setting.section.data.dataset.actions.refresh') }}
           </button>
         </SettingRow>
-        <SettingRow :label="$t('screens.setting.sections.data.photocards.title')"
-          :sublabel="$t('screens.setting.sections.data.photocards.sublabel')" :icon="ImageIcon"
+        <SettingRow :label="$t('screen.setting.section.data.photocards.title')"
+          :sublabel="$t('screen.setting.section.data.photocards.sublabel')" :icon="ImageIcon"
           icon-color="text-secondary">
           <input type="checkbox" class="toggle toggle-success toggle-sm" v-model="includePhotocardCount" />
         </SettingRow>
       </SettingSection>
 
       <!-- About -->
-      <SettingSection :title="$t('screens.setting.sections.about.title')">
-        <SettingRow :label="$t('screens.setting.sections.about.version.title')" :icon="PackageIcon"
+      <SettingSection :title="$t('screen.setting.section.about.title')">
+        <SettingRow :label="$t('screen.setting.section.about.version.title')" :icon="PackageIcon"
           icon-color="text-base-content/40">
           <span class="text-sm font-mono text-primary">{{ appVersion }}</span>
         </SettingRow>

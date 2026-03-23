@@ -31,7 +31,7 @@ const {
 
           <div class="flex-1 min-w-0">
             <p class="text-xs text-base-content/50 uppercase tracking-widest">
-              {{ $t(`modals.possession.type.${item.type}`) }}
+              {{ $t(`modal.possession.type.${item.type}`) }}
             </p>
             <h3 class="font-bold truncate">{{ item.name }}</h3>
           </div>
@@ -44,11 +44,11 @@ const {
         <!-- Owned count -->
         <div class="flex items-center justify-between py-4 border-b border-base-300">
           <div>
-            <p class="font-semibold">{{ $t('modals.possession.owned') }}</p>
+            <p class="font-semibold">{{ $t('modal.possession.owned') }}</p>
             <p class="text-xs text-base-content/50">
               {{ item.maxCount !== undefined
-                ? $t('modals.possession.owned_hint_max', { max: item.maxCount })
-                : $t('modals.possession.owned_hint') }}
+                ? $t('modal.possession.owned_hint_max', { max: item.maxCount })
+                : $t('modal.possession.owned_hint') }}
             </p>
           </div>
           <div class="flex items-center gap-3">
@@ -69,8 +69,8 @@ const {
         <!-- Signed count -->
         <div v-if="item.hasSigned" class="flex items-center justify-between py-4 border-b border-base-300">
           <div>
-            <p class="font-semibold">{{ $t('modals.possession.signed') }}</p>
-            <p class="text-xs text-base-content/50">{{ $t('modals.possession.signed_hint') }}</p>
+            <p class="font-semibold">{{ $t('modal.possession.signed') }}</p>
+            <p class="text-xs text-base-content/50">{{ $t('modal.possession.signed_hint') }}</p>
           </div>
           <div class="flex items-center gap-3">
             <button class="btn btn-circle btn-sm btn-outline" :disabled="!canDecreaseSign || loading"
@@ -90,10 +90,10 @@ const {
         <!-- Actions -->
         <div class="modal-action mt-4">
           <button class="btn btn-ghost" :disabled="loading" @click="store.close()">
-            {{ $t('common.cancel') }}
+            {{ $t('common.action.cancel') }}
           </button>
           <button class="btn btn-primary" :disabled="!isDirty || loading" :class="{ loading }" @click="store.save()">
-            {{ $t('common.save') }}
+            {{ $t('common.action.save') }}
           </button>
         </div>
 

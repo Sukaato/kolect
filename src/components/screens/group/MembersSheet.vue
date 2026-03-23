@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ChevronLeftIcon } from 'lucide-vue-next';
-import { shallowRef } from 'vue';
-import { useRouter } from 'vue-router';
-import MemberDetail from './MemberDetail.vue';
 import BottomSheet from '@/components/global/BottomSheet.vue';
 import MemberListItem from '@/components/screens/group/MemberListItem.vue';
 import { RouteName } from '@/types/routes';
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type';
+import { ChevronLeftIcon } from 'lucide-vue-next';
+import { shallowRef } from 'vue';
+import { useRouter } from 'vue-router';
+import MemberDetail from './MemberDetail.vue';
 
 defineProps<{
   open: boolean
@@ -53,7 +53,7 @@ function navigateToSolo(artistId: ArtistId) {
           <ChevronLeftIcon class="w-4 h-4" />
         </button>
         <h2 class="text-base font-semibold">
-          {{ selectedStageName ?? $t('screens.group.members.title') }}
+          {{ selectedStageName ?? $t('screen.group.members.title') }}
         </h2>
       </div>
     </template>

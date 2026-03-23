@@ -38,7 +38,7 @@ const versionOptions = computed(() => [
 <template>
   <section>
     <h2 class="text-xs font-semibold uppercase tracking-widest text-base-content/50 mb-3">
-      {{ $t('screens.album.sections.photocards') }}
+      {{ $t('screen.album.sections.photocards') }}
     </h2>
 
     <div class="bg-base-100 rounded-2xl border border-base-300 overflow-hidden">
@@ -78,7 +78,7 @@ const versionOptions = computed(() => [
       </div>
 
       <div v-if="!filteredPhotocards.length" class="py-10 text-center text-sm text-base-content/40">
-        {{ $t('screens.album.photocards.empty') }}
+        {{ $t('screen.album.photocards.empty') }}
       </div>
 
     </div>
