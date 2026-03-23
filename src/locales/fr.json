@@ -10,6 +10,20 @@
       },
       "agency": {
         "all": "Toutes les agences"
+      },
+      "all": "Tous",
+      "owned": "Possédés",
+      "missing": "Manquants"
+    },
+    "section": {
+      "album": {
+        "title": "Albums"
+      },
+      "lightstick": {
+        "title": "Lightsticks"
+      },
+      "fanclub_kit": {
+        "title": "Fanclub Kits"
       }
     },
     "kind": {
@@ -107,17 +121,6 @@
       }
     },
     "group": {
-      "filters": {
-        "all": "Tous",
-        "owned": "Possédés",
-        "missing": "Manquants"
-      },
-      "sections": {
-        "albums": "Albums",
-        "lightsticks": "Lightsticks",
-        "fanclub_kits": "Fanclub kits"
-      },
-      "empty": "Aucun item à afficher",
       "favorite": {
         "added": "Ajouté aux favoris",
         "removed": "Retiré des favoris"
@@ -131,6 +134,22 @@
           "solo_career": "Voir la carrière solo",
           "photocards": "Photocards"
         }
+      },
+      "list": {
+        "empty": "Aucun album, lightstick ou fanclub kit disponible.",
+        "empty_owned": "Vous ne possédez rien pour ce groupe pour l'instant.",
+        "empty_missing": "Félicitations, vous avez tout ! 🎉"
+      }
+    },
+    "artist": {
+      "favorite": {
+        "added": "Ajouté aux favoris",
+        "removed": "Retiré des favoris"
+      },
+      "list": {
+        "empty": "Aucun album, lightstick ou fanclub kit disponible.",
+        "empty_owned": "Vous ne possédez rien pour cet artiste pour l'instant.",
+        "empty_missing": "Félicitations, vous avez tout ! 🎉"
       }
     },
     "album": {
@@ -155,23 +174,6 @@
           "all": "Toutes versions"
         },
         "empty": "Aucune photocard"
-      }
-    },
-    "artist": {
-      "filters": {
-        "all": "Tous",
-        "owned": "Possédés",
-        "missing": "Manquants"
-      },
-      "sections": {
-        "albums": "Albums",
-        "lightsticks": "Lightsticks",
-        "fanclub_kits": "Fanclub kits"
-      },
-      "empty": "Aucun item à afficher",
-      "favorite": {
-        "added": "Ajouté aux favoris",
-        "removed": "Retiré des favoris"
       }
     }
   }

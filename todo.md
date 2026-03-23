@@ -16,7 +16,7 @@
 - [x] Replace sort chips with a text input filter (name search)
 - [x] Add an agency dropdown filter
   - [x] On Collection screen: only list agencies that have at least one owned item
-- [ ] Make common component for Home and Collection
+- [x] Make common component for Home and Collection
 
 ---
 

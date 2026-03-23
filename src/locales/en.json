@@ -10,6 +10,20 @@
       },
       "agency": {
         "all": "All agencies"
+      },
+      "all": "All",
+      "owned": "Owned",
+      "missing": "Missing"
+    },
+    "section": {
+      "album": {
+        "title": "Albums"
+      },
+      "lightstick": {
+        "title": "Lightsticks"
+      },
+      "fanclub_kit": {
+        "title": "Fanclub Kits"
       }
     },
     "kind": {
@@ -107,17 +121,6 @@
       }
     },
     "group": {
-      "filters": {
-        "all": "All",
-        "owned": "Owned",
-        "missing": "Missing"
-      },
-      "sections": {
-        "albums": "Albums",
-        "lightsticks": "Lightsticks",
-        "fanclub_kits": "Fanclub kits"
-      },
-      "empty": "No items to display",
       "favorite": {
         "added": "Added to favorites",
         "removed": "Removed from favorites"
@@ -131,6 +134,22 @@
           "solo_career": "View solo career",
           "photocards": "Photocards"
         }
+      },
+      "list": {
+        "empty": "No albums, lightsticks or fanclub kits available.",
+        "empty_owned": "You don't own anything for this group yet.",
+        "empty_missing": "Congratulations, you have everything! 🎉"
+      }
+    },
+    "artist": {
+      "favorite": {
+        "added": "Added to favorites",
+        "removed": "Removed from favorites"
+      },
+      "list": {
+        "empty": "No albums, lightsticks or fanclub kits available.",
+        "empty_owned": "You don't own anything for this artist yet.",
+        "empty_missing": "Congratulations, you have everything! 🎉"
       }
     },
     "album": {
@@ -155,23 +174,6 @@
           "all": "All versions"
         },
         "empty": "No photocards"
-      }
-    },
-    "artist": {
-      "filters": {
-        "all": "All",
-        "owned": "Owned",
-        "missing": "Missing"
-      },
-      "sections": {
-        "albums": "Albums",
-        "lightsticks": "Lightsticks",
-        "fanclub_kits": "Fanclub kits"
-      },
-      "empty": "No items to display",
-      "favorite": {
-        "added": "Added to favorites",
-        "removed": "Removed from favorites"
       }
     }
   }
