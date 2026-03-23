@@ -8,7 +8,7 @@ import type { GroupId } from '@/types/schema/group.type'
 export const useGroupStore = defineStore('group', () => {
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<GroupDetail>('group_get_detail', { defaults: null })
+  const detailInvoke = useInvoke<GroupDetail>('group_get_detail')
 
   // ─── Logique commune ───────────────────────────────────────────────────────
 

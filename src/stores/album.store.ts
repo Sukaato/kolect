@@ -15,12 +15,12 @@ export const useAlbumStore = defineStore('album', () => {
 
   // ─── Invoke ───────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<AlbumDetail>('album_get_detail', { defaults: null })
+  const detailInvoke = useInvoke<AlbumDetail>('album_get_detail')
   const versionsInvoke = useInvoke<AlbumVersionItem[]>('album_get_versions', { defaults: [] })
   const digipacksInvoke = useInvoke<DigipackItem[]>('album_get_digipacks', { defaults: [] })
   const photocardsInvoke = useInvoke<PhotocardItem[]>('album_get_photocards', { defaults: [] })
-  const groupDetailInvoke = useInvoke<GroupDetail>('group_get_detail', { defaults: null })
-  const artistDetailInvoke = useInvoke<ArtistDetail>('artist_get_detail', { defaults: null })
+  const groupDetailInvoke = useInvoke<GroupDetail>('group_get_detail')
+  const artistDetailInvoke = useInvoke<ArtistDetail>('artist_get_detail')
 
   // ─── State ────────────────────────────────────────────────────────────────
 

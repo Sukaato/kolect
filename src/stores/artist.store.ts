@@ -8,7 +8,7 @@ import type { ArtistId } from '@/types/schema/artist.type'
 export const useArtistStore = defineStore('artist', () => {
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<ArtistDetail>('artist_get_detail', { defaults: null })
+  const detailInvoke = useInvoke<ArtistDetail>('artist_get_detail')
 
   // ─── Logique commune ───────────────────────────────────────────────────────
 

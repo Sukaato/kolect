@@ -33,7 +33,6 @@ export const usePossessionStore = defineStore('possession', () => {
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
   const updateInvoke = useInvoke<void>('collection_update_item', {
-    defaults: null,
     showErrorToast: false,
   })
 
