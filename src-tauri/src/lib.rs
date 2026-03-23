@@ -1,6 +1,7 @@
 mod commands;
+mod config;
+mod db;
 mod dto;
-mod infrastructure;
 mod services;
 
 use diesel::SqliteConnection;

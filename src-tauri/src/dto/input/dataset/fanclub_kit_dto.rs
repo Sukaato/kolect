@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::FanclubKit;
+use crate::db::models::FanclubKit;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

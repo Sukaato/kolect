@@ -8,13 +8,13 @@ use tauri::AppHandle;
 use tauri::Manager;
 use tauri_plugin_log::log;
 
-use crate::dto::input::dataset::{DatasetDto, DatasetMetaDto};
-use crate::infrastructure::config::AppConfig;
-use crate::infrastructure::db::repositories::{
+use crate::config::AppConfig;
+use crate::db::repositories::{
     ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
-use crate::infrastructure::db::seeder::DatasetSeeder;
-use crate::services::collection_service::CollectionSummaryItem;
+use crate::db::seeder::DatasetSeeder;
+use crate::dto::input::dataset::{DatasetDto, DatasetMetaDto};
+use crate::dto::output::CollectionSummaryItem;
 
 pub struct DatasetService<'a> {
     app: &'a AppHandle,

@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::Photocard;
+use crate::db::models::Photocard;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

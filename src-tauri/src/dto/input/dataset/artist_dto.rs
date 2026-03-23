@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::Artist;
+use crate::db::models::Artist;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

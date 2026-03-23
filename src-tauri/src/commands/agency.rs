@@ -1,6 +1,7 @@
 use tauri::State;
 use tokio::sync::Mutex;
 
+use crate::dto::output::AgencyDto;
 use crate::services::AgencyService;
 use crate::AppStore;
 
@@ -8,11 +9,11 @@ use crate::AppStore;
 #[tauri::command]
 pub async fn dataset_get_agencies(
     state: State<'_, Mutex<AppStore>>,
-) -> Result<serde_json::Value, String> {
+) -> Result<Vec<AgencyDto>, String> {
     let mut store = state.lock().await;
     let mut service = AgencyService::new(&mut store.db_conn);
-    let result = service.get_all().map_err(|e| e.to_string())?;
-    serde_json::to_value(result).map_err(|e| e.to_string())
+
+    service.get_all().map_err(|e| e.to_string())
 }
 
 /// Returns only agencies with at least one item in the user collection
@@ -20,9 +21,9 @@ pub async fn dataset_get_agencies(
 #[tauri::command]
 pub async fn collection_get_agencies(
     state: State<'_, Mutex<AppStore>>,
-) -> Result<serde_json::Value, String> {
+) -> Result<Vec<AgencyDto>, String> {
     let mut store = state.lock().await;
     let mut service = AgencyService::new(&mut store.db_conn);
-    let result = service.get_for_collection().map_err(|e| e.to_string())?;
-    serde_json::to_value(result).map_err(|e| e.to_string())
+
+    service.get_for_collection().map_err(|e| e.to_string())
 }

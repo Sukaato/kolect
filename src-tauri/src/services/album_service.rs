@@ -1,10 +1,10 @@
 use diesel::sqlite::SqliteConnection;
 
-use crate::dto::output::{AlbumDetailDto, AlbumVersionItemDto, DigipackItemDto, PhotocardItemDto};
-use crate::infrastructure::db::repositories::{
+use crate::db::repositories::{
     AlbumRepository, AlbumVersionRepository, DigipackRepository, PhotocardRepository,
     RepositoryError,
 };
+use crate::dto::output::{AlbumDetailDto, AlbumVersionItemDto, DigipackItemDto, PhotocardItemDto};
 
 pub struct AlbumService<'a> {
     conn: &'a mut SqliteConnection,

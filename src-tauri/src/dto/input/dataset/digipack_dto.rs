@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::Digipack;
+use crate::db::models::Digipack;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

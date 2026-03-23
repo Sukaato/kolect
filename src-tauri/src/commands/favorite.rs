@@ -10,6 +10,7 @@ pub async fn favorite_toggle_group(
     group_id: String,
 ) -> Result<bool, String> {
     let mut store = state.lock().await;
+
     FavoriteService::new(&mut store.db_conn)
         .toggle_group(&group_id)
         .map_err(|e| e.to_string())
@@ -21,6 +22,7 @@ pub async fn favorite_toggle_artist(
     artist_id: String,
 ) -> Result<bool, String> {
     let mut store = state.lock().await;
+
     FavoriteService::new(&mut store.db_conn)
         .toggle_artist(&artist_id)
         .map_err(|e| e.to_string())

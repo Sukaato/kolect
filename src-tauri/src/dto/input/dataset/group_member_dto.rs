@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::GroupMember;
+use crate::db::models::GroupMember;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

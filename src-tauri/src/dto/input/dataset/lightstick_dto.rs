@@ -1,4 +1,4 @@
-use crate::infrastructure::db::models::Lightstick;
+use crate::db::models::Lightstick;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

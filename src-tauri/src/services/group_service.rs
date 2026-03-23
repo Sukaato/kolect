@@ -1,13 +1,13 @@
 use diesel::sqlite::SqliteConnection;
 
+use crate::db::repositories::{
+    AlbumRepository, ArtistAliasRepository, ArtistRepository, FanclubKitRepository,
+    GroupMemberRepository, GroupRepository, LightstickRepository, RepositoryError,
+    UserFavoriteRepository,
+};
 use crate::dto::output::{
     AlbumSummaryDto, ArtistAliasOutputDto, ArtistOutputDto, ArtistWithAliasesDto,
     FanclubKitItemDto, GroupDetailDto, GroupOutputDto, LightstickItemDto,
-};
-use crate::infrastructure::db::repositories::{
-    AlbumRepository, ArtistAliasRepository, ArtistRepository, FanclubKitRepository,
-    GroupMemberRepository, GroupRepository, LightstickRepository, Repository, RepositoryError,
-    UserFavoriteRepository,
 };
 
 pub struct GroupService<'a> {

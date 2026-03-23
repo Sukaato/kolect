@@ -1,6 +1,6 @@
 use diesel::sqlite::SqliteConnection;
 
-use crate::infrastructure::db::repositories::{RepositoryError, UserFavoriteRepository};
+use crate::db::repositories::{RepositoryError, UserFavoriteRepository};
 
 pub struct FavoriteService<'a> {
     conn: &'a mut SqliteConnection,

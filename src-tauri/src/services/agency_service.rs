@@ -1,7 +1,7 @@
 use diesel::SqliteConnection;
 
+use crate::db::repositories::{AgencyRepository, RepositoryError};
 use crate::dto::output::AgencyDto;
-use crate::infrastructure::db::repositories::{AgencyRepository, RepositoryError};
 
 pub struct AgencyService<'a> {
     conn: &'a mut SqliteConnection,

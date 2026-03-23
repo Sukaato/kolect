@@ -1,7 +1,7 @@
 use diesel::sqlite::SqliteConnection;
 
+use crate::db::repositories::{CollectionRepository, RepositoryError};
 use crate::dto::input::commands::UpdateItemDto;
-use crate::infrastructure::db::repositories::{CollectionRepository, RepositoryError};
 
 pub struct CollectionItemService<'a> {
     conn: &'a mut SqliteConnection,

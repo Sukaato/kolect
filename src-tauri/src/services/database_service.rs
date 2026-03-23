@@ -1,5 +1,3 @@
-// src-tauri/src/services/database_service.rs
-
 use std::fs;
 use std::path::Path;
 
