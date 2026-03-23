@@ -5,6 +5,9 @@ use uuid::Uuid;
 use super::RepoResult;
 use crate::dto::input::commands::CollectibleType;
 
+// Fields are read by the collection_item_service diff logic via pattern matching,
+// not by direct field access — suppress dead code warnings.
+#[allow(dead_code)]
 #[derive(Debug, Clone, Queryable, Selectable)]
 #[diesel(table_name = crate::db::schema::user_collection)]
 pub struct CollectionRow {
