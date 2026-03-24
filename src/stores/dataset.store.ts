@@ -29,7 +29,7 @@ export const useDatasetStore = defineStore('dataset', () => {
   const toast = useToast()
   const settingStore = useSettingStore()
   watch(
-    () => settingStore.includePhotocardCount,
+    () => settingStore.includePhotocardInCount,
     include => {
       params.value.includePhotocards = include
       reset()
@@ -41,7 +41,7 @@ export const useDatasetStore = defineStore('dataset', () => {
   const params = ref<CollectionSummaryParams>({
     page: defaultMeta.currentPage,
     perPage: defaultMeta.perPage,
-    includePhotocards: settingStore.includePhotocardCount,
+    includePhotocards: settingStore.includePhotocardInCount,
     search: null,
     agencyId: null,
   })
@@ -58,7 +58,7 @@ export const useDatasetStore = defineStore('dataset', () => {
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
   const {
-    data: syncSuccess,
+    data: synced,
     loading: syncing,
     error: syncError,
     invoke: syncDataset,
@@ -99,13 +99,18 @@ export const useDatasetStore = defineStore('dataset', () => {
   // ─── Actions ───────────────────────────────────────────────────────────────
 
   async function sync(force: boolean = false) {
-    await syncDataset({ force })
-    if (syncSuccess) {
-      toast.success('Dataset synced successfully')
-    } else {
+    const [error, success] = await syncDataset({ force })
+    if (error) {
       toast.error(syncError.value ?? '', { title: 'Dataset failed to sync' })
+      return [error, null] as const
+    }
+
+    if (success) {
+      toast.success('Dataset synced successfully')
     }
     lastFetchedAt.value = new Date()
+
+    return [null, success] as const
   }
 
   async function fetch(overrides?: Partial<CollectionSummaryParams>, refresh = false) {
@@ -143,6 +148,7 @@ export const useDatasetStore = defineStore('dataset', () => {
 
   return {
     // State
+    isSynced: readonly(synced),
     params: readonly(params),
     meta: readonly(meta),
     lastFetchedAt: readonly(lastFetchedAt),

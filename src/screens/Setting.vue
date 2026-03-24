@@ -19,7 +19,7 @@ const locales: Record<Setting['locale'], string> = {
 const i18n = useI18n()
 
 const settingStore = useSettingStore()
-const { theme, locale, includePhotocardCount, includeExclusiveItems } = storeToRefs(settingStore)
+const { theme, locale, includePhotocardInCount, includeExclusiveItems } = storeToRefs(settingStore)
 
 function setLocale(newLocale: Setting['locale']) {
   i18n.locale.value = newLocale
@@ -113,7 +113,7 @@ onMounted(async () => {
         <SettingRow :label="$t('screen.setting.section.data.photocards.title')"
           :sublabel="$t('screen.setting.section.data.photocards.sublabel')" :icon="ImageIcon"
           icon-color="text-secondary">
-          <input v-model="includePhotocardCount" type="checkbox" class="toggle toggle-success toggle-sm" />
+          <input v-model="includePhotocardInCount" type="checkbox" class="toggle toggle-success toggle-sm" />
         </SettingRow>
       </SettingSection>
 

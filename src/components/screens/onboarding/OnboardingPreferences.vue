@@ -7,7 +7,7 @@ defineEmits<{
 }>()
 
 const settingStore = useSettingStore()
-const { includeExclusiveItems, includePhotocardCount } = storeToRefs(settingStore)
+const { includeExclusiveItems, includePhotocardInCount } = storeToRefs(settingStore)
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const { includeExclusiveItems, includePhotocardCount } = storeToRefs(settingStor
 
       <!-- Photocards -->
       <label class="flex items-start gap-4 cursor-pointer bg-base-200 rounded-2xl p-4">
-        <input v-model="includePhotocardCount" type="checkbox" class="toggle toggle-primary mt-0.5 shrink-0" />
+        <input v-model="includePhotocardInCount" type="checkbox" class="toggle toggle-primary mt-0.5 shrink-0" />
         <div class="space-y-1">
           <p class="font-medium text-sm leading-snug">
             {{ $t('screen.onboarding.step.preferences.photocards.label') }}

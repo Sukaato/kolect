@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { useDatasetStore } from '@/stores/dataset.store'
 import { useSettingStore } from '@/stores/setting.store'
-import { wait } from '@/utils/wait.util'
-import { info, error } from '@tauri-apps/plugin-log'
+import { wait, waitUntilReady } from '@/utils/wait.util'
+import { error, info } from '@tauri-apps/plugin-log'
 import { storeToRefs } from 'pinia'
 import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
+import { locale as tauriLocale } from '@tauri-apps/plugin-os'
 
 const router = useRouter()
 
 const datasetStore = useDatasetStore()
-const { syncing, syncError } = storeToRefs(datasetStore)
+const { syncing } = storeToRefs(datasetStore)
 
 const settingStore = useSettingStore()
-const { onboardingDone } = storeToRefs(settingStore)
+const { isReady, locale, onboardingDone } = storeToRefs(settingStore)
 
 const errorMsg = shallowRef<string>()
 
@@ -22,35 +23,37 @@ function handleRetry(): void {
 }
 
 onMounted(async () => {
-  info('Initializing app...')
+  await waitUntilReady(isReady)
+  await info('Initializing app...')
 
-  try {
-    // Redirect to onboarding if not completed yet
-    if (!onboardingDone.value) {
-      await info('Onboarding not completed, redirecting to /onboarding')
-      router.replace('/onboarding')
-      return
-    }
+  // Redirect to onboarding if not completed yet
+  if (!onboardingDone.value) {
+    await info('Onboarding not completed, redirecting to /onboarding')
 
-    // Sync dataset from GitHub
-    await info('Syncing dataset from GitHub...')
-    await datasetStore.sync()
-    if (syncError.value) {
-      throw new Error(syncError.value)
-    }
-    await info('Dataset synced successfully')
+    const systemLocale = await tauriLocale().then(l => l?.split('-')[0])
+    locale.value = systemLocale as any
+    await info(`Detected system locale: "${systemLocale}"`)
 
-    // Redirect to home after initialization
-    await wait(200)
-    await info('Redirecting to /home')
-    router.replace('/home')
-
-  } catch (err) {
-    const e = err instanceof Error ? err.message : String(err)
-    await error('Initialization failed:', {})
-
-    errorMsg.value = e
+    router.replace('/onboarding')
+    return
   }
+
+  // Sync dataset from GitHub
+  await info('Syncing dataset from GitHub...')
+  const [err] = await datasetStore.sync()
+  if (err) {
+    error(err)
+    errorMsg.value = err
+    return
+  }
+  await info('Dataset synced successfully')
+
+  // Redirect to home after initialization
+  await wait(200)
+  await info('Redirecting to /home')
+  router.replace('/home')
+
+  await error('Initialization failed:', {})
 })
 </script>
 

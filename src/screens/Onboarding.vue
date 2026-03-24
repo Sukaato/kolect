@@ -10,11 +10,16 @@ import OnboardingPreferences from '@/components/screens/onboarding/OnboardingPre
 import OnboardingDone from '@/components/screens/onboarding/OnboardingDone.vue'
 import { useRouter } from 'vue-router'
 import { RouteName } from '@/types/routes'
+import { onMounted } from 'vue'
+import { error, info } from '@tauri-apps/plugin-log'
+import { useDatasetStore } from '@/stores/dataset.store'
 
 const router = useRouter()
 
 const settingStore = useSettingStore()
 const { onboardingDone } = storeToRefs(settingStore)
+
+const datasetStore = useDatasetStore()
 
 const stepper = useStepper(['welcome', 'language', 'theme', 'preferences', 'done'])
 
@@ -22,6 +27,16 @@ async function finish(): Promise<void> {
   onboardingDone.value = true
   router.replace({ name: RouteName.HOME })
 }
+
+onMounted(async () => {
+  await info('Syncing dataset from GitHub...')
+  const [err] = await datasetStore.sync()
+  if (err) {
+    error(err)
+    return
+  }
+  await info('Dataset synced successfully')
+})
 </script>
 
 <template>
@@ -29,11 +44,7 @@ async function finish(): Promise<void> {
 
     <!-- Top bar — back + skip -->
     <div v-if="!stepper.isLast.value" class="flex items-center justify-between px-6 pt-4">
-      <button
-        v-if="!stepper.isFirst.value"
-        class="btn btn-ghost btn-sm"
-        @click="stepper.goToPrevious"
-      >
+      <button v-if="!stepper.isFirst.value" class="btn btn-ghost btn-sm" @click="stepper.goToPrevious">
         <ChevronLeft :size="18" />
       </button>
       <div v-else></div>
@@ -54,12 +65,8 @@ async function finish(): Promise<void> {
 
     <!-- Pagination dots -->
     <div class="flex justify-center gap-2 pb-6 pt-2">
-      <span
-        v-for="step in stepper.steps.value"
-        :key="step"
-        class="block rounded-full transition-all duration-300"
-        :class="stepper.isCurrent(step) ? 'w-6 h-2 bg-primary' : 'w-2 h-2 bg-base-content/20'"
-      ></span>
+      <span v-for="step in stepper.steps.value" :key="step" class="block rounded-full transition-all duration-300"
+        :class="stepper.isCurrent(step) ? 'w-6 h-2 bg-primary' : 'w-2 h-2 bg-base-content/20'"></span>
     </div>
 
   </div>

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { TransitionName } from '@/types/transitions'
+import { usePreferredColorScheme } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onErrorCaptured, onMounted, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, onErrorCaptured, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Dock from './components/global/Dock.vue'
+import PossessionModal from './components/global/PossessionModal.vue'
 import Toast from './components/global/Toast.vue'
 import { useSettingStore } from './stores/setting.store'
 import { useToastStore } from './stores/toast.store'
-import PossessionModal from './components/global/PossessionModal.vue'
-import { usePreferredColorScheme } from '@vueuse/core'
 
 const route = useRoute()
 const showDock = computed(() => route.path !== '/')
@@ -20,21 +19,13 @@ const transitionName = computed(() => {
 const systemTheme = usePreferredColorScheme()
 
 const settingStore = useSettingStore()
-const { theme, locale } = storeToRefs(settingStore)
+const { theme } = storeToRefs(settingStore)
 watch([theme, systemTheme], ([theme]) => {
   document.body.dataset.theme = theme === 'system' ? systemTheme.value : theme
 })
 
 const toastStore = useToastStore()
 const { toasts } = storeToRefs(toastStore)
-
-const i18n = useI18n()
-
-onMounted(async () => {
-  await settingStore.init()
-
-  i18n.locale.value = locale.value
-})
 
 onErrorCaptured(error => {
   toastStore.show(error.message, 'error', {

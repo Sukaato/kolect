@@ -1,7 +1,6 @@
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use std::collections::HashSet;
-use tauri_plugin_log::log;
 
 use crate::db::models::{
     Agency, Album, AlbumVersion, Artist, ArtistAlias, Digipack, FanclubKit, Group, GroupMember,
@@ -95,41 +94,7 @@ impl<'a> DatasetSeeder<'a> {
             Ok(report)
         });
 
-        // Rebuild des index FTS5 hors transaction (FTS5 + transactions SQLite)
-        self.rebuild_fts()?;
-
         Ok(report.unwrap())
-    }
-
-    fn rebuild_fts(&mut self) -> SeederResult<()> {
-        // Vider et repeupler groups_fts
-        diesel::sql_query("DELETE FROM groups_fts").execute(self.conn)?;
-        diesel::sql_query(
-            "INSERT INTO groups_fts(group_id, name)
-             SELECT id, name FROM groups WHERE is_deleted = 0",
-        )
-        .execute(self.conn)?;
-
-        // Vider et repeupler artists_fts
-        // Le champ name agrège real_name + tous les aliases séparés par un espace
-        diesel::sql_query("DELETE FROM artists_fts").execute(self.conn)?;
-        diesel::sql_query(
-            "INSERT INTO artists_fts(artist_id, name)
-             SELECT
-                 ar.id,
-                 ar.real_name || ' ' || COALESCE(
-                     (SELECT GROUP_CONCAT(aa.name, ' ')
-                      FROM artist_aliases aa
-                      WHERE aa.artist_id = ar.id AND aa.is_deleted = 0),
-                     ''
-                 )
-             FROM artists ar
-             WHERE ar.is_deleted = 0 AND ar.solo_agency_id IS NOT NULL",
-        )
-        .execute(self.conn)?;
-
-        log::info!("FTS indexes rebuilt (groups_fts, artists_fts)");
-        Ok(())
     }
 
     // ─── Agencies ─────────────────────────────────────────────────────────────

@@ -14,7 +14,7 @@ const totalCount = computed(() => summary.versionsTotalCount + summary.digipacks
 const isComplete = computed(() => ownedCount.value === totalCount.value && totalCount.value > 0)
 
 const showPhotocards = computed(
-  () => settingStore.includePhotocardCount && summary.photocardsOwnedCount > 0,
+  () => settingStore.includePhotocardInCount && summary.photocardsOwnedCount > 0,
 )
 </script>
 

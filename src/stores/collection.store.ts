@@ -44,7 +44,7 @@ const defaultSummary: PaginatedResult<CollectionSummaryItem> = {
 export const useCollectionStore = defineStore('collection', () => {
   const settingStore = useSettingStore()
   watch(
-    () => settingStore.includePhotocardCount,
+    () => settingStore.includePhotocardInCount,
     include => {
       params.value.includePhotocards = include
       reset()
@@ -56,7 +56,7 @@ export const useCollectionStore = defineStore('collection', () => {
   const params = ref<CollectionSummaryParams>({
     page: defaultMeta.currentPage,
     perPage: defaultMeta.perPage,
-    includePhotocards: settingStore.includePhotocardCount,
+    includePhotocards: settingStore.includePhotocardInCount,
     search: null,
     agencyId: null,
   })

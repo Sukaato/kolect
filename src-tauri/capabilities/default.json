@@ -8,9 +8,10 @@
   "permissions": [
     "core:default",
     "opener:default",
+    "os:default",
+    "fs:default",
     "log:default",
     "store:default",
-    "fs:default",
     {
       "identifier": "fs:allow-create",
       "allow": [

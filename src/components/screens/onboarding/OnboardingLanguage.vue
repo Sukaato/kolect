@@ -15,7 +15,7 @@ const { locale: settingLocale } = storeToRefs(settingStore)
 
 // Detect device locale on mount and pre-select if supported
 onMounted(function detectLocale(): void {
-  const deviceLang = navigator.language?.split('-')[0]
+  const [deviceLang] = navigator.language.split('-')
   if (deviceLang === 'fr' || deviceLang === 'en') {
     applyLocale(deviceLang as 'fr' | 'en')
   }

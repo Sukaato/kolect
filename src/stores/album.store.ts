@@ -94,7 +94,7 @@ export const useAlbumStore = defineStore('album', () => {
   }))
 
   const showPhotocardsProgress = computed(
-    () => settingStore.includePhotocardCount && (detail.value?.photocardsTotalCount ?? 0) > 0,
+    () => settingStore.includePhotocardInCount && (detail.value?.photocardsTotalCount ?? 0) > 0,
   )
 
   // ─── Filtered lists ───────────────────────────────────────────────────────
