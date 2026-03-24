@@ -12,15 +12,6 @@
 - [x] Add route `/onboarding` + guard in `Startup.vue` (redirect if `!onboardingDone`)
 - [x] Add all i18n keys for the onboarding flow (`screen.onboarding.*`)
 
-**Slides structure:**
-
-1. Welcome — logo, one-liner concept, discreet "Skip" link
-2. Language — auto-detect device locale, fallback to FR / EN buttons
-3. Theme — 3 buttons with icon (Light / Dark / System), System by default
-4. Content preferences — toggle `includeExclusiveItems` + toggle `includePhotocards`
-5. All set! — confirmation / welcome screen → redirect to Home
-
----
 
 ## Theme transitions
 
