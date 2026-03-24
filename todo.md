@@ -2,15 +2,15 @@
 
 ## Onboarding screen
 
-- [ ] Detect language automatically from Android/desktop device
-- [ ] If language cannot be detected, ask the user to pick one (FR/EN) → `setting.store`
-- [ ] Ask the user to choose a theme (Light / Dark / System) → `setting.store`
-- [ ] Ask whether to include photocard count in the display → `setting.store`
-- [ ] Ask whether to collect items outside the user's region
-  - [ ] If yes, persist `includeExclusiveItems: boolean` → `setting.store` + Rust backend
-- [ ] Persist `onboardingDone: boolean` flag once onboarding is completed so it is never shown again
-- [ ] Add route `/onboarding` + guard in `Startup.vue` (redirect if `!onboardingDone`)
-- [ ] Add all i18n keys for the onboarding flow (`screen.onboarding.*`)
+- [x] Detect language automatically from Android/desktop device
+- [x] If language cannot be detected, ask the user to pick one (FR/EN) → `setting.store`
+- [x] Ask the user to choose a theme (Light / Dark / System) → `setting.store`
+- [x] Ask whether to include photocard count in the display → `setting.store`
+- [x] Ask whether to collect items outside the user's region
+  - [x] If yes, persist `includeExclusiveItems: boolean` → `setting.store` + Rust backend
+- [x] Persist `onboardingDone: boolean` flag once onboarding is completed so it is never shown again
+- [x] Add route `/onboarding` + guard in `Startup.vue` (redirect if `!onboardingDone`)
+- [x] Add all i18n keys for the onboarding flow (`screen.onboarding.*`)
 
 **Slides structure:**
 

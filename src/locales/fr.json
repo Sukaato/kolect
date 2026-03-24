@@ -56,6 +56,46 @@
     }
   },
   "screen": {
+    "onboarding": {
+      "actions": {
+        "skip": "Passer",
+        "next": "Suivant",
+        "finish": "C'est parti !"
+      },
+      "step": {
+        "welcome": {
+          "title": "Bienvenue sur Kolect",
+          "description": "Suivez et gérez votre collection K-pop : albums, versions, digipacks, photocards et bien plus."
+        },
+        "language": {
+          "title": "Quelle est votre langue ?",
+          "description": "Choisissez la langue de l'interface."
+        },
+        "theme": {
+          "title": "Choisissez votre thème",
+          "description": "Vous pouvez le modifier à tout moment dans les paramètres.",
+          "system": "Système",
+          "light": "Clair",
+          "dark": "Sombre"
+        },
+        "preferences": {
+          "title": "Préférences de contenu",
+          "description": "Personnalisez ce que vous voyez dans votre collection.",
+          "exclusive_items": {
+            "label": "Inclure les items géographiquement exclusifs",
+            "hint": "Affiche les albums, photocards et autres items disponibles uniquement dans certaines régions, en plus des items GLOBAL."
+          },
+          "photocards": {
+            "label": "Inclure les photocards dans le comptage",
+            "hint": "Les photocards seront comptabilisées dans le total de votre collection."
+          }
+        },
+        "done": {
+          "title": "Tout est prêt !",
+          "description": "Votre collection n'attend plus que vous. Bonne chance pour compléter vos albums !"
+        }
+      }
+    },
     "startup": {
       "title": "Kolect",
       "initializing": "Initialisation...",
@@ -110,6 +150,10 @@
           "photocards": {
             "title": "Inclure les photocards",
             "sublabel": "Compter les photocards dans le total des items"
+          },
+          "exclusive_items": {
+            "title": "Items géographiquement exclusifs",
+            "sublabel": "Inclure les items disponibles uniquement dans certaines régions"
           }
         },
         "about": {

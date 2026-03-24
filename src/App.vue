@@ -9,6 +9,7 @@ import Toast from './components/global/Toast.vue'
 import { useSettingStore } from './stores/setting.store'
 import { useToastStore } from './stores/toast.store'
 import PossessionModal from './components/global/PossessionModal.vue'
+import { usePreferredColorScheme } from '@vueuse/core'
 
 const route = useRoute()
 const showDock = computed(() => route.path !== '/')
@@ -16,10 +17,12 @@ const transitionName = computed(() => {
   return route.path === '/' ? TransitionName.STARTUP : TransitionName.PAGE
 })
 
+const systemTheme = usePreferredColorScheme()
+
 const settingStore = useSettingStore()
 const { theme, locale } = storeToRefs(settingStore)
-watch(theme, theme => {
-  document.body.dataset.theme = theme
+watch([theme, systemTheme], ([theme]) => {
+  document.body.dataset.theme = theme === 'system' ? systemTheme.value : theme
 })
 
 const toastStore = useToastStore()

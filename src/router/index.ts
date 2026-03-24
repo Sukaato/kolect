@@ -1,11 +1,23 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import Home from '@/screens/Home.vue'
 import Startup from '@/screens/Startup.vue'
 import { RouteName } from '@/types/routes'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', name: RouteName.STARTUP, component: Startup },
-  { path: '/home', name: RouteName.HOME, component: Home },
+  {
+    path: '/',
+    name: RouteName.STARTUP,
+    component: Startup,
+  },
+  {
+    path: '/onboarding',
+    name: RouteName.ONBOARDING,
+    component: () => import('@/screens/Onboarding.vue'),
+  },
+  {
+    path: '/home',
+    name: RouteName.HOME,
+    component: () => import('@/screens/Home.vue'),
+  },
   {
     path: '/collection',
     name: RouteName.COLLECTION,

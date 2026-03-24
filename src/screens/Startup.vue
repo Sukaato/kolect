@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDatasetStore } from '@/stores/dataset.store'
+import { useSettingStore } from '@/stores/setting.store'
 import { wait } from '@/utils/wait.util'
 import { info, error } from '@tauri-apps/plugin-log'
 import { storeToRefs } from 'pinia'
@@ -11,6 +12,9 @@ const router = useRouter()
 const datasetStore = useDatasetStore()
 const { syncing, syncError } = storeToRefs(datasetStore)
 
+const settingStore = useSettingStore()
+const { onboardingDone } = storeToRefs(settingStore)
+
 const errorMsg = shallowRef<string>()
 
 function handleRetry(): void {
@@ -21,6 +25,13 @@ onMounted(async () => {
   info('Initializing app...')
 
   try {
+    // Redirect to onboarding if not completed yet
+    if (!onboardingDone.value) {
+      await info('Onboarding not completed, redirecting to /onboarding')
+      router.replace('/onboarding')
+      return
+    }
+
     // Sync dataset from GitHub
     await info('Syncing dataset from GitHub...')
     await datasetStore.sync()
@@ -32,7 +43,7 @@ onMounted(async () => {
     // Redirect to home after initialization
     await wait(200)
     await info('Redirecting to /home')
-    router.replace('/home') // So user can't go back to Startup screen
+    router.replace('/home')
 
   } catch (err) {
     const e = err instanceof Error ? err.message : String(err)
@@ -44,7 +55,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center h-dvh bg-base-300" data-theme="dark">
+  <div class="screen screen--startup flex items-center justify-center h-dvh bg-base-300" data-theme="dark">
     <div class="text-center">
       <!-- Logo -->
       <div class="mb-8">

@@ -56,6 +56,46 @@
     }
   },
   "screen": {
+    "onboarding": {
+      "actions": {
+        "skip": "Skip",
+        "next": "Next",
+        "finish": "Let's go!"
+      },
+      "step": {
+        "welcome": {
+          "title": "Welcome to Kolect",
+          "description": "Track and manage your K-pop collection: albums, versions, digipacks, photocards and more."
+        },
+        "language": {
+          "title": "What's your language?",
+          "description": "Choose the interface language."
+        },
+        "theme": {
+          "title": "Choose your theme",
+          "description": "You can change this at any time in the settings.",
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        },
+        "preferences": {
+          "title": "Content preferences",
+          "description": "Customise what you see in your collection.",
+          "exclusive_items": {
+            "label": "Include region-exclusive items",
+            "hint": "Shows albums, photocards and other items only available in specific regions, in addition to GLOBAL items."
+          },
+          "photocards": {
+            "label": "Include photocards in the count",
+            "hint": "Photocards will be counted in your total collection."
+          }
+        },
+        "done": {
+          "title": "All set!",
+          "description": "Your collection is waiting for you. Good luck completing your albums!"
+        }
+      }
+    },
     "startup": {
       "title": "Kolect",
       "initializing": "Initializing...",
@@ -110,6 +150,10 @@
           "photocards": {
             "title": "Include photocards",
             "sublabel": "Count photocards in the total item count"
+          },
+          "exclusive_items": {
+            "title": "Region-exclusive items",
+            "sublabel": "Include items only available in specific regions"
           }
         },
         "about": {

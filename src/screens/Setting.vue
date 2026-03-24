@@ -5,12 +5,12 @@ import { useDatasetStore } from '@/stores/dataset.store';
 import { Setting, useSettingStore } from '@/stores/setting.store';
 import { app } from '@tauri-apps/api';
 import { onLongPress } from '@vueuse/core';
-import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, ImageIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, ImageIcon, MapPinIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, shallowRef, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const themes: NoInfer<Setting['theme'][]> = ['light', 'dark']
+const themes: NoInfer<Setting['theme'][]> = ['system', 'light', 'dark']
 const locales: Record<Setting['locale'], string> = {
   en: 'English',
   fr: 'Français',
@@ -19,7 +19,7 @@ const locales: Record<Setting['locale'], string> = {
 const i18n = useI18n()
 
 const settingStore = useSettingStore()
-const { theme, locale, includePhotocardCount } = storeToRefs(settingStore)
+const { theme, locale, includePhotocardCount, includeExclusiveItems } = storeToRefs(settingStore)
 
 function setLocale(newLocale: Setting['locale']) {
   i18n.locale.value = newLocale
@@ -63,7 +63,7 @@ onMounted(async () => {
     <!-- Header -->
     <div class="sticky top-0 z-10 bg-base-100/80 backdrop-blur-md border-b border-base-300">
       <div class="flex items-center gap-3 px-4 py-4 max-w-lg mx-auto">
-        <button @click="$emit('back')" class="btn btn-ghost btn-sm btn-circle">
+        <button class="btn btn-ghost btn-sm btn-circle" @click="$emit('back')">
           <ChevronLeftIcon class="w-5 h-5" />
         </button>
         <h1 class="text-xl font-bold tracking-tight">{{ $t('screen.setting.title') }}</h1>
@@ -92,7 +92,6 @@ onMounted(async () => {
             </option>
           </select>
         </SettingRow>
-
       </SettingSection>
 
       <!-- Data -->
@@ -104,10 +103,17 @@ onMounted(async () => {
             {{ $t('screen.setting.section.data.dataset.actions.refresh') }}
           </button>
         </SettingRow>
+
+        <SettingRow :label="$t('screen.setting.section.data.exclusive_items.title')"
+          :sublabel="$t('screen.setting.section.data.exclusive_items.sublabel')" :icon="MapPinIcon"
+          icon-color="text-warning">
+          <input v-model="includeExclusiveItems" type="checkbox" class="toggle toggle-success toggle-sm" />
+        </SettingRow>
+
         <SettingRow :label="$t('screen.setting.section.data.photocards.title')"
           :sublabel="$t('screen.setting.section.data.photocards.sublabel')" :icon="ImageIcon"
           icon-color="text-secondary">
-          <input type="checkbox" class="toggle toggle-success toggle-sm" v-model="includePhotocardCount" />
+          <input v-model="includePhotocardCount" type="checkbox" class="toggle toggle-success toggle-sm" />
         </SettingRow>
       </SettingSection>
 
