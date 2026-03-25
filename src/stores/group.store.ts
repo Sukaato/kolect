@@ -2,18 +2,21 @@ import { defineStore } from 'pinia'
 import { computed, readonly } from 'vue'
 import { useEntityStore } from '@/composables/use-entity-store'
 import { useInvoke } from '@/composables/use-invoke'
-import type { GroupDetail } from '@/types/group.type'
+import { useToast } from '@/composables/use-toast'
 import type { GroupId } from '@/types/schema/group.type'
-import { useSettingStore } from './setting.store'
 
 export const useGroupStore = defineStore('group', () => {
   // ─── Composables ───────────────────────────────────────────────────────────
 
-  const settingStore = useSettingStore()
+  const toast = useToast()
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<GroupDetail>('group_get_detail')
+  const detailInvoke = useInvoke('group_get_detail', {
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
 
   // ─── Logique commune ───────────────────────────────────────────────────────
 
@@ -45,10 +48,7 @@ export const useGroupStore = defineStore('group', () => {
 
   async function load(groupId: GroupId, refresh = false) {
     await Promise.all([
-      detailInvoke.invoke(
-        { groupId, includeExclusiveItems: settingStore.includeExclusiveItems },
-        { resetBeforeInvoke: !refresh },
-      ),
+      detailInvoke.invoke({ groupId }, { resetBeforeInvoke: !refresh }),
       loadCollectibles(groupId, refresh),
     ])
   }

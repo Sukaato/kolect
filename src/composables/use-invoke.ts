@@ -1,11 +1,19 @@
 import { invoke as tauriInvoke } from '@tauri-apps/api/core'
 import { debug, error as logError } from '@tauri-apps/plugin-log'
-import { shallowRef } from 'vue'
-import { wait } from '@/utils/wait.util'
-import { useToast } from './use-toast'
+import { readonly, shallowRef } from 'vue'
 
-type UseInvokeOptions<T = unknown> = {
+type Commands = TauriInvokeCommands
+type CommandName = keyof Commands
+
+type CommandParams<T extends CommandName> = Commands[T]['params']
+
+type CommandResult<T extends CommandName> = Commands[T]['result']
+type CommandError<T extends CommandName> = Commands[T]['error']
+
+type UseInvokeOptions<T = unknown, E = unknown> = {
   showErrorToast?: boolean
+  onError?: (cause: E) => void
+  onSuccess?: (data: T) => void
   defaults?: T
 } & InvokeOptions
 
@@ -14,25 +22,27 @@ type InvokeOptions = {
   resetOnError?: boolean
 }
 
-export function useInvoke<T = unknown, E = string>(command: string, useOptions?: UseInvokeOptions) {
-  const toast = useToast()
-
-  const result = shallowRef<T | null>((useOptions?.defaults as T) ?? null)
-  const error = shallowRef<E>()
+export function useInvoke<TName extends CommandName>(
+  command: TName,
+  useOptions?: UseInvokeOptions<CommandResult<TName>, CommandError<TName>>,
+) {
+  const data = shallowRef<CommandResult<TName> | null>(
+    (useOptions?.defaults as CommandResult<TName>) ?? null,
+  )
+  const error = shallowRef<CommandError<TName> | null>(null)
   const loading = shallowRef(false)
 
-  async function invoke(args?: Record<string, unknown>, options?: InvokeOptions) {
+  async function invoke(args: CommandParams<TName>, options?: InvokeOptions) {
+    loading.value = true
+    error.value = void 0
+
     const mergedOptions = {
       ...useOptions,
       ...options,
     }
 
-    loading.value = true
-    error.value = void 0
-    console.log(mergedOptions)
     if (mergedOptions?.resetBeforeInvoke !== false) {
-      console.log('reset data')
-      result.value = mergedOptions?.defaults ?? void 0
+      data.value = mergedOptions?.defaults ?? void 0
     }
 
     console.debug(
@@ -45,38 +55,47 @@ export function useInvoke<T = unknown, E = string>(command: string, useOptions?:
         ? `call "${command}" command with args: ${JSON.stringify(args)}`
         : `call "${command}" command`,
     )
-    return Promise.all([
-      wait(200), // wait at least 2 seconds
-      tauriInvoke<T>(command, args)
-        .then(res => {
-          result.value = res
-          return [null, res] as [null, T]
-        })
-        .catch(async err => {
-          const errorMsg = err instanceof Error ? err.message : String(err)
-          error.value = errorMsg as E
 
-          if (mergedOptions?.showErrorToast !== false) {
-            toast.error(errorMsg)
-          }
-          if (mergedOptions?.resetOnError) {
-            result.value = mergedOptions.defaults ?? void 0
-          }
-          console.error(`Error while calling command "${command}":`, err)
-          await logError(`Error while calling command "${command}": ${err}`)
-          return [errorMsg, null] as [E, null]
-        }),
-    ])
-      .then(([_, data]) => data)
+    return tauriInvoke<CommandResult<TName>>(command, args as Record<string, unknown>)
+      .then(result => {
+        mergedOptions.onSuccess?.(result)
+
+        data.value = result
+
+        return [null, result] as const
+      })
+      .catch(async cause => {
+        console.error(`Error while calling command "${command}":`, cause)
+        await logError(`Error while calling command "${command}": ${cause}`)
+
+        error.value = cause
+        mergedOptions.onError?.(cause)
+
+        if (mergedOptions?.resetOnError) {
+          data.value = mergedOptions.defaults ?? void 0
+        }
+
+        return [cause as string, null] as const
+      })
       .finally(() => {
         loading.value = false
       })
   }
 
+  function reset() {
+    data.value = useOptions?.defaults ?? null
+    error.value = null
+    loading.value = false
+  }
+
   return {
-    data: result,
-    error,
-    loading,
+    // State
+    data,
+    error: readonly(error),
+    loading: readonly(loading),
+
+    // Actions
     invoke,
+    reset,
   }
 }

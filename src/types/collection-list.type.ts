@@ -1,4 +1,5 @@
 import type { CollectionSummaryItem } from '@/stores/collection.store'
+import type { AgencyId } from './schema/agency.type'
 
 /**
  * Common interface exposed by useCollectionStore and useDatasetStore
@@ -8,7 +9,7 @@ export interface CollectionListStore {
   // State
   params: {
     readonly search: string | null
-    readonly agencyId: string | null
+    readonly agencyId: AgencyId | null
     [key: string]: unknown
   }
 
@@ -19,16 +20,16 @@ export interface CollectionListStore {
 
   // Invoke state
   loading: boolean
-  error: string | undefined
+  error: string | null
 
   // Actions
   fetch: (overrides?: {
     page?: number
     search?: string | null
-    agencyId?: string | null
+    agencyId?: AgencyId | null
     includePhotocards?: boolean
   }) => Promise<void>
   loadNextPage: () => Promise<void>
   setSearch: (search: string | null) => Promise<void>
-  setAgency: (agencyId: string | null) => Promise<void>
+  setAgency: (agencyId: AgencyId | null) => Promise<void>
 }

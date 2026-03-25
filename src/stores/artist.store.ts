@@ -2,13 +2,21 @@ import { defineStore } from 'pinia'
 import { computed, readonly } from 'vue'
 import { useEntityStore } from '@/composables/use-entity-store'
 import { useInvoke } from '@/composables/use-invoke'
-import type { ArtistDetail } from '@/types/artist.type'
 import type { ArtistId } from '@/types/schema/artist.type'
+import { useToast } from '@/composables/use-toast'
 
 export const useArtistStore = defineStore('artist', () => {
+  // ─── Composables ───────────────────────────────────────────────────────────
+
+  const toast = useToast()
+
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<ArtistDetail>('artist_get_detail')
+  const detailInvoke = useInvoke('artist_get_detail', {
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
 
   // ─── Logique commune ───────────────────────────────────────────────────────
 

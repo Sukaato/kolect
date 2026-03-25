@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { computed, readonly, ref, shallowRef, watch } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
+import { useToast } from '@/composables/use-toast'
 import type { PageMeta, PaginatedResult } from '@/types/pagination.type'
+import type { AgencyId } from '@/types/schema/agency.type'
 import { useSettingStore } from './setting.store'
 
 export interface CollectionSummaryItem {
@@ -21,7 +23,7 @@ export interface CollectionSummaryParams {
   includePhotocards: boolean
   includeExclusiveItems: boolean
   search: string | null
-  agencyId: string | null
+  agencyId: AgencyId | null
 }
 
 const defaultMeta: PageMeta = {
@@ -45,6 +47,7 @@ const defaultSummary: PaginatedResult<CollectionSummaryItem> = {
 export const useCollectionStore = defineStore('collection', () => {
   // ─── Composables ───────────────────────────────────────────────────────────
 
+  const toast = useToast()
   const settingStore = useSettingStore()
   watch(
     () => settingStore.includePhotocardInCount,
@@ -80,10 +83,12 @@ export const useCollectionStore = defineStore('collection', () => {
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const { data, loading, error, invoke } = useInvoke<PaginatedResult<CollectionSummaryItem>>(
-    'collection_get_summary',
-    { defaults: defaultSummary },
-  )
+  const { data, loading, error, invoke } = useInvoke('collection_get_summary', {
+    defaults: defaultSummary,
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 
@@ -133,7 +138,7 @@ export const useCollectionStore = defineStore('collection', () => {
     await fetch({ search })
   }
 
-  async function setAgency(agencyId: string | null) {
+  async function setAgency(agencyId: AgencyId | null) {
     reset()
     await fetch({ agencyId })
   }

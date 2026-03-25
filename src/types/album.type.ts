@@ -1,23 +1,5 @@
-import type { AlbumId, AlbumVersionId } from '@/types/schema/album.type'
+import type { AlbumVersionId } from '@/types/schema/album.type'
 import type { ArtistId } from '@/types/schema/artist.type'
-
-export interface AlbumDetail {
-  albumId: AlbumId
-  name: string
-  releaseDate: string
-  imageUrl: string | null
-  groupId: string | null
-  artistId: string | null
-  // Versions progress
-  versionsOwnedCount: number
-  versionsTotalCount: number
-  // Digipacks progress
-  digipacksOwnedCount: number
-  digipacksTotalCount: number
-  // Photocards progress
-  photocardsOwnedCount: number
-  photocardsTotalCount: number
-}
 
 export interface AlbumVersionItem {
   id: AlbumVersionId

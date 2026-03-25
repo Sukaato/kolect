@@ -16,12 +16,8 @@ export const useFavoriteStore = defineStore('favorite', () => {
 
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
-  const toggleGroupInvoke = useInvoke<boolean>('favorite_toggle_group', {
-    showErrorToast: false,
-  })
-  const toggleArtistInvoke = useInvoke<boolean>('favorite_toggle_artist', {
-    showErrorToast: false,
-  })
+  const toggleGroupInvoke = useInvoke('favorite_toggle_group')
+  const toggleArtistInvoke = useInvoke('favorite_toggle_artist')
 
   // ─── Computed ──────────────────────────────────────────────────────────────
 

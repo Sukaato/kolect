@@ -3,7 +3,7 @@ import { useInvoke } from '@/composables/use-invoke'
 import type { CollectionSummaryItem } from '@/stores/collection.store'
 import type { CollectionListStore } from '@/types/collection-list.type'
 import { RouteName } from '@/types/routes'
-import type { Agency } from '@/types/schema/agency.type'
+import { AgencyId } from '@/types/schema/agency.type'
 import { useDebounceFn, useInfiniteScroll } from '@vueuse/core'
 import { SearchIcon, StarIcon } from 'lucide-vue-next'
 import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
@@ -20,7 +20,7 @@ const {
   store: CollectionListStore
   screenClass: string
   /** Tauri command name to load the agency list (differs between Home and Collection) */
-  agenciesCommand: string
+  agenciesCommand: 'dataset_get_agencies' | 'collection_get_agencies'
   /** Debounce delay in ms for the search input (default: 500) */
   searchDebounce?: number
 }>()
@@ -37,7 +37,7 @@ const hasActiveFilters = computed(
 
 // ─── Agencies ─────────────────────────────────────────────────────────────────
 
-const { data: agencies, invoke: fetchAgencies } = useInvoke<Agency[]>(agenciesCommand, {
+const { data: agencies, invoke: fetchAgencies } = useInvoke(agenciesCommand, {
   defaults: [],
 })
 
@@ -58,7 +58,7 @@ watch(searchInput, value => debouncedSearch(value))
 
 async function onAgencyChange(agencyId: string | null) {
   selectedAgencyId.value = agencyId
-  await store.setAgency(agencyId)
+  await store.setAgency(agencyId as AgencyId)
 }
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
@@ -137,7 +137,7 @@ useInfiniteScroll(
 
       <!-- Initial loading -->
       <div v-if="loading && items.length === 0" class="flex justify-center items-center h-40">
-        <span class="loading loading-spinner loading-lg" />
+        <span class="loading loading-spinner loading-lg"></span>
       </div>
 
       <!-- Empty state -->

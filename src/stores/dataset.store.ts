@@ -3,6 +3,7 @@ import { computed, readonly, ref, shallowRef, watch } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
 import { useToast } from '@/composables/use-toast'
 import type { PageMeta, PaginatedResult } from '@/types/pagination.type'
+import type { AgencyId } from '@/types/schema/agency.type'
 import type { CollectionSummaryItem, CollectionSummaryParams } from './collection.store'
 import { useSettingStore } from './setting.store'
 
@@ -71,14 +72,9 @@ export const useDatasetStore = defineStore('dataset', () => {
     loading: syncing,
     error: syncError,
     invoke: syncDataset,
-  } = useInvoke<boolean>('dataset_sync')
+  } = useInvoke('dataset_sync')
 
-  const {
-    data: collection,
-    loading,
-    error,
-    invoke,
-  } = useInvoke<PaginatedResult<CollectionSummaryItem>>('dataset_get_summary', {
+  const { loading, error, invoke } = useInvoke('dataset_get_summary', {
     defaults: defaultSummary,
   })
 
@@ -127,11 +123,11 @@ export const useDatasetStore = defineStore('dataset', () => {
       params.value = { ...params.value, ...overrides }
     }
 
-    await invoke({ params: params.value }, { resetBeforeInvoke: !refresh })
+    const [_, value] = await invoke({ params: params.value }, { resetBeforeInvoke: !refresh })
 
-    if (collection.value) {
-      pages.value = new Map(pages.value).set(params.value.page, collection.value.data)
-      meta.value = collection.value.meta
+    if (value) {
+      pages.value = new Map(pages.value).set(params.value.page, value.data)
+      meta.value = value.meta
     }
   }
 
@@ -145,7 +141,7 @@ export const useDatasetStore = defineStore('dataset', () => {
     await fetch({ search })
   }
 
-  async function setAgency(agencyId: string | null) {
+  async function setAgency(agencyId: AgencyId | null) {
     reset()
     await fetch({ agencyId })
   }

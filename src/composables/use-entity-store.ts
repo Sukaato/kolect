@@ -1,17 +1,13 @@
 import { computed, readonly, shallowRef } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
 import { useSettingStore } from '@/stores/setting.store'
-import type {
-  AlbumSummary,
-  FanclubKitItem,
-  LightstickItem,
-  PossessionFilter,
-} from '@/types/group.type'
+import type { PossessionFilter } from '@/types/group.type'
+import { useToast } from './use-toast'
 
 export interface EntityStoreCommands {
-  albumsCommand: string
-  lightsticksCommand: string
-  fanclubKitsCommand: string
+  albumsCommand: 'group_get_album_summaries' | 'artist_get_album_summaries'
+  lightsticksCommand: 'group_get_lightsticks' | 'artist_get_lightsticks'
+  fanclubKitsCommand: 'group_get_fanclub_kits' | 'artist_get_fanclub_kits'
   idParam: string
 }
 
@@ -19,15 +15,27 @@ export function useEntityStore(commands: EntityStoreCommands) {
   // ─── Composables ───────────────────────────────────────────────────────────
 
   const settingStore = useSettingStore()
+  const toast = useToast()
 
   // ─── Invoke ──────────────────────────────────────────────────────────────
 
-  const albumsInvoke = useInvoke<AlbumSummary[]>(commands.albumsCommand, { defaults: [] })
-  const lightsticksInvoke = useInvoke<LightstickItem[]>(commands.lightsticksCommand, {
+  const albumsInvoke = useInvoke(commands.albumsCommand, {
     defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
   })
-  const fanclubKitsInvoke = useInvoke<FanclubKitItem[]>(commands.fanclubKitsCommand, {
+  const lightsticksInvoke = useInvoke(commands.lightsticksCommand, {
     defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const fanclubKitsInvoke = useInvoke(commands.fanclubKitsCommand, {
+    defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
   })
 
   // ─── State ───────────────────────────────────────────────────────────────
@@ -75,13 +83,16 @@ export function useEntityStore(commands: EntityStoreCommands) {
   async function loadCollectibles(id: string, refresh = false) {
     await Promise.all([
       albumsInvoke.invoke(
+        // @ts-expect-error - FIXME
         { [commands.idParam]: id, includeExclusiveItems: settingStore.includeExclusiveItems },
         { resetBeforeInvoke: !refresh },
       ),
       lightsticksInvoke.invoke(
+        // @ts-expect-error - FIXME
         { [commands.idParam]: id, includeExclusiveItems: settingStore.includeExclusiveItems },
         { resetBeforeInvoke: !refresh },
       ),
+      // @ts-expect-error - FIXME
       fanclubKitsInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
     ])
   }

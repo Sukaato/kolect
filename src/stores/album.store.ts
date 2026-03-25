@@ -1,26 +1,53 @@
 import { defineStore } from 'pinia'
 import { computed, readonly, shallowRef } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
+import { useToast } from '@/composables/use-toast'
 import { useSettingStore } from '@/stores/setting.store'
-import type { AlbumDetail, AlbumVersionItem, DigipackItem, PhotocardItem } from '@/types/album.type'
-import type { ArtistDetail } from '@/types/artist.type'
-import type { GroupDetail, PossessionFilter } from '@/types/group.type'
+import type { PossessionFilter } from '@/types/group.type'
 import type { AlbumId, AlbumVersionId } from '@/types/schema/album.type'
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type'
 
 export const useAlbumStore = defineStore('album', () => {
   // ─── Composables ──────────────────────────────────────────────────────────
 
+  const toast = useToast()
   const settingStore = useSettingStore()
 
   // ─── Invoke ───────────────────────────────────────────────────────────────
 
-  const detailInvoke = useInvoke<AlbumDetail>('album_get_detail')
-  const versionsInvoke = useInvoke<AlbumVersionItem[]>('album_get_versions', { defaults: [] })
-  const digipacksInvoke = useInvoke<DigipackItem[]>('album_get_digipacks', { defaults: [] })
-  const photocardsInvoke = useInvoke<PhotocardItem[]>('album_get_photocards', { defaults: [] })
-  const groupDetailInvoke = useInvoke<GroupDetail>('group_get_detail')
-  const artistDetailInvoke = useInvoke<ArtistDetail>('artist_get_detail')
+  const detailInvoke = useInvoke('album_get_detail', {
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const versionsInvoke = useInvoke('album_get_versions', {
+    defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const digipacksInvoke = useInvoke('album_get_digipacks', {
+    defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const photocardsInvoke = useInvoke('album_get_photocards', {
+    defaults: [],
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const groupDetailInvoke = useInvoke('group_get_detail', {
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
+  const artistDetailInvoke = useInvoke('artist_get_detail', {
+    onError(cause) {
+      toast.error(cause)
+    },
+  })
 
   // ─── State ────────────────────────────────────────────────────────────────
 
