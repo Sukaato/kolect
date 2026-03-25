@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import { LucideHome, LucideLibrary, LucideUser } from 'lucide-vue-next';
+import { LucideHome, LucideLibrary, LucideUser } from '@lucide/vue';
 </script>
 
 <template>

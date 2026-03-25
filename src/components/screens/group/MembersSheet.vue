@@ -3,7 +3,7 @@ import BottomSheet from '@/components/global/BottomSheet.vue';
 import MemberListItem from '@/components/screens/group/MemberListItem.vue';
 import { RouteName } from '@/types/routes';
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type';
-import { ChevronLeftIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon } from '@lucide/vue';
 import { shallowRef } from 'vue';
 import { useRouter } from 'vue-router';
 import MemberDetail from './MemberDetail.vue';

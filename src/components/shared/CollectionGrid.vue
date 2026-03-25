@@ -5,7 +5,7 @@ import type { CollectionListStore } from '@/types/collection-list.type'
 import { RouteName } from '@/types/routes'
 import { AgencyId } from '@/types/schema/agency.type'
 import { useDebounceFn, useInfiniteScroll } from '@vueuse/core'
-import { SearchIcon, StarIcon } from 'lucide-vue-next'
+import { SearchIcon, StarIcon } from '@lucide/vue'
 import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 

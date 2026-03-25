@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CollectionGrid from '@/components/shared/CollectionGrid.vue'
 import { useCollectionStore } from '@/stores/collection.store'
-import { PlusIcon } from 'lucide-vue-next'
+import { PlusIcon } from '@lucide/vue'
 import { onMounted } from 'vue'
 
 const collectionStore = useCollectionStore()

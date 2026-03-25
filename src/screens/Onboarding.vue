@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStepper } from '@vueuse/core'
-import { ChevronLeft } from 'lucide-vue-next'
+import { ChevronLeft } from '@lucide/vue'
 import { useSettingStore } from '@/stores/setting.store'
 import { storeToRefs } from 'pinia'
 import OnboardingWelcome from '@/components/screens/onboarding/OnboardingWelcome.vue'

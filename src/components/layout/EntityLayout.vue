@@ -3,7 +3,7 @@ import AlbumCard from '@/components/shared/AlbumCard.vue'
 import FanclubKitCard from '@/components/shared/FanclubKitCard.vue'
 import LightstickCard from '@/components/shared/LightstickCard.vue'
 import type { AlbumSummary, FanclubKitItem, LightstickItem, PossessionFilter } from '@/types/group.type'
-import { ChevronLeftIcon, StarIcon } from 'lucide-vue-next'
+import { ChevronLeftIcon, StarIcon } from '@lucide/vue'
 import type { RouteLocationRaw } from 'vue-router'
 
 // ─── Props & emits ───────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePossessionStore } from '@/stores/possession.store'
-import { MinusIcon, PlusIcon, XIcon } from 'lucide-vue-next'
+import { MinusIcon, PlusIcon, XIcon } from '@lucide/vue'
 import { storeToRefs } from 'pinia'
 
 const store = usePossessionStore()

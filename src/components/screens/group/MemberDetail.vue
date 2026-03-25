@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ArtistId, ArtistWithAliases } from '@/types/schema/artist.type';
-import { ExternalLinkIcon } from 'lucide-vue-next';
+import { ExternalLinkIcon } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 

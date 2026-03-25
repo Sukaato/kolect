@@ -6,7 +6,7 @@ import PhotocardSection from '@/components/screens/album/PhotocardSection.vue'
 import { useAlbumStore } from '@/stores/album.store'
 import type { PossessionFilter } from '@/types/group.type'
 import type { AlbumId } from '@/types/schema/album.type'
-import { ChevronLeftIcon } from 'lucide-vue-next'
+import { ChevronLeftIcon } from '@lucide/vue'
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
 

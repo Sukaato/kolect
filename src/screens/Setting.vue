@@ -5,7 +5,7 @@ import { useDatasetStore } from '@/stores/dataset.store';
 import { Setting, useSettingStore } from '@/stores/setting.store';
 import { app } from '@tauri-apps/api';
 import { onLongPress } from '@vueuse/core';
-import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, ImageIcon, MapPinIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon, DatabaseIcon, GlobeIcon, ImageIcon, MapPinIcon, MoonIcon, PackageIcon, RefreshCwIcon, SunIcon } from '@lucide/vue';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, shallowRef, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';

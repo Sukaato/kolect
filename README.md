@@ -1,6 +1,5 @@
 # Kolect
 
-
 Kolect is a mobile-first application for organizing and tracking K-pop collection items (albums, lightsticks, photocards, merchandise, and related goods). The project combines a Vue 3 + TypeScript frontend with native packaging to deliver a fast, native-feeling experience on mobile devices.
 
 ## Purpose
@@ -14,7 +13,7 @@ Kolect is a mobile-first application for organizing and tracking K-pop collectio
 - **Frontend:** Vue 3, TypeScript, Vite
 - **Desktop shell:** Tauri (Rust)
 - **Styling:** Tailwind CSS, DaisyUI, Sass
-- **Icons:** lucide-vue-next
+- **Icons:** @lucide/vue
 - **Tauri API:** @tauri-apps/api
 
 ### Prerequisites
@@ -49,7 +48,6 @@ If you run the frontend-only server and need to connect it to Tauri APIs for tes
 
 ### Build
 
-
 - Build the frontend only:
 
 ```bash
@@ -76,7 +74,6 @@ Thanks for considering contributing to Kolect! A few quick guidelines to get sta
 - **Formatting:** Follow existing code style. Run the dev frontend locally to verify UI changes.
 - **Native builds:** If you change Tauri/native code, ensure the Rust toolchain is installed and native builds still pass on your platform.
 
-Maintainers will review PRs and request changes as needed. If you'd like, I can add a CONTRIBUTING.md with a checklist and PR template.
----
+## Maintainers will review PRs and request changes as needed. If you'd like, I can add a CONTRIBUTING.md with a checklist and PR template.
 
 If you'd like, I can also add a short CONTRIBUTING section, example data, or a quick start walkthrough for adding items to a collection. Which would you prefer next?

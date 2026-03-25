@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ArtistWithAliases } from '@/types/schema/artist.type';
-import { ChevronRightIcon } from 'lucide-vue-next';
+import { ChevronRightIcon } from '@lucide/vue';
 import { computed } from 'vue';
 
 const { member } = defineProps<{
