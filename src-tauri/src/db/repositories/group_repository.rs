@@ -47,52 +47,88 @@ impl<'a> GroupRepository<'a> {
     }
 
     /// Returns the group summary with owned/total counts.
-    /// - owned_only         : true → HAVING owned_count > 0 (collection screen)
-    /// +                      false → all groups (home screen)
-    /// - query              : LIKE %query% search on group name (case-insensitive)
-    /// - agency_ids         : filter by agency
-    /// - include_photocards : count photocards in total/owned
+    /// - owned_only              : true → HAVING owned_count > 0 (collection screen)
+    /// +                           false → all groups (home screen)
+    /// - query                   : LIKE %query% search on group name (case-insensitive)
+    /// - agency_ids              : filter by agency
+    /// - include_photocards      : count photocards in total/owned
+    /// - include_exclusive_items : if false, only GLOBAL region items are counted
     pub fn get_summary(
         &mut self,
         owned_only: bool,
         query: Option<&str>,
         agency_ids: Option<&[String]>,
         include_photocards: bool,
+        include_exclusive_items: bool,
     ) -> Result<Vec<GroupSummaryRow>, diesel::result::Error> {
-        let photocard_union = if include_photocards {
-            "UNION ALL
-             SELECT p.id AS item_id, al.group_id AS owner_id
-             FROM photocards p
-             JOIN album_versions av ON av.id = p.album_version_id AND av.is_deleted = 0
-             JOIN albums al ON al.id = av.album_id AND al.group_id IS NOT NULL AND al.is_deleted = 0
-             WHERE p.is_deleted = 0
-             UNION ALL
-             SELECT p.id AS item_id, al.group_id AS owner_id
-             FROM photocards p
-             JOIN digipacks d ON d.id = p.digipack_id AND d.is_deleted = 0
-             JOIN albums al ON al.id = d.album_id AND al.group_id IS NOT NULL AND al.is_deleted = 0
-             WHERE p.is_deleted = 0"
-        } else {
+        let region_filter = if include_exclusive_items {
             ""
+        } else {
+            "AND av.region = 'GLOBAL'"
+        };
+
+        let region_filter_d = if include_exclusive_items {
+            ""
+        } else {
+            "AND d.region = 'GLOBAL'"
+        };
+
+        let region_filter_ls = if include_exclusive_items {
+            ""
+        } else {
+            "AND ls.region = 'GLOBAL'"
+        };
+
+        let region_filter_fk = if include_exclusive_items {
+            ""
+        } else {
+            "AND fk.region = 'GLOBAL'"
+        };
+
+        let region_filter_p = if include_exclusive_items {
+            ""
+        } else {
+            "AND p.region = 'GLOBAL'"
+        };
+
+        let photocard_union = if include_photocards {
+            format!(
+                "UNION ALL
+                 SELECT p.id AS item_id, al.group_id AS owner_id
+                 FROM photocards p
+                 JOIN album_versions av ON av.id = p.album_version_id AND av.is_deleted = 0
+                 JOIN albums al ON al.id = av.album_id AND al.group_id IS NOT NULL AND al.is_deleted = 0
+                 WHERE p.is_deleted = 0 {region_filter_p}
+                 UNION ALL
+                 SELECT p.id AS item_id, al.group_id AS owner_id
+                 FROM photocards p
+                 JOIN digipacks d ON d.id = p.digipack_id AND d.is_deleted = 0
+                 JOIN albums al ON al.id = d.album_id AND al.group_id IS NOT NULL AND al.is_deleted = 0
+                 WHERE p.is_deleted = 0 {region_filter_p}"
+            )
+        } else {
+            String::new()
         };
 
         let owned_photocard_union = if include_photocards {
-            "UNION ALL
-             SELECT uc.photocard_id AS item_id, al.group_id AS owner_id
-             FROM user_collection uc
-             JOIN photocards p ON p.id = uc.photocard_id
-             JOIN album_versions av ON av.id = p.album_version_id
-             JOIN albums al ON al.id = av.album_id AND al.group_id IS NOT NULL
-             WHERE uc.photocard_id IS NOT NULL
-             UNION ALL
-             SELECT uc.photocard_id AS item_id, al.group_id AS owner_id
-             FROM user_collection uc
-             JOIN photocards p ON p.id = uc.photocard_id
-             JOIN digipacks d ON d.id = p.digipack_id
-             JOIN albums al ON al.id = d.album_id AND al.group_id IS NOT NULL
-             WHERE uc.photocard_id IS NOT NULL"
+            format!(
+                "UNION ALL
+                 SELECT uc.photocard_id AS item_id, al.group_id AS owner_id
+                 FROM user_collection uc
+                 JOIN photocards p ON p.id = uc.photocard_id {region_filter_p}
+                 JOIN album_versions av ON av.id = p.album_version_id
+                 JOIN albums al ON al.id = av.album_id AND al.group_id IS NOT NULL
+                 WHERE uc.photocard_id IS NOT NULL
+                 UNION ALL
+                 SELECT uc.photocard_id AS item_id, al.group_id AS owner_id
+                 FROM user_collection uc
+                 JOIN photocards p ON p.id = uc.photocard_id {region_filter_p}
+                 JOIN digipacks d ON d.id = p.digipack_id
+                 JOIN albums al ON al.id = d.album_id AND al.group_id IS NOT NULL
+                 WHERE uc.photocard_id IS NOT NULL"
+            )
         } else {
-            ""
+            String::new()
         };
 
         let search_filter = match query {
@@ -134,43 +170,43 @@ impl<'a> GroupRepository<'a> {
                 SELECT av.id AS item_id, al.group_id AS owner_id
                 FROM album_versions av
                 JOIN albums al ON al.id = av.album_id AND al.is_deleted = 0
-                WHERE av.is_deleted = 0 AND al.group_id IS NOT NULL
+                WHERE av.is_deleted = 0 AND al.group_id IS NOT NULL {region_filter}
                 UNION ALL
                 SELECT d.id AS item_id, al.group_id AS owner_id
                 FROM digipacks d
                 JOIN albums al ON al.id = d.album_id AND al.is_deleted = 0
-                WHERE d.is_deleted = 0 AND al.group_id IS NOT NULL
+                WHERE d.is_deleted = 0 AND al.group_id IS NOT NULL {region_filter_d}
                 UNION ALL
                 SELECT ls.id AS item_id, ls.group_id AS owner_id
                 FROM lightsticks ls
-                WHERE ls.is_deleted = 0 AND ls.group_id IS NOT NULL
+                WHERE ls.is_deleted = 0 AND ls.group_id IS NOT NULL {region_filter_ls}
                 UNION ALL
                 SELECT fk.id AS item_id, fk.group_id AS owner_id
                 FROM fanclub_kits fk
-                WHERE fk.is_deleted = 0 AND fk.group_id IS NOT NULL
+                WHERE fk.is_deleted = 0 AND fk.group_id IS NOT NULL {region_filter_fk}
                 {photocard_union}
             ) total_items ON total_items.owner_id = g.id
             LEFT JOIN (
                 SELECT uc.album_version_id AS item_id, al.group_id AS owner_id
                 FROM user_collection uc
-                JOIN album_versions av ON av.id = uc.album_version_id
+                JOIN album_versions av ON av.id = uc.album_version_id {region_filter}
                 JOIN albums al ON al.id = av.album_id AND al.group_id IS NOT NULL
                 WHERE uc.album_version_id IS NOT NULL
                 UNION ALL
                 SELECT uc.digipack_id AS item_id, al.group_id AS owner_id
                 FROM user_collection uc
-                JOIN digipacks d ON d.id = uc.digipack_id
+                JOIN digipacks d ON d.id = uc.digipack_id {region_filter_d}
                 JOIN albums al ON al.id = d.album_id AND al.group_id IS NOT NULL
                 WHERE uc.digipack_id IS NOT NULL
                 UNION ALL
                 SELECT uc.lightstick_id AS item_id, ls.group_id AS owner_id
                 FROM user_collection uc
-                JOIN lightsticks ls ON ls.id = uc.lightstick_id AND ls.group_id IS NOT NULL
+                JOIN lightsticks ls ON ls.id = uc.lightstick_id AND ls.group_id IS NOT NULL {region_filter_ls}
                 WHERE uc.lightstick_id IS NOT NULL
                 UNION ALL
                 SELECT uc.fanclub_kit_id AS item_id, fk.group_id AS owner_id
                 FROM user_collection uc
-                JOIN fanclub_kits fk ON fk.id = uc.fanclub_kit_id AND fk.group_id IS NOT NULL
+                JOIN fanclub_kits fk ON fk.id = uc.fanclub_kit_id AND fk.group_id IS NOT NULL {region_filter_fk}
                 WHERE uc.fanclub_kit_id IS NOT NULL
                 {owned_photocard_union}
             ) owned_items ON owned_items.owner_id = g.id

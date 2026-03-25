@@ -54,8 +54,10 @@ impl<'a> ArtistService<'a> {
     pub fn get_album_summaries(
         &mut self,
         artist_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<AlbumSummaryDto>, RepositoryError> {
-        let rows = AlbumRepository::new(self.conn).find_summaries_by_artist_id(artist_id)?;
+        let rows = AlbumRepository::new(self.conn)
+            .find_summaries_by_artist_id(artist_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()
@@ -76,8 +78,10 @@ impl<'a> ArtistService<'a> {
     pub fn get_lightsticks(
         &mut self,
         artist_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<LightstickItemDto>, RepositoryError> {
-        let rows = LightstickRepository::new(self.conn).find_by_artist_id_with_owned(artist_id)?;
+        let rows = LightstickRepository::new(self.conn)
+            .find_by_artist_id_with_owned(artist_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()

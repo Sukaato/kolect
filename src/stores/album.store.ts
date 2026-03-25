@@ -151,10 +151,22 @@ export const useAlbumStore = defineStore('album', () => {
     resetFilters()
 
     await Promise.all([
-      detailInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
-      versionsInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
-      digipacksInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
-      photocardsInvoke.invoke({ albumId }, { resetBeforeInvoke: !refresh }),
+      detailInvoke.invoke(
+        { albumId, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
+      versionsInvoke.invoke(
+        { albumId, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
+      digipacksInvoke.invoke(
+        { albumId, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
+      photocardsInvoke.invoke(
+        { albumId, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
     ])
 
     const d = detailInvoke.data.value

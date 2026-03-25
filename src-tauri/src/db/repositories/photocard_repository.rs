@@ -38,11 +38,20 @@ impl<'a> PhotocardRepository<'a> {
     }
 
     /// Returns all photocards linked to an album with owned_count and has_signed.
+    /// - include_exclusive_items : if false, only GLOBAL region photocards are returned
     pub fn find_by_album_id_with_owned(
         &mut self,
         a_id: &str,
+        include_exclusive_items: bool,
     ) -> RepoResult<Vec<PhotocardWithOwnedRow>> {
-        let sql = "
+        let region_filter = if include_exclusive_items {
+            ""
+        } else {
+            "AND p.region = 'GLOBAL'"
+        };
+
+        let sql = format!(
+            "
             SELECT
                 p.id,
                 p.artist_id,
@@ -54,7 +63,7 @@ impl<'a> PhotocardRepository<'a> {
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed
             FROM photocards p
             LEFT JOIN user_collection uc ON uc.photocard_id = p.id
-            WHERE p.is_deleted = 0
+            WHERE p.is_deleted = 0 {region_filter}
               AND (
                 p.album_version_id IN (
                     SELECT id FROM album_versions WHERE album_id = ? AND is_deleted = 0
@@ -66,7 +75,8 @@ impl<'a> PhotocardRepository<'a> {
               )
             GROUP BY p.id
             ORDER BY p.artist_id ASC
-        ";
+        "
+        );
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(a_id)

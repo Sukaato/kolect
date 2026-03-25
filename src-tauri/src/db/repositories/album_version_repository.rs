@@ -38,11 +38,20 @@ impl<'a> AlbumVersionRepository<'a> {
     }
 
     /// Returns versions of an album with owned_count and has_signed.
+    /// - include_exclusive_items : if false, only GLOBAL region versions are returned
     pub fn find_by_album_id_with_owned(
         &mut self,
         a_id: &str,
+        include_exclusive_items: bool,
     ) -> RepoResult<Vec<AlbumVersionWithOwnedRow>> {
-        let sql = "
+        let region_filter = if include_exclusive_items {
+            ""
+        } else {
+            "AND av.region = 'GLOBAL'"
+        };
+
+        let sql = format!(
+            "
             SELECT
                 av.id,
                 av.name,
@@ -54,10 +63,11 @@ impl<'a> AlbumVersionRepository<'a> {
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed
             FROM album_versions av
             LEFT JOIN user_collection uc ON uc.album_version_id = av.id
-            WHERE av.album_id = ? AND av.is_deleted = 0
+            WHERE av.album_id = ? AND av.is_deleted = 0 {region_filter}
             GROUP BY av.id
             ORDER BY av.release_date ASC
-        ";
+        "
+        );
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(a_id)

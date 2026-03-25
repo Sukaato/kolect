@@ -42,6 +42,7 @@ pub async fn dataset_get_summary(
             params.search.as_deref(),
             params.agency_id.as_deref(),
             params.include_photocards,
+            params.include_exclusive_items,
         )
         .map_err(|e| e.to_string())
 }

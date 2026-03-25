@@ -38,11 +38,20 @@ impl<'a> DigipackRepository<'a> {
     }
 
     /// Returns digipacks for an album with owned_count and has_signed.
+    /// - include_exclusive_items : if false, only GLOBAL region digipacks are returned
     pub fn find_by_album_id_with_owned(
         &mut self,
         a_id: &str,
+        include_exclusive_items: bool,
     ) -> RepoResult<Vec<DigipackWithOwnedRow>> {
-        let sql = "
+        let region_filter = if include_exclusive_items {
+            ""
+        } else {
+            "AND d.region = 'GLOBAL'"
+        };
+
+        let sql = format!(
+            "
             SELECT
                 d.id,
                 d.name,
@@ -54,10 +63,11 @@ impl<'a> DigipackRepository<'a> {
                 CASE WHEN SUM(uc.is_signed) > 0 THEN 1 ELSE 0 END AS has_signed
             FROM digipacks d
             LEFT JOIN user_collection uc ON uc.digipack_id = d.id
-            WHERE d.album_id = ? AND d.is_deleted = 0
+            WHERE d.album_id = ? AND d.is_deleted = 0 {region_filter}
             GROUP BY d.id
             ORDER BY d.release_date ASC
-        ";
+        "
+        );
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(a_id)

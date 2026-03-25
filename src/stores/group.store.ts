@@ -4,8 +4,13 @@ import { useEntityStore } from '@/composables/use-entity-store'
 import { useInvoke } from '@/composables/use-invoke'
 import type { GroupDetail } from '@/types/group.type'
 import type { GroupId } from '@/types/schema/group.type'
+import { useSettingStore } from './setting.store'
 
 export const useGroupStore = defineStore('group', () => {
+  // ─── Composables ───────────────────────────────────────────────────────────
+
+  const settingStore = useSettingStore()
+
   // ─── Invoke ────────────────────────────────────────────────────────────────
 
   const detailInvoke = useInvoke<GroupDetail>('group_get_detail')
@@ -40,7 +45,10 @@ export const useGroupStore = defineStore('group', () => {
 
   async function load(groupId: GroupId, refresh = false) {
     await Promise.all([
-      detailInvoke.invoke({ groupId }, { resetBeforeInvoke: !refresh }),
+      detailInvoke.invoke(
+        { groupId, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
       loadCollectibles(groupId, refresh),
     ])
   }

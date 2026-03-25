@@ -85,8 +85,10 @@ impl<'a> GroupService<'a> {
     pub fn get_album_summaries(
         &mut self,
         group_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<AlbumSummaryDto>, RepositoryError> {
-        let rows = AlbumRepository::new(self.conn).find_summaries_by_group_id(group_id)?;
+        let rows = AlbumRepository::new(self.conn)
+            .find_summaries_by_group_id(group_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()
@@ -107,8 +109,10 @@ impl<'a> GroupService<'a> {
     pub fn get_lightsticks(
         &mut self,
         group_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<LightstickItemDto>, RepositoryError> {
-        let rows = LightstickRepository::new(self.conn).find_by_group_id_with_owned(group_id)?;
+        let rows = LightstickRepository::new(self.conn)
+            .find_by_group_id_with_owned(group_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()

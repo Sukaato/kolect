@@ -16,9 +16,13 @@ impl<'a> AlbumService<'a> {
     }
 
     /// Returns album info with separate owned/total counts for versions, digipacks and photocards.
-    pub fn get_detail(&mut self, album_id: &str) -> Result<AlbumDetailDto, RepositoryError> {
+    pub fn get_detail(
+        &mut self,
+        album_id: &str,
+        include_exclusive_items: bool,
+    ) -> Result<AlbumDetailDto, RepositoryError> {
         let row = AlbumRepository::new(self.conn)
-            .find_detail_by_id(album_id)?
+            .find_detail_by_id(album_id, include_exclusive_items)?
             .ok_or_else(|| RepositoryError::NotFound(album_id.to_string()))?;
 
         Ok(AlbumDetailDto {
@@ -41,8 +45,10 @@ impl<'a> AlbumService<'a> {
     pub fn get_versions(
         &mut self,
         album_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<AlbumVersionItemDto>, RepositoryError> {
-        let rows = AlbumVersionRepository::new(self.conn).find_by_album_id_with_owned(album_id)?;
+        let rows = AlbumVersionRepository::new(self.conn)
+            .find_by_album_id_with_owned(album_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()
@@ -63,8 +69,10 @@ impl<'a> AlbumService<'a> {
     pub fn get_digipacks(
         &mut self,
         album_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<DigipackItemDto>, RepositoryError> {
-        let rows = DigipackRepository::new(self.conn).find_by_album_id_with_owned(album_id)?;
+        let rows = DigipackRepository::new(self.conn)
+            .find_by_album_id_with_owned(album_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()
@@ -85,8 +93,10 @@ impl<'a> AlbumService<'a> {
     pub fn get_photocards(
         &mut self,
         album_id: &str,
+        include_exclusive_items: bool,
     ) -> Result<Vec<PhotocardItemDto>, RepositoryError> {
-        let rows = PhotocardRepository::new(self.conn).find_by_album_id_with_owned(album_id)?;
+        let rows = PhotocardRepository::new(self.conn)
+            .find_by_album_id_with_owned(album_id, include_exclusive_items)?;
 
         Ok(rows
             .into_iter()

@@ -21,11 +21,12 @@ pub async fn group_get_detail(
 pub async fn group_get_album_summaries(
     state: State<'_, Mutex<AppStore>>,
     group_id: String,
+    include_exclusive_items: bool,
 ) -> Result<Vec<AlbumSummaryDto>, String> {
     let mut store = state.lock().await;
 
     GroupService::new(&mut store.db_conn)
-        .get_album_summaries(&group_id)
+        .get_album_summaries(&group_id, include_exclusive_items)
         .map_err(|e| e.to_string())
 }
 
@@ -33,11 +34,12 @@ pub async fn group_get_album_summaries(
 pub async fn group_get_lightsticks(
     state: State<'_, Mutex<AppStore>>,
     group_id: String,
+    include_exclusive_items: bool,
 ) -> Result<Vec<LightstickItemDto>, String> {
     let mut store = state.lock().await;
 
     GroupService::new(&mut store.db_conn)
-        .get_lightsticks(&group_id)
+        .get_lightsticks(&group_id, include_exclusive_items)
         .map_err(|e| e.to_string())
 }
 

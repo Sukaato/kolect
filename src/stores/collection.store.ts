@@ -19,6 +19,7 @@ export interface CollectionSummaryParams {
   page: number
   perPage: number
   includePhotocards: boolean
+  includeExclusiveItems: boolean
   search: string | null
   agencyId: string | null
 }
@@ -42,11 +43,20 @@ const defaultSummary: PaginatedResult<CollectionSummaryItem> = {
 }
 
 export const useCollectionStore = defineStore('collection', () => {
+  // ─── Composables ───────────────────────────────────────────────────────────
+
   const settingStore = useSettingStore()
   watch(
     () => settingStore.includePhotocardInCount,
     include => {
       params.value.includePhotocards = include
+      reset()
+    },
+  )
+  watch(
+    () => settingStore.includeExclusiveItems,
+    include => {
+      params.value.includeExclusiveItems = include
       reset()
     },
   )
@@ -57,6 +67,7 @@ export const useCollectionStore = defineStore('collection', () => {
     page: defaultMeta.currentPage,
     perPage: defaultMeta.perPage,
     includePhotocards: settingStore.includePhotocardInCount,
+    includeExclusiveItems: settingStore.includeExclusiveItems,
     search: null,
     agencyId: null,
   })

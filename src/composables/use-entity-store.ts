@@ -1,5 +1,6 @@
 import { computed, readonly, shallowRef } from 'vue'
 import { useInvoke } from '@/composables/use-invoke'
+import { useSettingStore } from '@/stores/setting.store'
 import type {
   AlbumSummary,
   FanclubKitItem,
@@ -15,6 +16,10 @@ export interface EntityStoreCommands {
 }
 
 export function useEntityStore(commands: EntityStoreCommands) {
+  // ─── Composables ───────────────────────────────────────────────────────────
+
+  const settingStore = useSettingStore()
+
   // ─── Invoke ──────────────────────────────────────────────────────────────
 
   const albumsInvoke = useInvoke<AlbumSummary[]>(commands.albumsCommand, { defaults: [] })
@@ -69,8 +74,14 @@ export function useEntityStore(commands: EntityStoreCommands) {
 
   async function loadCollectibles(id: string, refresh = false) {
     await Promise.all([
-      albumsInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
-      lightsticksInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
+      albumsInvoke.invoke(
+        { [commands.idParam]: id, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
+      lightsticksInvoke.invoke(
+        { [commands.idParam]: id, includeExclusiveItems: settingStore.includeExclusiveItems },
+        { resetBeforeInvoke: !refresh },
+      ),
       fanclubKitsInvoke.invoke({ [commands.idParam]: id }, { resetBeforeInvoke: !refresh }),
     ])
   }

@@ -18,20 +18,30 @@ impl<'a> CollectionService<'a> {
 
     /// Returns the paginated collection summary — groups and solo artists unified.
     /// Sorted: favorites first, then by name ASC.
-    /// include_photocards: if true, photocards are counted in total/owned.
+    /// - include_photocards      : if true, photocards are counted in total/owned
+    /// - include_exclusive_items : if false, only GLOBAL region items are counted
     pub fn get_summary(
         &mut self,
         page: Page,
         search: Option<&str>,
         agency_id: Option<&str>,
         include_photocards: bool,
+        include_exclusive_items: bool,
     ) -> Result<PaginatedResult<CollectionSummaryItem>, diesel::result::Error> {
         let agency_ids: Option<Vec<String>> = agency_id.map(|id| vec![id.to_string()]);
 
-        let mut groups =
-            self.get_groups_summary(search, agency_ids.as_deref(), include_photocards)?;
-        let mut artists =
-            self.get_artists_summary(search, agency_ids.as_deref(), include_photocards)?;
+        let mut groups = self.get_groups_summary(
+            search,
+            agency_ids.as_deref(),
+            include_photocards,
+            include_exclusive_items,
+        )?;
+        let mut artists = self.get_artists_summary(
+            search,
+            agency_ids.as_deref(),
+            include_photocards,
+            include_exclusive_items,
+        )?;
 
         // Merge and convert
         let mut items: Vec<CollectionSummaryItem> = groups
@@ -82,8 +92,15 @@ impl<'a> CollectionService<'a> {
         query: Option<&str>,
         agency_ids: Option<&[String]>,
         include_photocards: bool,
+        include_exclusive_items: bool,
     ) -> Result<Vec<GroupSummaryRow>, diesel::result::Error> {
-        GroupRepository::new(self.conn).get_summary(true, query, agency_ids, include_photocards)
+        GroupRepository::new(self.conn).get_summary(
+            true,
+            query,
+            agency_ids,
+            include_photocards,
+            include_exclusive_items,
+        )
     }
 
     fn get_artists_summary(
@@ -91,7 +108,14 @@ impl<'a> CollectionService<'a> {
         query: Option<&str>,
         agency_ids: Option<&[String]>,
         include_photocards: bool,
+        include_exclusive_items: bool,
     ) -> Result<Vec<ArtistSummaryRow>, diesel::result::Error> {
-        ArtistRepository::new(self.conn).get_summary(true, query, agency_ids, include_photocards)
+        ArtistRepository::new(self.conn).get_summary(
+            true,
+            query,
+            agency_ids,
+            include_photocards,
+            include_exclusive_items,
+        )
     }
 }

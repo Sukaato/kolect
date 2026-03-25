@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use diesel::prelude::*;
 use diesel::sql_types::{BigInt, Nullable, Text};
 use diesel::sqlite::SqliteConnection;
@@ -74,8 +76,17 @@ impl<'a> AlbumRepository<'a> {
     }
 
     /// Returns albums for a group with owned/total counts for versions, digipacks and photocards.
-    pub fn find_summaries_by_group_id(&mut self, g_id: &str) -> RepoResult<Vec<AlbumSummaryRow>> {
-        let sql = "
+    /// - include_exclusive_items : if false, only GLOBAL region items are counted
+    pub fn find_summaries_by_group_id(
+        &mut self,
+        g_id: &str,
+        include_exclusive_items: bool,
+    ) -> RepoResult<Vec<AlbumSummaryRow>> {
+        let album_version_region = region_clause(include_exclusive_items, "av").into_owned();
+        let digipack_region = region_clause(include_exclusive_items, "d").into_owned();
+        let photocard_region = region_clause(include_exclusive_items, "p").into_owned();
+
+        let sql = format!("
             SELECT
                 al.id AS album_id,
                 al.name,
@@ -91,16 +102,16 @@ impl<'a> AlbumRepository<'a> {
                 COUNT(DISTINCT uc_p.photocard_id)      AS photocards_owned_count
 
             FROM albums al
-            LEFT JOIN album_versions av ON av.album_id = al.id AND av.is_deleted = 0
+            LEFT JOIN album_versions av ON av.album_id = al.id AND av.is_deleted = 0 {album_version_region}
             LEFT JOIN user_collection uc_av ON uc_av.album_version_id = av.id
-            LEFT JOIN digipacks d ON d.album_id = al.id AND d.is_deleted = 0
+            LEFT JOIN digipacks d ON d.album_id = al.id AND d.is_deleted = 0 {digipack_region}
             LEFT JOIN user_collection uc_d ON uc_d.digipack_id = d.id
-            LEFT JOIN photocards p ON p.is_deleted = 0 AND (
+            LEFT JOIN photocards p ON p.is_deleted = 0 {photocard_region} AND (
                 p.album_version_id IN (
-                    SELECT id FROM album_versions WHERE album_id = al.id AND is_deleted = 0
+                    SELECT id FROM album_versions WHERE album_id = al.id AND is_deleted = 0 {album_version_region}
                 )
                 OR p.digipack_id IN (
-                    SELECT id FROM digipacks WHERE album_id = al.id AND is_deleted = 0
+                    SELECT id FROM digipacks WHERE album_id = al.id AND is_deleted = 0 {digipack_region}
                 )
                 OR p.album_id = al.id
             )
@@ -108,7 +119,7 @@ impl<'a> AlbumRepository<'a> {
             WHERE al.group_id = ? AND al.is_deleted = 0
             GROUP BY al.id
             ORDER BY al.release_date DESC
-        ";
+        ");
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(g_id)
@@ -116,8 +127,17 @@ impl<'a> AlbumRepository<'a> {
     }
 
     /// Returns albums for a solo artist with owned/total counts for versions, digipacks and photocards.
-    pub fn find_summaries_by_artist_id(&mut self, a_id: &str) -> RepoResult<Vec<AlbumSummaryRow>> {
-        let sql = "
+    /// - include_exclusive_items : if false, only GLOBAL region items are counted
+    pub fn find_summaries_by_artist_id(
+        &mut self,
+        a_id: &str,
+        include_exclusive_items: bool,
+    ) -> RepoResult<Vec<AlbumSummaryRow>> {
+        let album_version_region = region_clause(include_exclusive_items, "av").into_owned();
+        let digipack_region = region_clause(include_exclusive_items, "d").into_owned();
+        let photocard_region = region_clause(include_exclusive_items, "p").into_owned();
+
+        let sql = format!("
             SELECT
                 al.id AS album_id,
                 al.name,
@@ -133,16 +153,16 @@ impl<'a> AlbumRepository<'a> {
                 COUNT(DISTINCT uc_p.photocard_id)      AS photocards_owned_count
 
             FROM albums al
-            LEFT JOIN album_versions av ON av.album_id = al.id AND av.is_deleted = 0
+            LEFT JOIN album_versions av ON av.album_id = al.id AND av.is_deleted = 0 {album_version_region}
             LEFT JOIN user_collection uc_av ON uc_av.album_version_id = av.id
-            LEFT JOIN digipacks d ON d.album_id = al.id AND d.is_deleted = 0
+            LEFT JOIN digipacks d ON d.album_id = al.id AND d.is_deleted = 0 {digipack_region}
             LEFT JOIN user_collection uc_d ON uc_d.digipack_id = d.id
-            LEFT JOIN photocards p ON p.is_deleted = 0 AND (
+            LEFT JOIN photocards p ON p.is_deleted = 0 {photocard_region} AND (
                 p.album_version_id IN (
-                    SELECT id FROM album_versions WHERE album_id = al.id AND is_deleted = 0
+                    SELECT id FROM album_versions WHERE album_id = al.id AND is_deleted = 0 {digipack_region}
                 )
                 OR p.digipack_id IN (
-                    SELECT id FROM digipacks WHERE album_id = al.id AND is_deleted = 0
+                    SELECT id FROM digipacks WHERE album_id = al.id AND is_deleted = 0 {digipack_region}
                 )
                 OR p.album_id = al.id
             )
@@ -150,7 +170,7 @@ impl<'a> AlbumRepository<'a> {
             WHERE al.artist_id = ? AND al.is_deleted = 0
             GROUP BY al.id
             ORDER BY al.release_date DESC
-        ";
+        ");
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(a_id)
@@ -159,8 +179,18 @@ impl<'a> AlbumRepository<'a> {
 
     /// Returns the detail of an album with separate owned/total counts
     /// for versions, digipacks and photocards.
-    pub fn find_detail_by_id(&mut self, record_id: &str) -> RepoResult<Option<AlbumDetailRow>> {
-        let sql = "
+    /// - include_exclusive_items : if false, only GLOBAL region items are counted
+    pub fn find_detail_by_id(
+        &mut self,
+        record_id: &str,
+        include_exclusive_items: bool,
+    ) -> RepoResult<Option<AlbumDetailRow>> {
+        let album_version_region = region_clause(include_exclusive_items, "av").into_owned();
+        let digipack_region = region_clause(include_exclusive_items, "d").into_owned();
+        let photocard_region = region_clause(include_exclusive_items, "p").into_owned();
+
+        let sql = format!(
+            "
             SELECT
                 al.id AS album_id,
                 al.name,
@@ -181,24 +211,24 @@ impl<'a> AlbumRepository<'a> {
             FROM albums al
 
             LEFT JOIN album_versions av
-                ON av.album_id = al.id AND av.is_deleted = 0
+                ON av.album_id = al.id AND av.is_deleted = 0 {album_version_region}
             LEFT JOIN user_collection uc_av
                 ON uc_av.album_version_id = av.id
 
             LEFT JOIN digipacks d
-                ON d.album_id = al.id AND d.is_deleted = 0
+                ON d.album_id = al.id AND d.is_deleted = 0 {digipack_region}
             LEFT JOIN user_collection uc_d
                 ON uc_d.digipack_id = d.id
 
             LEFT JOIN photocards p
-                ON p.is_deleted = 0 AND (
+                ON p.is_deleted = 0 {photocard_region} AND (
                     p.album_version_id IN (
                         SELECT id FROM album_versions
-                        WHERE album_id = al.id AND is_deleted = 0
+                        WHERE album_id = al.id AND is_deleted = 0 {digipack_region}
                     )
                     OR p.digipack_id IN (
                         SELECT id FROM digipacks
-                        WHERE album_id = al.id AND is_deleted = 0
+                        WHERE album_id = al.id AND is_deleted = 0 {digipack_region}
                     )
                     OR p.album_id = al.id
                 )
@@ -207,11 +237,23 @@ impl<'a> AlbumRepository<'a> {
 
             WHERE al.id = ? AND al.is_deleted = 0
             GROUP BY al.id
-        ";
+        "
+        );
 
         Ok(diesel::sql_query(sql)
             .bind::<Text, _>(record_id)
             .get_result::<AlbumDetailRow>(self.conn)
             .optional()?)
+    }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/// Returns an extra AND clause to restrict items to GLOBAL region when exclusive items are excluded.
+fn region_clause(include_exclusive_items: bool, table: &'static str) -> Cow<'static, str> {
+    if include_exclusive_items {
+        Cow::Borrowed("")
+    } else {
+        Cow::Owned(format!("AND {}.region = 'GLOBAL'", table))
     }
 }
