@@ -15,7 +15,7 @@ jobs:
     name: Audit — Frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Bun
         uses: ./.github/workflows/actions/setup-bun
@@ -27,7 +27,7 @@ jobs:
     name: Audit — Backend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Rust
         uses: ./.github/workflows/actions/setup-rust

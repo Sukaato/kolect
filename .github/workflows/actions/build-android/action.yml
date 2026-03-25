@@ -80,14 +80,14 @@ runs:
       run: bun tauri android build --aab
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: kolect-${{ inputs.artifact-suffix }}.apk
         path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
         retention-days: 14
 
     - name: Upload AAB artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: kolect-${{ inputs.artifact-suffix }}.aab
         path: src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
