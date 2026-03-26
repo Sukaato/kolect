@@ -3,7 +3,7 @@ import { debug, error as logError } from '@tauri-apps/plugin-log'
 import { readonly, shallowRef } from 'vue'
 
 type Commands = TauriInvokeCommands
-type CommandName = keyof Commands
+export type CommandName = keyof Commands
 
 type CommandParams<T extends CommandName> = Commands[T]['params']
 

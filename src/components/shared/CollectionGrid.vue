@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useInvoke } from '@/composables/use-invoke'
+import { CommandName, useInvoke } from '@/composables/use-invoke'
 import type { CollectionSummaryItem } from '@/stores/collection.store'
 import type { CollectionListStore } from '@/types/collection-list.type'
 import { RouteName } from '@/types/routes'
@@ -20,7 +20,7 @@ const {
   store: CollectionListStore
   screenClass: string
   /** Tauri command name to load the agency list (differs between Home and Collection) */
-  agenciesCommand: 'dataset_get_agencies' | 'collection_get_agencies'
+  agenciesCommand: Extract<CommandName, 'dataset_get_agencies' | 'collection_get_agencies'>
   /** Debounce delay in ms for the search input (default: 500) */
   searchDebounce?: number
 }>()

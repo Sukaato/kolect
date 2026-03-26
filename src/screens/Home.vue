@@ -25,7 +25,7 @@ onMounted(async () => {
 
     <template #empty="{ hasActiveFilters }">
       <p class="text-sm">
-        {{ $t(hasActiveFilters ? 'screen.home.list.empty_filtered' : 'screen.home.list.empty') }}
+        {{ hasActiveFilters ? $t('screen.home.list.empty_filtered') : $t('screen.home.list.empty') }}
       </p>
     </template>
 

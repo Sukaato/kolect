@@ -1,13 +1,13 @@
 import { computed, readonly, shallowRef } from 'vue'
-import { useInvoke } from '@/composables/use-invoke'
+import { type CommandName, useInvoke } from '@/composables/use-invoke'
 import { useSettingStore } from '@/stores/setting.store'
 import type { PossessionFilter } from '@/types/group.type'
 import { useToast } from './use-toast'
 
 export interface EntityStoreCommands {
-  albumsCommand: 'group_get_album_summaries' | 'artist_get_album_summaries'
-  lightsticksCommand: 'group_get_lightsticks' | 'artist_get_lightsticks'
-  fanclubKitsCommand: 'group_get_fanclub_kits' | 'artist_get_fanclub_kits'
+  albumsCommand: Extract<CommandName, 'group_get_album_summaries' | 'artist_get_album_summaries'>
+  lightsticksCommand: Extract<CommandName, 'group_get_lightsticks' | 'artist_get_lightsticks'>
+  fanclubKitsCommand: Extract<CommandName, 'group_get_fanclub_kits' | 'artist_get_fanclub_kits'>
   idParam: string
 }
 

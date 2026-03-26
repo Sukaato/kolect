@@ -11,7 +11,7 @@ import { useSettingStore } from './stores/setting.store'
 import { useToastStore } from './stores/toast.store'
 
 const route = useRoute()
-const showDock = computed(() => route.path !== '/')
+const showDock = computed(() => route.path !== '/' && route.path !== '/onboarding')
 const transitionName = computed(() => {
   return route.path === '/' ? TransitionName.STARTUP : TransitionName.PAGE
 })
