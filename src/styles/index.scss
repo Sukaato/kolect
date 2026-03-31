@@ -10,3 +10,7 @@ body {
   min-height: 100dvh;
   overflow: hidden;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}

@@ -29,7 +29,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/screens/Setting.vue'),
   },
   {
-    path: '/groups/:id/:mode',
+    path: '/groups/:id',
     children: [
       {
         path: '',

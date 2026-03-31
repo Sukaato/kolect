@@ -16,10 +16,9 @@ pub async fn dataset_sync(
 ) -> Result<(), String> {
     log::debug!("dataset_sync, force: {}", force);
 
-    let mut state = state.lock().await;
-    DatasetService::new(&app, &mut state.db_conn)
-        .sync(force)
-        .await?;
+    let mut store = state.lock().await;
+    let mut service = DatasetService::new(&app, &mut store);
+    service.sync(force).await?;
 
     Ok(())
 }
@@ -34,7 +33,7 @@ pub async fn dataset_get_summary(
 
     let page = Page::new(params.page, params.per_page);
 
-    let mut service = DatasetService::new(&app, &mut store.db_conn);
+    let mut service = DatasetService::new(&app, &mut store);
 
     service
         .get_summary(

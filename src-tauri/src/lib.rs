@@ -9,18 +9,15 @@ use tauri::Manager;
 use tauri_plugin_log::log;
 use tokio::sync::Mutex;
 
+use crate::config::AppConfig;
+
 struct AppStore {
     db_conn: SqliteConnection,
+    config: AppConfig,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    if cfg!(dev) {
-        dotenvy::dotenv().ok();
-    } else {
-        dotenvy::from_filename(".env.production").ok();
-    }
-
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
@@ -72,12 +69,18 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     scope.allow_directory(app_data_dir, false)?;
     log::info!("Fs scope setup successfully");
 
+    let config = AppConfig::load(app);
+    log::info!("Config loaded successfully");
+
     services::database_service::init(app.handle());
     let mut conn = services::database_service::establish_db_connection(app.handle());
     services::database_service::migrate(&mut conn);
     log::info!("Local database setup successfully");
 
-    app.manage(Mutex::new(AppStore { db_conn: conn }));
+    app.manage(Mutex::new(AppStore {
+        db_conn: conn,
+        config,
+    }));
     log::info!("App managed state created");
 
     log::info!("Application started successfully");

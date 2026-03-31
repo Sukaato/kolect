@@ -69,7 +69,7 @@ function navigateToItem(item: CollectionSummaryItem) {
   if (item.kind === 'group') {
     router.push({
       name: RouteName.GROUP,
-      params: { id: item.id, mode: 'collection' },
+      params: { id: item.id },
     })
   } else {
     router.push({

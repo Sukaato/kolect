@@ -10,9 +10,8 @@ import { storeToRefs } from 'pinia'
 import { onMounted, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 
-const { id, mode } = defineProps<{
+const { id } = defineProps<{
   id: GroupId
-  mode: string
 }>()
 
 const router = useRouter()
@@ -51,7 +50,7 @@ onMounted(async () => {
   <EntityLayout v-model:possession-filter="possessionFilter" :loading :is-favorite
     :favorite-loading="favoriteStore.loading" :albums="filteredAlbums" :lightsticks="filteredLightsticks"
     :fanclub-kits="filteredFanclubKits"
-    :album-route="(albumId) => ({ name: RouteName.GROUP_ALBUM, params: { id, mode, albumId } })" class="screen--group"
+    :album-route="(albumId) => ({ name: RouteName.GROUP_ALBUM, params: { id, albumId } })" class="screen--group"
     @toggle-favorite="handleFavoriteToggle" @on-saved="groupStore.load(id, true)">
     <template #title>{{ group?.name ?? '...' }}</template>
 

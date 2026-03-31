@@ -10,25 +10,15 @@ use chrono::{DateTime, Utc};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-// ─── Désérialiseur custom pour semver::Version ────────────────────────────────
-
-fn deserialize_version<'de, D>(deserializer: D) -> Result<Version, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
-    Version::parse(&s).map_err(serde::de::Error::custom)
-}
-
 // ─── DatasetDto ───────────────────────────────────────────────────────────────
 
 /// Représente le fichier dataset_v2.json complet.
 /// Désérialisé une fois au démarrage, puis converti en `DatasetModels`
 /// pour l'insertion en base.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct DatasetDto {
-    #[serde(deserialize_with = "deserialize_version")]
-    pub version: Version,
+    #[serde(default = "default_version_str")]
+    pub version: String,
     pub agencies: Vec<AgencyDto>,
     pub groups: Vec<GroupDto>,
     pub artists: Vec<ArtistDto>,
@@ -44,8 +34,8 @@ pub struct DatasetDto {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatasetMetaDto {
-    #[serde(default = "default_version")]
-    pub version: Version,
+    #[serde(default = "default_version_str")]
+    pub version: String,
 
     #[serde(default = "default_fetched_at")]
     pub fetched_at: DateTime<Utc>,
@@ -54,7 +44,7 @@ pub struct DatasetMetaDto {
 impl DatasetMetaDto {
     pub fn new(version: Version) -> Self {
         Self {
-            version,
+            version: version.to_string(),
             fetched_at: default_fetched_at(),
         }
     }
@@ -68,6 +58,9 @@ impl Default for DatasetMetaDto {
 
 fn default_version() -> Version {
     Version::new(0, 0, 0)
+}
+fn default_version_str() -> String {
+    default_version().to_string()
 }
 
 fn default_fetched_at() -> DateTime<Utc> {

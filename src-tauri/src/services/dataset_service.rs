@@ -2,28 +2,27 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::PathBuf;
 
-use diesel::SqliteConnection;
 use semver::Version;
 use tauri::AppHandle;
 use tauri::Manager;
 use tauri_plugin_log::log;
 
-use crate::config::AppConfig;
 use crate::db::repositories::{
     ArtistRepository, ArtistSummaryRow, GroupRepository, GroupSummaryRow, Page, PaginatedResult,
 };
 use crate::db::seeder::DatasetSeeder;
 use crate::dto::input::dataset::{DatasetDto, DatasetMetaDto};
 use crate::dto::output::CollectionSummaryItem;
+use crate::AppStore;
 
 pub struct DatasetService<'a> {
     app: &'a AppHandle,
-    conn: &'a mut SqliteConnection,
+    store: &'a mut AppStore,
 }
 
 impl<'a> DatasetService<'a> {
-    pub fn new(app: &'a AppHandle, conn: &'a mut SqliteConnection) -> Self {
-        Self { app, conn }
+    pub fn new(app: &'a AppHandle, store: &'a mut AppStore) -> Self {
+        Self { app, store }
     }
 
     // -----------------------------------------------------------------------
@@ -31,22 +30,27 @@ impl<'a> DatasetService<'a> {
     // -----------------------------------------------------------------------
 
     pub async fn sync(&mut self, force: bool) -> Result<bool, String> {
-        let dataset_url = AppConfig::dataset_url();
-        let dataset = Self::download(&dataset_url).await?;
+        let dataset_url = self.store.config.dataset_url.as_str();
+        let dataset = Self::download(self.app, dataset_url).await?;
         let new_version = dataset.version.clone();
         let current_version = self.read_dataset_meta()?.version;
 
-        if current_version >= new_version && !force {
+        let parsed_new_version = Version::parse(&new_version)
+            .map_err(|e| format!("Failed to parse new dataset version: {}", e))?;
+        let parsed_current_version = Version::parse(&current_version)
+            .map_err(|e| format!("Failed to parse current dataset version: {}", e))?;
+
+        if parsed_current_version >= parsed_new_version && !force {
             log::info!("Dataset is already up to date");
             return Ok(false);
         }
 
-        let mut seeder = DatasetSeeder::new(self.conn);
+        let mut seeder = DatasetSeeder::new(&mut self.store.db_conn);
         let report = seeder
             .run(dataset)
             .map_err(|e| format!("Failed to seed database: {}", e))?;
 
-        self.write_dataset_meta(new_version)?;
+        self.write_dataset_meta(parsed_new_version)?;
         log::info!("Dataset synchronization completed, report: {:?}", report);
 
         Ok(true)
@@ -121,7 +125,8 @@ impl<'a> DatasetService<'a> {
     // Private helpers
     // -----------------------------------------------------------------------
 
-    async fn download(url: &str) -> Result<DatasetDto, String> {
+    #[cfg(not(target_os = "android"))]
+    async fn download(_app: &AppHandle, url: &str) -> Result<DatasetDto, String> {
         let response = reqwest::get(url)
             .await
             .map_err(|e| format!("Failed to fetch dataset: {}", e))?;
@@ -130,6 +135,29 @@ impl<'a> DatasetService<'a> {
             .json::<DatasetDto>()
             .await
             .map_err(|e| format!("Failed to parse dataset: {}", e))
+    }
+
+    #[cfg(target_os = "android")]
+    async fn download(app: &AppHandle, url: &str) -> Result<DatasetDto, String> {
+        use tauri_plugin_fs::FsExt;
+
+        let path = app
+            .path()
+            .resolve(url, tauri::path::BaseDirectory::Resource)
+            .expect("failed to resolve dataset path");
+
+        let content = app
+            .fs()
+            .read_to_string(path)
+            .expect("failed to read dataset content");
+
+        match serde_json::from_str::<DatasetDto>(&content) {
+            Ok(dataset) => Ok(dataset),
+            Err(e) => {
+                log::error!("Invalid JSON, returning default dataset: {}", e);
+                Ok(DatasetDto::default())
+            }
+        }
     }
 
     fn dataset_meta_path(&self) -> Result<PathBuf, String> {
@@ -181,7 +209,7 @@ impl<'a> DatasetService<'a> {
         include_photocards: bool,
         include_exclusive_items: bool,
     ) -> Result<Vec<GroupSummaryRow>, diesel::result::Error> {
-        GroupRepository::new(self.conn).get_summary(
+        GroupRepository::new(&mut self.store.db_conn).get_summary(
             false,
             query,
             agency_ids,
@@ -197,7 +225,7 @@ impl<'a> DatasetService<'a> {
         include_photocards: bool,
         include_exclusive_items: bool,
     ) -> Result<Vec<ArtistSummaryRow>, diesel::result::Error> {
-        ArtistRepository::new(self.conn).get_summary(
+        ArtistRepository::new(&mut self.store.db_conn).get_summary(
             false,
             query,
             agency_ids,
